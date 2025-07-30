@@ -49,6 +49,18 @@ export const usePaperSizeManager = (
 ): PaperSizeManagerState => {
   const [paperSizeData, setPaperSizeData] = useState<PaperSizeData>(() => {
     const dimensions = STANDARD_PAPER_DIMENSIONS[initialPaperSize];
+    if (!dimensions) {
+      // Fallback to A4 if the initial paper size is not found
+      const fallbackDimensions = STANDARD_PAPER_DIMENSIONS['A4'];
+      return {
+        width: fallbackDimensions.width,
+        height: fallbackDimensions.height,
+        widthUnit: initialWidthUnit,
+        heightUnit: initialHeightUnit,
+        orientation: initialOrientation,
+        paperSize: 'A4', // Use A4 as fallback
+      };
+    }
     return {
       width: dimensions.width,
       height: dimensions.height,
@@ -94,8 +106,21 @@ export const usePaperSizeManager = (
             width,
             height,
           };
+        } else {
+          // If paper size not found, fallback to A4
+          const fallbackDimensions = STANDARD_PAPER_DIMENSIONS['A4'];
+          let { width, height } = fallbackDimensions;
+          if (prev.orientation === 'landscape') {
+            [width, height] = [height, width];
+          }
+          
+          return {
+            ...prev,
+            paperSize: 'A4',
+            width,
+            height,
+          };
         }
-        return prev;
       }
     });
   }, []);
