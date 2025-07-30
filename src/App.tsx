@@ -25,13 +25,13 @@ import { ColorSliderInput } from './components/primitives/ColorSliderInput';
 import { MultipleSlidersInput } from './components/inputs/MultipleSlidersInput';
 import { HexInput } from './components/primitives/HexInput';
 import { ColorHexInput } from './components/inputs/ColorHexInput';
-import { ColorModelSelector } from './components/inputs/ColorModelSelector';
-import { AspectRatioSelector } from './components/inputs/AspectRatioSelector';
-import { PaperSelector } from './components/inputs/PaperSelector';
-import { PositionSelector } from './components/inputs/PositionSelector';
-import { OrientationSelector } from './components/inputs/OrientationSelector';
+import { ColorModelSelector } from './components/components/ColorModelSelector';
+import { AspectRatioSelector } from './components/components/AspectRatioSelector';
+import { PaperSelector } from './components/components/PaperSelector';
+import { PositionSelector } from './components/components/PositionSelector';
+import { OrientationSelector } from './components/components/OrientationSelector';
 import { UnitSelector } from './components/primitives/UnitSelector';
-import { UniversalSelector } from './components/inputs/UniversalSelector';
+import { UniversalSelector } from './components/components/UniversalSelector';
 import { ColorInput } from './components/inputs/ColorInput';
 import { DimensionInput } from './components/inputs/DimensionInput';
 import { FluentColorPicker } from './components/legacy/FluentColorPicker';
@@ -255,36 +255,36 @@ const categories = [
   {
     name: 'Primitives',
     items: [
+      { name: 'ColorSliderInput', key: 'colorSliderInput' },
       { name: 'HexInput', key: 'hexInput' },
       { name: 'NumericInput', key: 'numericInput' },
       { name: 'SliderInput', key: 'sliderInput' },
       { name: 'UnitSelector', key: 'unitSelector' },
-      { name: 'ColorSliderInput', key: 'colorSliderInput' },
     ]
   },
   {
     name: 'Components',
     items: [
-      { name: 'ColorModelSelector', key: 'colorModelSelector' },
       { name: 'AspectRatioSelector', key: 'aspectRatioSelector' },
-      { name: 'PositionSelector', key: 'positionSelector' },
+      { name: 'ColorModelSelector', key: 'colorModelSelector' },
       { name: 'OrientationSelector', key: 'orientationSelector' },
       { name: 'PaperSelector', key: 'paperSelector' },
+      { name: 'PositionSelector', key: 'positionSelector' },
       { name: 'UniversalSelector', key: 'universalSelector' },
     ]
   },
   {
     name: 'Compositions',
     items: [
+      { name: 'ColorHexInput', key: 'colorHexInput' },
       { name: 'ColorInput', key: 'colorInput' },
       { name: 'ColorPicker', key: 'colorPicker' },
-      { name: 'ResponsiveColorPicker', key: 'responsiveColorPicker' },
       { name: 'ColorSelector', key: 'colorSelector' },
-      { name: 'ColorHexInput', key: 'colorHexInput' },
-      { name: 'Large Swatch ColorHexInput', key: 'largeSwatchColorHexInput' },
       { name: 'DimensionInput', key: 'dimensionInput' },
-      { name: 'RGBHSLColorSlidersInput', key: 'rgbhslColorSlidersInput' },
+      { name: 'Large Swatch ColorHexInput', key: 'largeSwatchColorHexInput' },
       { name: 'MultipleSlidersInput', key: 'multipleSlidersInput' },
+      { name: 'ResponsiveColorPicker', key: 'responsiveColorPicker' },
+      { name: 'RGBHSLColorSlidersInput', key: 'rgbhslColorSlidersInput' },
     ]
   },
   {
@@ -294,8 +294,8 @@ const categories = [
       { name: 'PaddingPanel', key: 'paddingPanel' },
       { name: 'PaperSizePanel', key: 'paperSizePanel' },
       { name: 'PositionFields', key: 'positionFields' },
-      { name: 'SizeFields', key: 'sizeFields' },
       { name: 'SizeAndPositionPanel', key: 'sizeAndPositionPanel' },
+      { name: 'SizeFields', key: 'sizeFields' },
     ]
   },
   {

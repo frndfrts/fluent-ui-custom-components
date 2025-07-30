@@ -4,9 +4,9 @@
  */
 import * as React from 'react';
 import { makeStyles, tokens, Title3 } from '@fluentui/react-components';
-import { PaperSelector } from '../inputs/PaperSelector';
+import { PaperSelector } from '../components/PaperSelector';
 import { SizeFields } from './SizeFields';
-import { OrientationSelector } from '../inputs/OrientationSelector';
+import { OrientationSelector } from '../components/OrientationSelector';
 import { usePaperSizeManager } from '../../hooks/usePaperSizeManager';
 
 const useStyles = makeStyles({

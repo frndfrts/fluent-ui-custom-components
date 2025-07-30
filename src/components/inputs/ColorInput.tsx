@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { makeStyles } from '@fluentui/react-components';
-import { ColorModelSelector } from './ColorModelSelector';
+import { ColorModelSelector } from '../components/ColorModelSelector';
 import { ColorHexInput } from './ColorHexInput';
 import { RGBHSLColorSlidersInput } from './RGBHSLColorSlidersInput';
 
