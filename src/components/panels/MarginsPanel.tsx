@@ -5,7 +5,7 @@
  */
 import * as React from 'react';
 import { makeStyles, tokens, Title3 } from '@fluentui/react-components';
-import { DimensionInput } from '../inputs/DimensionInput';
+import { DimensionInput } from '../compositions/DimensionInput';
 
 const useStyles = makeStyles({
   panel: {

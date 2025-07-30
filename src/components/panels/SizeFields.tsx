@@ -5,7 +5,7 @@
  */
 import * as React from 'react';
 import { Checkbox, makeStyles, tokens } from '@fluentui/react-components';
-import { DimensionInput } from '../inputs/DimensionInput';
+import { DimensionInput } from '../compositions/DimensionInput';
 import { useAspectRatioLock } from '../../hooks/useAspectRatioLock';
 
 const useStyles = makeStyles({

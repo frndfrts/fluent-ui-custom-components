@@ -16,9 +16,9 @@ import {
 
 import { useCommonStyles } from '../../styles/commonStyles';
 import { useComponentSize } from '../../hooks/useComponentSize';
-import { ColorSelector } from '../inputs/ColorSelector';
-import { ColorInput } from '../inputs/ColorInput';
-import { ColorHexInput } from '../inputs/ColorHexInput';
+import { ColorSelector } from '../compositions/ColorSelector';
+import { ColorInput } from '../compositions/ColorInput';
+import { ColorHexInput } from '../compositions/ColorHexInput';
 import { RecentColors } from '../inputs/RecentColors';
 
 const useStyles = makeStyles({

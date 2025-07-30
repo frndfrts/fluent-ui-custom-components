@@ -3,22 +3,18 @@
  * Centralized exports for all input components.
  * Note: Primitives have been moved to components/primitives/
  * Note: Components have been moved to components/components/
+ * Note: Compositions have been moved to components/compositions/
  */
 
-// Core input components (Level 3+ components)
-export { ColorHexInput } from './ColorHexInput';
-export { ColorInput } from './ColorInput';
-export { ResponsiveColorPicker as ColorPicker } from './ColorPicker';
-export { ColorSelector } from './ColorSelector';
-export { DimensionInput } from './DimensionInput';
+// Core input components (Level 4+ components)
 export { RecentColors } from './RecentColors';
-export { ResponsiveColorPicker } from './ResponsiveColorPicker';
 export { ColorInput as RGBHSL } from './RGBHSL';
-export { RGBHSLColorSlidersInput } from './RGBHSLColorSlidersInput';
-export { MultipleSlidersInput } from './MultipleSlidersInput';
 
 // Re-export primitives for backward compatibility
 export { HexInput, NumericInput, SliderInput, UnitSelector, ColorSliderInput } from '../primitives';
 
 // Re-export components for backward compatibility
 export { AspectRatioSelector, ColorModelSelector, OrientationSelector, PaperSelector, PositionSelector, UniversalSelector } from '../components';
+
+// Re-export compositions for backward compatibility
+export { ColorHexInput, ColorInput, ColorPicker, ColorSelector, DimensionInput, MultipleSlidersInput, ResponsiveColorPicker, RGBHSLColorSlidersInput } from '../compositions';

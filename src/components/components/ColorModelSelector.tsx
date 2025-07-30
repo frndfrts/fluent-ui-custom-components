@@ -4,7 +4,7 @@
  */
 import * as React from 'react';
 import { RadioGroup, Radio, makeStyles } from '@fluentui/react-components';
-import { ColorModel } from '../inputs/ColorInput';
+import { ColorModel } from '../compositions/ColorInput';
 
 const useStyles = makeStyles({
   container: {

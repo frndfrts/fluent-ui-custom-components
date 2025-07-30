@@ -20,7 +20,7 @@ import { useComponentSize } from '../../hooks/useComponentSize';
 import { ColorSelector } from './ColorSelector';
 import { ColorInput } from './ColorInput';
 import { ColorHexInput } from './ColorHexInput';
-import { RecentColors } from './RecentColors';
+import { RecentColors } from '../inputs/RecentColors';
 
 const useStyles = makeStyles({
   container: {

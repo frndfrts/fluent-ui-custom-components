@@ -6,7 +6,7 @@
 import * as React from 'react';
 import { makeStyles, tokens } from '@fluentui/react-components';
 import { PositionSelector } from '../components/PositionSelector';
-import { DimensionInput } from '../inputs/DimensionInput';
+import { DimensionInput } from '../compositions/DimensionInput';
 
 const useStyles = makeStyles({
   group: {

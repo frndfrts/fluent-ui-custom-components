@@ -22,7 +22,7 @@ import type { ColorPickerProps, InputProps, SpinButtonChangeEvent, SpinButtonOnC
 
 import { useCommonStyles } from '../../styles/commonStyles';
 import { useComponentSize } from '../../hooks/useComponentSize';
-import { ColorHexInput } from '../inputs/ColorHexInput';
+import { ColorHexInput } from '../compositions/ColorHexInput';
 
 const useStyles = makeStyles({
   container: {
