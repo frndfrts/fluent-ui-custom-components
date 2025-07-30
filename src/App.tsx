@@ -8,6 +8,9 @@ import {
   Title1,
   Title2,
   Title3,
+  Subtitle1,
+  Body1,
+  Body2,
   Text,
   TabList,
   Tab,
@@ -16,6 +19,7 @@ import {
   shorthands,
   Divider,
   Link,
+  Badge,
 } from '@fluentui/react-components';
 import React from 'react';
 import { NumericInput } from './components/primitives/NumericInput';
@@ -51,8 +55,6 @@ interface ComponentExample {
   settings: Record<string, unknown>;
 }
 
-
-
 interface ComponentProp {
   name: string;
   type: string;
@@ -77,8 +79,8 @@ const useStyles = makeStyles({
     flex: 1,
     overflowY: 'auto',
     padding: tokens.spacingVerticalL,
-    maxWidth: '900px', // Added max-width constraint
-    margin: '0 auto', // Center the content
+    maxWidth: '900px',
+    margin: '0 auto',
   },
   pageNav: {
     width: '240px',
@@ -151,21 +153,61 @@ const useStyles = makeStyles({
     padding: tokens.spacingVerticalS,
     marginBottom: tokens.spacingVerticalXS,
   },
+  navItem: {
+    fontSize: tokens.fontSizeBase100,
+    color: tokens.colorNeutralForeground2,
+    padding: `${tokens.spacingVerticalXS} ${tokens.spacingHorizontalS}`,
+    cursor: 'pointer',
+    borderRadius: tokens.borderRadiusSmall,
+    transition: 'all 0.2s ease',
+    ':hover': {
+      backgroundColor: tokens.colorNeutralBackground1,
+      color: tokens.colorNeutralForeground1,
+    },
+  },
+  navItemActive: {
+    backgroundColor: tokens.colorNeutralBackground1,
+    color: tokens.colorNeutralForeground1,
+    fontWeight: tokens.fontWeightMedium,
+  },
+  // New fluid layout styles
   heroSection: {
-    maxWidth: '800px',
     marginBottom: tokens.spacingVerticalXXL,
   },
-  featureGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-    gap: tokens.spacingHorizontalL,
-    marginTop: tokens.spacingVerticalL,
+  introText: {
+    fontSize: tokens.fontSizeBase400,
+    lineHeight: '1.6',
+    color: tokens.colorNeutralForeground1,
+    marginBottom: tokens.spacingVerticalL,
   },
-  featureCard: {
-    padding: tokens.spacingVerticalL,
-    backgroundColor: tokens.colorNeutralBackground1,
-    ...shorthands.border('1px', 'solid', tokens.colorNeutralStroke2),
-    borderRadius: tokens.borderRadiusMedium,
+  sectionTitle: {
+    marginBottom: tokens.spacingVerticalM,
+    color: tokens.colorNeutralForeground1,
+  },
+  sectionContent: {
+    color: tokens.colorNeutralForeground2,
+    lineHeight: '1.5',
+    marginBottom: tokens.spacingVerticalL,
+  },
+  featureList: {
+    marginBottom: tokens.spacingVerticalL,
+  },
+  featureItem: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: tokens.spacingHorizontalS,
+    marginBottom: tokens.spacingVerticalS,
+  },
+  featureBullet: {
+    color: tokens.colorBrandForeground1,
+    fontSize: tokens.fontSizeBase300,
+    fontWeight: tokens.fontWeightSemibold,
+    marginTop: '2px',
+  },
+  featureText: {
+    fontSize: tokens.fontSizeBase200,
+    lineHeight: '1.5',
+    color: tokens.colorNeutralForeground2,
   },
   techStack: {
     display: 'flex',
@@ -184,19 +226,32 @@ const useStyles = makeStyles({
     fontSize: tokens.fontSizeBase100,
     fontWeight: tokens.fontWeightMedium,
   },
-  introText: {
-    fontSize: tokens.fontSizeBase300,
-    lineHeight: '1.6',
-    color: tokens.colorNeutralForeground1,
-    marginBottom: tokens.spacingVerticalL,
+  componentGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+    gap: tokens.spacingHorizontalL,
+    marginTop: tokens.spacingVerticalL,
   },
-  sectionTitle: {
+  componentCard: {
+    padding: tokens.spacingVerticalL,
+    backgroundColor: tokens.colorNeutralBackground1,
+    ...shorthands.border('1px', 'solid', tokens.colorNeutralStroke2),
+    borderRadius: tokens.borderRadiusMedium,
+  },
+  navHeader: {
+    padding: tokens.spacingVerticalM,
+    borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
     marginBottom: tokens.spacingVerticalM,
-    color: tokens.colorNeutralForeground1,
   },
-  sectionContent: {
+  navHeaderTitle: {
+    fontSize: tokens.fontSizeBase300,
+    fontWeight: tokens.fontWeightSemibold,
+    color: tokens.colorNeutralForeground1,
+    marginBottom: tokens.spacingVerticalXS,
+  },
+  navHeaderSubtitle: {
+    fontSize: tokens.fontSizeBase100,
     color: tokens.colorNeutralForeground2,
-    lineHeight: '1.5',
   },
 });
 
@@ -296,6 +351,12 @@ const categories = [
       { name: 'PositionFields', key: 'positionFields' },
       { name: 'SizeAndPositionPanel', key: 'sizeAndPositionPanel' },
       { name: 'SizeFields', key: 'sizeFields' },
+    ]
+  },
+  {
+    name: 'Sections',
+    items: [
+      // Placeholder for future section components
     ]
   },
   {
@@ -2027,11 +2088,13 @@ const App: React.FC = () => {
     <FluentProvider theme={webLightTheme}>
       <div className={styles.root}>
         <nav className={styles.nav}>
+          {/* Navigation Header */}
+          <div className={styles.navHeader}>
+            <div className={styles.navHeaderTitle}>Component Library</div>
+            <div className={styles.navHeaderSubtitle}>Fluent UI Custom Components</div>
+          </div>
+          
           <TabList vertical>
-            <Tab value="all" onClick={() => setSelectedKey('all')}>
-              All Components
-            </Tab>
-            <Divider />
             {categories.map((category) => (
               <React.Fragment key={category.name}>
                 <div className={styles.navGroup}>
@@ -2049,64 +2112,157 @@ const App: React.FC = () => {
                 <Divider />
               </React.Fragment>
             ))}
+            
+            {/* All Components moved to the end */}
+            <div className={styles.navGroup}>
+              <div className={styles.navGroupTitle}>Navigation</div>
+              <Tab value="all" onClick={() => setSelectedKey('all')}>
+                All Components
+              </Tab>
+            </div>
           </TabList>
         </nav>
         <main className={styles.content}>
           {selectedKey === 'all' ? (
             <div>
+              {/* Hero Section */}
               <div className={styles.heroSection}>
                 <Title1>Fluent UI Custom Components</Title1>
-                <Text block className={styles.introText}>
+                <Subtitle1 style={{ marginBottom: tokens.spacingVerticalL, color: tokens.colorNeutralForeground2 }}>
+                  Professional UI components for dimension and color management
+                </Subtitle1>
+                <Body1 className={styles.introText}>
                   A comprehensive collection of specialized UI components built with Microsoft Fluent UI v9, designed specifically for dimension and color management applications. These components extend the Fluent UI design system with domain-specific functionality while maintaining consistency with Microsoft's design language.
-                </Text>
+                </Body1>
               </div>
 
-              <div className={styles.featureGrid}>
-                <div className={styles.featureCard}>
-                  <Title3 className={styles.sectionTitle}>Purpose & Scope</Title3>
-                  <Text block className={styles.sectionContent}>
-                    This component library addresses the specific needs of applications requiring precise dimension controls, color management, and layout tools. Whether you're building design software, CAD applications, or document editors, these components provide the building blocks for professional-grade user interfaces.
-                  </Text>
-                </div>
+              {/* Purpose & Scope Section */}
+              <div style={{ marginBottom: tokens.spacingVerticalXXL }}>
+                <Title2 className={styles.sectionTitle}>Purpose & Scope</Title2>
+                <Body1 className={styles.sectionContent}>
+                  This component library addresses the specific needs of applications requiring precise dimension controls, color management, and layout tools. Whether you're building design software, CAD applications, or document editors, these components provide the building blocks for professional-grade user interfaces.
+                </Body1>
+              </div>
 
-                <div className={styles.featureCard}>
-                  <Title3 className={styles.sectionTitle}>Integration</Title3>
-                  <Text block className={styles.sectionContent}>
-                    All components are built on top of Fluent UI v9 and integrate seamlessly with existing Fluent UI applications. They follow the same design patterns, use the same design tokens, and maintain accessibility standards. Simply import and use alongside your existing Fluent UI components.
-                  </Text>
-                </div>
-
-                <div className={styles.featureCard}>
-                  <Title3 className={styles.sectionTitle}>Component Categories</Title3>
-                  <Text block className={styles.sectionContent}>
-                    <strong>Primitives:</strong> Atomic Fluent UI component wrappers - the fundamental building blocks.<br/>
-                    <strong>Components:</strong> Molecule-level combinations of primitives for specific use cases.<br/>
-                    <strong>Compositions:</strong> Complex functional units combining multiple components.<br/>
-                    <strong>Panels:</strong> Layout containers with specific functionality areas.<br/>
-                    <strong>Legacy:</strong> Older components maintained for backward compatibility.
-                  </Text>
-                </div>
-
-                <div className={styles.featureCard}>
-                  <Title3 className={styles.sectionTitle}>Technology Stack</Title3>
-                  <div className={styles.techStack}>
-                    <span className={styles.techTag}>React 18+</span>
-                    <span className={styles.techTag}>TypeScript</span>
-                    <span className={styles.techTag}>Fluent UI v9</span>
-                    <span className={styles.techTag}>CSS-in-JS</span>
-                    <span className={styles.techTag}>Design Tokens</span>
+              {/* Key Features Section */}
+              <div style={{ marginBottom: tokens.spacingVerticalXXL }}>
+                <Title2 className={styles.sectionTitle}>Key Features</Title2>
+                <div className={styles.featureList}>
+                  <div className={styles.featureItem}>
+                    <span className={styles.featureBullet}>•</span>
+                    <Body2 className={styles.featureText}>
+                      <strong>Atomic Design:</strong> Components organized in a 5-level hierarchy from primitives to complex compositions
+                    </Body2>
                   </div>
-                  <Text block className={styles.sectionContent} style={{ marginTop: '12px' }}>
-                    Built with modern React patterns, TypeScript for type safety, and Fluent UI's design system for consistency and accessibility.
-                  </Text>
+                  <div className={styles.featureItem}>
+                    <span className={styles.featureBullet}>•</span>
+                    <Body2 className={styles.featureText}>
+                      <strong>Fluent UI Integration:</strong> Built on Microsoft Fluent UI v9 with consistent design tokens and accessibility
+                    </Body2>
+                  </div>
+                  <div className={styles.featureItem}>
+                    <span className={styles.featureBullet}>•</span>
+                    <Body2 className={styles.featureText}>
+                      <strong>TypeScript Support:</strong> Full type safety with comprehensive prop interfaces and documentation
+                    </Body2>
+                  </div>
+                  <div className={styles.featureItem}>
+                    <span className={styles.featureBullet}>•</span>
+                    <Body2 className={styles.featureText}>
+                      <strong>Professional Quality:</strong> Production-ready components with validation, error handling, and responsive design
+                    </Body2>
+                  </div>
+                  <div className={styles.featureItem}>
+                    <span className={styles.featureBullet}>•</span>
+                    <Body2 className={styles.featureText}>
+                      <strong>Backward Compatibility:</strong> Maintained through re-exports and gradual migration paths
+                    </Body2>
+                  </div>
                 </div>
               </div>
 
-              <div style={{ marginTop: tokens.spacingVerticalXXL }}>
+              {/* Component Categories Section */}
+              <div style={{ marginBottom: tokens.spacingVerticalXXL }}>
+                <Title2 className={styles.sectionTitle}>Component Categories</Title2>
+                <div className={styles.componentGrid}>
+                  <div className={styles.componentCard}>
+                    <Title3 style={{ marginBottom: tokens.spacingVerticalS }}>Primitives</Title3>
+                    <Body2 style={{ marginBottom: tokens.spacingVerticalM }}>
+                      Atomic Fluent UI component wrappers - the fundamental building blocks.
+                    </Body2>
+                    <div className={styles.techStack}>
+                      <Badge appearance="filled" color="brand">5 Components</Badge>
+                    </div>
+                  </div>
+                  <div className={styles.componentCard}>
+                    <Title3 style={{ marginBottom: tokens.spacingVerticalS }}>Components</Title3>
+                    <Body2 style={{ marginBottom: tokens.spacingVerticalM }}>
+                      Molecule-level combinations of primitives for specific use cases.
+                    </Body2>
+                    <div className={styles.techStack}>
+                      <Badge appearance="filled" color="brand">6 Components</Badge>
+                    </div>
+                  </div>
+                  <div className={styles.componentCard}>
+                    <Title3 style={{ marginBottom: tokens.spacingVerticalS }}>Compositions</Title3>
+                    <Body2 style={{ marginBottom: tokens.spacingVerticalM }}>
+                      Complex functional units combining multiple components.
+                    </Body2>
+                    <div className={styles.techStack}>
+                      <Badge appearance="filled" color="brand">8 Components</Badge>
+                    </div>
+                  </div>
+                  <div className={styles.componentCard}>
+                    <Title3 style={{ marginBottom: tokens.spacingVerticalS }}>Panels</Title3>
+                    <Body2 style={{ marginBottom: tokens.spacingVerticalM }}>
+                      Layout containers with specific functionality areas.
+                    </Body2>
+                    <div className={styles.techStack}>
+                      <Badge appearance="filled" color="brand">6 Components</Badge>
+                    </div>
+                  </div>
+                  <div className={styles.componentCard}>
+                    <Title3 style={{ marginBottom: tokens.spacingVerticalS }}>Sections</Title3>
+                    <Body2 style={{ marginBottom: tokens.spacingVerticalM }}>
+                      High-level layout sections for complete application areas.
+                    </Body2>
+                    <div className={styles.techStack}>
+                      <Badge appearance="outline" color="subtle">Coming Soon</Badge>
+                    </div>
+                  </div>
+                  <div className={styles.componentCard}>
+                    <Title3 style={{ marginBottom: tokens.spacingVerticalS }}>Legacy</Title3>
+                    <Body2 style={{ marginBottom: tokens.spacingVerticalM }}>
+                      Older components maintained for backward compatibility.
+                    </Body2>
+                    <div className={styles.techStack}>
+                      <Badge appearance="filled" color="subtle">2 Components</Badge>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Technology Stack Section */}
+              <div style={{ marginBottom: tokens.spacingVerticalXXL }}>
+                <Title2 className={styles.sectionTitle}>Technology Stack</Title2>
+                <div className={styles.techStack} style={{ marginBottom: tokens.spacingVerticalM }}>
+                  <span className={styles.techTag}>React 18+</span>
+                  <span className={styles.techTag}>TypeScript</span>
+                  <span className={styles.techTag}>Fluent UI v9</span>
+                  <span className={styles.techTag}>CSS-in-JS</span>
+                  <span className={styles.techTag}>Design Tokens</span>
+                </div>
+                <Body1 className={styles.sectionContent}>
+                  Built with modern React patterns, TypeScript for type safety, and Fluent UI's design system for consistency and accessibility. All components follow Microsoft's design language and accessibility standards.
+                </Body1>
+              </div>
+
+              {/* Getting Started Section */}
+              <div style={{ marginBottom: tokens.spacingVerticalXXL }}>
                 <Title2 className={styles.sectionTitle}>Getting Started</Title2>
-                <Text block className={styles.sectionContent}>
+                <Body1 className={styles.sectionContent}>
                   Use the navigation menu on the left to explore individual components. Each component page includes live examples, detailed props documentation, and usage patterns. All components are designed to work together seamlessly while remaining independently usable.
-                </Text>
+                </Body1>
               </div>
             </div>
           ) : (
