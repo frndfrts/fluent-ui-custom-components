@@ -5,7 +5,7 @@
  */
 import * as React from 'react';
 import { makeStyles } from '@fluentui/react-components';
-import { HexInput } from './HexInput';
+import { HexInput } from '../primitives/HexInput';
 import { useClickableSwatch } from '../../hooks/useClickableSwatch';
 
 const useStyles = makeStyles({

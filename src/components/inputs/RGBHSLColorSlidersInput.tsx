@@ -4,7 +4,7 @@
  */
 import * as React from 'react';
 import { makeStyles } from '@fluentui/react-components';
-import { ColorSliderInput, ColorSliderInputProps } from './ColorSliderInput';
+import { ColorSliderInput, ColorSliderInputProps } from '../primitives/ColorSliderInput';
 
 const useStyles = makeStyles({
   container: {

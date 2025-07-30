@@ -5,8 +5,8 @@
  */
 import * as React from 'react';
 import { makeStyles } from '@fluentui/react-components';
-import { NumericInput } from './NumericInput';
-import { UnitSelector } from './UnitSelector';
+import { NumericInput } from '../primitives/NumericInput';
+import { UnitSelector } from '../primitives/UnitSelector';
 import { useUnitConversion, Unit } from '../../hooks/useUnitConversion';
 import { useDecimalPlaces } from '../../hooks/useDecimalPlaces';
 

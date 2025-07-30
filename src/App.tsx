@@ -18,19 +18,19 @@ import {
   Link,
 } from '@fluentui/react-components';
 import React from 'react';
-import { NumericInput } from './components/inputs/NumericInput';
+import { NumericInput } from './components/primitives/NumericInput';
 import { ColorSelector } from './components/inputs/ColorSelector';
-import { SliderInput } from './components/inputs/SliderInput';
-import { ColorSliderInput } from './components/inputs/ColorSliderInput';
+import { SliderInput } from './components/primitives/SliderInput';
+import { ColorSliderInput } from './components/primitives/ColorSliderInput';
 import { MultipleSlidersInput } from './components/inputs/MultipleSlidersInput';
-import { HexInput } from './components/inputs/HexInput';
+import { HexInput } from './components/primitives/HexInput';
 import { ColorHexInput } from './components/inputs/ColorHexInput';
 import { ColorModelSelector } from './components/inputs/ColorModelSelector';
 import { AspectRatioSelector } from './components/inputs/AspectRatioSelector';
 import { PaperSelector } from './components/inputs/PaperSelector';
 import { PositionSelector } from './components/inputs/PositionSelector';
 import { OrientationSelector } from './components/inputs/OrientationSelector';
-import { UnitSelector } from './components/inputs/UnitSelector';
+import { UnitSelector } from './components/primitives/UnitSelector';
 import { UniversalSelector } from './components/inputs/UniversalSelector';
 import { ColorInput } from './components/inputs/ColorInput';
 import { DimensionInput } from './components/inputs/DimensionInput';
@@ -253,46 +253,56 @@ const OnThisPage: React.FC<{ sections: { id: string; title: string }[] }> = ({ s
 
 const categories = [
   {
-    name: 'Atomic Components',
+    name: 'Primitives',
     items: [
-      { name: 'NumericInput', key: 'numericInput' },
-      { name: 'ColorSelector', key: 'colorSelector' },
-      { name: 'SliderInput', key: 'sliderInput' },
-      { name: 'ColorSliderInput', key: 'colorSliderInput' },
-      { name: 'RGBHSLColorSlidersInput', key: 'rgbhslColorSlidersInput' },
-      { name: 'MultipleSlidersInput', key: 'multipleSlidersInput' },
       { name: 'HexInput', key: 'hexInput' },
-      { name: 'ColorHexInput', key: 'colorHexInput' },
-      { name: 'Large Swatch ColorHexInput', key: 'largeSwatchColorHexInput' },
+      { name: 'NumericInput', key: 'numericInput' },
+      { name: 'SliderInput', key: 'sliderInput' },
+      { name: 'UnitSelector', key: 'unitSelector' },
+      { name: 'ColorSliderInput', key: 'colorSliderInput' },
+    ]
+  },
+  {
+    name: 'Components',
+    items: [
       { name: 'ColorModelSelector', key: 'colorModelSelector' },
       { name: 'AspectRatioSelector', key: 'aspectRatioSelector' },
-      { name: 'PaperSelector', key: 'paperSelector' },
       { name: 'PositionSelector', key: 'positionSelector' },
       { name: 'OrientationSelector', key: 'orientationSelector' },
-      { name: 'UnitSelector', key: 'unitSelector' },
+      { name: 'PaperSelector', key: 'paperSelector' },
       { name: 'UniversalSelector', key: 'universalSelector' },
     ]
   },
   {
-    name: 'Sub-Components',
+    name: 'Compositions',
     items: [
       { name: 'ColorInput', key: 'colorInput' },
-      { name: 'DimensionInput', key: 'dimensionInput' },
-      { name: 'FluentColorPicker', key: 'fluentColorPicker' },
-      { name: 'HorizontalColorPicker', key: 'horizontalColorPicker' },
-      { name: 'ResponsiveColorPicker', key: 'responsiveColorPicker' },
       { name: 'ColorPicker', key: 'colorPicker' },
+      { name: 'ResponsiveColorPicker', key: 'responsiveColorPicker' },
+      { name: 'ColorSelector', key: 'colorSelector' },
+      { name: 'ColorHexInput', key: 'colorHexInput' },
+      { name: 'Large Swatch ColorHexInput', key: 'largeSwatchColorHexInput' },
+      { name: 'DimensionInput', key: 'dimensionInput' },
+      { name: 'RGBHSLColorSlidersInput', key: 'rgbhslColorSlidersInput' },
+      { name: 'MultipleSlidersInput', key: 'multipleSlidersInput' },
     ]
   },
   {
-    name: 'Integrated Components',
+    name: 'Panels',
     items: [
-      { name: 'PositionFields', key: 'positionFields' },
-      { name: 'SizeFields', key: 'sizeFields' },
       { name: 'MarginsPanel', key: 'marginsPanel' },
       { name: 'PaddingPanel', key: 'paddingPanel' },
       { name: 'PaperSizePanel', key: 'paperSizePanel' },
+      { name: 'PositionFields', key: 'positionFields' },
+      { name: 'SizeFields', key: 'sizeFields' },
       { name: 'SizeAndPositionPanel', key: 'sizeAndPositionPanel' },
+    ]
+  },
+  {
+    name: 'Legacy',
+    items: [
+      { name: 'FluentColorPicker', key: 'fluentColorPicker' },
+      { name: 'HorizontalColorPicker', key: 'horizontalColorPicker' },
     ]
   }
 ];
@@ -2069,9 +2079,11 @@ const App: React.FC = () => {
                 <div className={styles.featureCard}>
                   <Title3 className={styles.sectionTitle}>Component Categories</Title3>
                   <Text block className={styles.sectionContent}>
-                    <strong>Atomic Components:</strong> Fundamental building blocks like inputs, selectors, and sliders.<br/>
-                    <strong>Sub-Components:</strong> Specialized combinations of atomic components for specific use cases.<br/>
-                    <strong>Integrated Components:</strong> Complete panels and complex UI patterns ready for production use.
+                    <strong>Primitives:</strong> Atomic Fluent UI component wrappers - the fundamental building blocks.<br/>
+                    <strong>Components:</strong> Molecule-level combinations of primitives for specific use cases.<br/>
+                    <strong>Compositions:</strong> Complex functional units combining multiple components.<br/>
+                    <strong>Panels:</strong> Layout containers with specific functionality areas.<br/>
+                    <strong>Legacy:</strong> Older components maintained for backward compatibility.
                   </Text>
                 </div>
 
