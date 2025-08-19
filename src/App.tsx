@@ -313,6 +313,14 @@ const OnThisPage: React.FC<{ sections: { id: string; title: string }[] }> = ({ s
 
 const categories = [
   {
+    name: 'Sections',
+    items: [
+      { name: 'PaperSection', key: 'paperSection' },
+      { name: 'NotesSection', key: 'notesSection' },
+      { name: 'SlidesSection', key: 'slidesSection' },
+    ]
+  },
+  {
     name: 'Panels',
     items: [
       { name: 'MarginsPanel', key: 'marginsPanel' },
@@ -357,14 +365,6 @@ const categories = [
       { name: 'NumericInput', key: 'numericInput' },
       { name: 'SliderInput', key: 'sliderInput' },
       { name: 'UnitSelector', key: 'unitSelector' },
-    ]
-  },
-  {
-    name: 'Sections',
-    items: [
-      { name: 'PaperSection', key: 'paperSection' },
-      { name: 'NotesSection', key: 'notesSection' },
-      { name: 'SlidesSection', key: 'slidesSection' },
     ]
   },
   {
@@ -1264,6 +1264,33 @@ const getComponentFeatures = (key: string): { title: string; description: string
         { title: "Professional Layout", description: "Organized layout with proper spacing and visual hierarchy." },
         { title: "Section Titles", description: "Clear section titles for panel organization." }
       ];
+    case 'paperSection':
+      return [
+        { title: "Paper Size Panel", description: "Integrated paper size selection with dimensions and orientation controls." },
+        { title: "Margins Panel", description: "Comprehensive margin settings for all sides with individual unit control." },
+        { title: "FormLayoutProvider Integration", description: "Seamless integration with the layout system for perfect alignment." },
+        { title: "Professional Styling", description: "Consistent section styling with clear titles and organized layout." },
+        { title: "Flexible Configuration", description: "Support for custom paper sizes, margins, and measurement units." },
+        { title: "Event Handling", description: "Separate callbacks for paper size and margin changes." }
+      ];
+    case 'notesSection':
+      return [
+        { title: "Size and Position Panel", description: "Integrated size controls with aspect ratio locking and position selection." },
+        { title: "Margins Panel", description: "Comprehensive margin settings for all sides with individual unit control." },
+        { title: "FormLayoutProvider Integration", description: "Seamless integration with the layout system for perfect alignment." },
+        { title: "Professional Styling", description: "Consistent section styling with clear titles and organized layout." },
+        { title: "Flexible Configuration", description: "Support for custom sizes, positions, margins, and measurement units." },
+        { title: "Event Handling", description: "Separate callbacks for size, position, and margin changes." }
+      ];
+    case 'slidesSection':
+      return [
+        { title: "Size and Position Panel", description: "Integrated size controls with aspect ratio locking and position selection." },
+        { title: "Margins Panel", description: "Comprehensive margin settings for all sides with individual unit control." },
+        { title: "FormLayoutProvider Integration", description: "Seamless integration with the layout system for perfect alignment." },
+        { title: "Professional Styling", description: "Consistent section styling with clear titles and organized layout." },
+        { title: "Flexible Configuration", description: "Support for custom sizes, positions, margins, and measurement units." },
+        { title: "Event Handling", description: "Separate callbacks for size, position, and margin changes." }
+      ];
     default:
       return [
         { title: "Fluent UI Integration", description: "Built on Microsoft Fluent UI v9 for consistent design and behavior." },
@@ -1604,6 +1631,41 @@ const getComponentProps = (key: string): ComponentProp[] => {
         { name: "onSizeChange", type: "(fields: SizeFieldsData) => void", default: "required", description: "Callback fired when size fields change." },
         { name: "onPositionChange", type: "(fields: PositionFieldsData) => void", default: "required", description: "Callback fired when position fields change." }
       ];
+    case 'paperSection':
+      return [
+        { name: "paperSize", type: "PaperSize", default: "undefined", description: "Object containing paper size configuration (width, height, units, orientation, paperSize)." },
+        { name: "margins", type: "Margins", default: "undefined", description: "Object containing margin settings for all sides with individual units." },
+        { name: "units", type: "string[]", default: "['px', 'pt', 'cm', 'mm', 'in']", description: "Array of available measurement units." },
+        { name: "onPaperSizeChange", type: "(paperSize: any) => void", default: "undefined", description: "Callback fired when paper size configuration changes." },
+        { name: "onMarginsChange", type: "(margins: any) => void", default: "undefined", description: "Callback fired when margin settings change." },
+        { name: "disabled", type: "boolean", default: "false", description: "Whether the section is disabled." }
+      ];
+    case 'notesSection':
+      return [
+        { name: "size", type: "Size", default: "undefined", description: "Object containing width, height, and unit settings." },
+        { name: "position", type: "Position", default: "undefined", description: "Object containing position preset, X/Y coordinates, and units." },
+        { name: "margins", type: "Margins", default: "undefined", description: "Object containing margin settings for all sides with individual units." },
+        { name: "positions", type: "string[]", default: "['top-left', 'top-center', 'top-right', 'center', 'bottom-left', 'bottom-center', 'bottom-right', 'Custom']", description: "Array of available position presets." },
+        { name: "units", type: "string[]", default: "['px', 'pt', 'cm', 'mm', 'in']", description: "Array of available measurement units." },
+        { name: "showLockAspectRatio", type: "boolean", default: "true", description: "Whether to show aspect ratio lock toggle." },
+        { name: "onSizeChange", type: "(size: any) => void", default: "undefined", description: "Callback fired when size settings change." },
+        { name: "onPositionChange", type: "(position: any) => void", default: "undefined", description: "Callback fired when position settings change." },
+        { name: "onMarginsChange", type: "(margins: any) => void", default: "undefined", description: "Callback fired when margin settings change." },
+        { name: "disabled", type: "boolean", default: "false", description: "Whether the section is disabled." }
+      ];
+    case 'slidesSection':
+      return [
+        { name: "size", type: "Size", default: "undefined", description: "Object containing width, height, and unit settings." },
+        { name: "position", type: "Position", default: "undefined", description: "Object containing position preset, X/Y coordinates, and units." },
+        { name: "margins", type: "Margins", default: "undefined", description: "Object containing margin settings for all sides with individual units." },
+        { name: "positions", type: "string[]", default: "['top-left', 'top-center', 'top-right', 'center', 'bottom-left', 'bottom-center', 'bottom-right', 'Custom']", description: "Array of available position presets." },
+        { name: "units", type: "string[]", default: "['px', 'pt', 'cm', 'mm', 'in']", description: "Array of available measurement units." },
+        { name: "showLockAspectRatio", type: "boolean", default: "true", description: "Whether to show aspect ratio lock toggle." },
+        { name: "onSizeChange", type: "(size: any) => void", default: "undefined", description: "Callback fired when size settings change." },
+        { name: "onPositionChange", type: "(position: any) => void", default: "undefined", description: "Callback fired when position settings change." },
+        { name: "onMarginsChange", type: "(margins: any) => void", default: "undefined", description: "Callback fired when margin settings change." },
+        { name: "disabled", type: "boolean", default: "false", description: "Whether the section is disabled." }
+      ];
     default:
       return [
         { name: "value", type: "any", default: "required", description: "The current value of the component." },
@@ -1694,6 +1756,111 @@ const InteractiveHexInputDemo: React.FC = () => {
 const InteractiveLockAspectRatioDemo: React.FC = () => {
   const [checked, setChecked] = React.useState(false);
   return <LockAspectRatio checked={checked} onChange={setChecked} />;
+};
+
+// Interactive demo components for Sections
+const InteractivePaperSectionDemo: React.FC = () => {
+  const [paperSize, setPaperSize] = React.useState({
+    width: 21,
+    height: 29.7,
+    widthUnit: 'cm',
+    heightUnit: 'cm',
+    orientation: 'portrait',
+    paperSize: 'A4'
+  });
+  const [margins, setMargins] = React.useState({
+    top: 2.5,
+    right: 2.5,
+    bottom: 2.5,
+    left: 2.5,
+    topUnit: 'cm',
+    rightUnit: 'cm',
+    bottomUnit: 'cm',
+    leftUnit: 'cm'
+  });
+
+  return (
+    <PaperSection
+      paperSize={paperSize}
+      margins={margins}
+      onPaperSizeChange={setPaperSize}
+      onMarginsChange={setMargins}
+    />
+  );
+};
+
+const InteractiveNotesSectionDemo: React.FC = () => {
+  const [size, setSize] = React.useState({
+    width: 400,
+    height: 300,
+    widthUnit: 'px',
+    heightUnit: 'px'
+  });
+  const [position, setPosition] = React.useState({
+    position: 'center',
+    x: 0,
+    y: 0,
+    xUnit: 'px',
+    yUnit: 'px'
+  });
+  const [margins, setMargins] = React.useState({
+    top: 10,
+    right: 10,
+    bottom: 10,
+    left: 10,
+    topUnit: 'px',
+    rightUnit: 'px',
+    bottomUnit: 'px',
+    leftUnit: 'px'
+  });
+
+  return (
+    <NotesSection
+      size={size}
+      position={position}
+      margins={margins}
+      onSizeChange={setSize}
+      onPositionChange={setPosition}
+      onMarginsChange={setMargins}
+    />
+  );
+};
+
+const InteractiveSlidesSectionDemo: React.FC = () => {
+  const [size, setSize] = React.useState({
+    width: 1920,
+    height: 1080,
+    widthUnit: 'px',
+    heightUnit: 'px'
+  });
+  const [position, setPosition] = React.useState({
+    position: 'center',
+    x: 0,
+    y: 0,
+    xUnit: 'px',
+    yUnit: 'px'
+  });
+  const [margins, setMargins] = React.useState({
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    topUnit: 'px',
+    rightUnit: 'px',
+    bottomUnit: 'px',
+    leftUnit: 'px'
+  });
+
+  return (
+    <SlidesSection
+      size={size}
+      position={position}
+      margins={margins}
+      onSizeChange={setSize}
+      onPositionChange={setPosition}
+      onMarginsChange={setMargins}
+    />
+  );
 };
 
 const InteractiveUniversalSelectorDemo: React.FC = () => {
@@ -1958,6 +2125,12 @@ const renderDemo = (key: string): React.ReactNode => {
       return <InteractivePaperSizePanelDemo />;
     case 'sizeAndPositionPanel':
       return <InteractiveSizeAndPositionPanelDemo />;
+    case 'paperSection':
+      return <InteractivePaperSectionDemo />;
+    case 'notesSection':
+      return <InteractiveNotesSectionDemo />;
+    case 'slidesSection':
+      return <InteractiveSlidesSectionDemo />;
     default:
       return (
         <div style={{ padding: '16px', border: '1px solid #e1e1e1', borderRadius: '4px', backgroundColor: '#f9f9f9' }}>
