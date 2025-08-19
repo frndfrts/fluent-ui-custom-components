@@ -1,20 +1,21 @@
 # Fluent UI Custom Components
 
-A comprehensive collection of specialized UI components built with Microsoft Fluent UI v9, designed specifically for dimension and color management applications with a sophisticated layout system for pixel-perfect alignment.
+A comprehensive collection of specialized UI components built with Microsoft Fluent UI v9, designed specifically for dimension and color management applications with a sophisticated layout system for pixel-perfect alignment and Card-based Section components optimized for sidebar integration.
 
 ## 🎯 Purpose & Scope
 
-This component library addresses the specific needs of applications requiring precise dimension controls, color management, and layout tools. Whether you're building design software, CAD applications, or document editors, these components provide the building blocks for professional-grade user interfaces with consistent alignment and spacing.
+This component library addresses the specific needs of applications requiring precise dimension controls, color management, and layout tools. Whether you're building design software, CAD applications, document editors, or template layout design tools, these components provide the building blocks for professional-grade user interfaces with consistent alignment, spacing, and organized Section-based layouts.
 
 ## 🏗️ Component Hierarchy
 
-The components are organized into a 5-level hierarchy based on complexity and integration level:
+The components are organized into a 6-level hierarchy based on complexity and integration level:
 
+- **Sections** (Level 5): High-level functional areas with Card-based containers
 - **Panels** (Level 4): Layout containers with specific functionality areas
 - **Compositions** (Level 3): Complex functional units combining multiple components
 - **Components** (Level 2): Molecule-level combinations of primitives
 - **Primitives** (Level 1): Atomic Fluent UI component wrappers
-- **Legacy** (Level 5): Older components maintained for backward compatibility
+- **Legacy** (Level 6): Older components maintained for backward compatibility
 
 See [Component Hierarchy Documentation](./src/components/README.md) for detailed information.
 
@@ -38,6 +39,22 @@ The component library features a sophisticated layout system that ensures pixel-
 - **Responsive Design**: Automatic scaling based on component size
 - **Context-Driven**: Layout specifications provided via React Context
 
+## 🃏 Section Components
+
+The library now includes high-level Section components that provide organized, Card-based containers for different functional areas:
+
+### Section Features
+- **Card-Based Design**: Each Section is wrapped in a Fluent UI Card with professional styling
+- **Sidebar Optimized**: Dimensions and spacing optimized for sidebar menu integration
+- **Clear Hierarchy**: Distinct Section titles with proper emphasis and visual separation
+- **Integrated Panels**: Combines multiple related panels into cohesive functional areas
+- **FormLayoutProvider**: Seamless integration with the layout system
+
+### Available Sections
+- **PaperSection**: Paper configuration including size, orientation, and margins
+- **NotesSection**: Notes layout with size, position, and margin controls
+- **SlidesSection**: Slides configuration with size, position, and margin settings
+
 ## 🚀 Quick Start
 
 ### Installation
@@ -51,52 +68,63 @@ npm start
 
 ```typescript
 import { FormLayoutProvider } from './components/primitives';
-import { DimensionInput } from './components/compositions/DimensionInput';
-import { PositionSelector } from './components/components/PositionSelector';
-import { LockAspectRatio } from './components/primitives/LockAspectRatio';
-import { PaperSizePanel } from './components/panels/PaperSizePanel';
+import { PaperSection } from './components/sections/PaperSection';
+import { NotesSection } from './components/sections/NotesSection';
+import { SlidesSection } from './components/sections/SlidesSection';
 
-// Wrap components in layout provider for perfect alignment
+// Use Section components for organized layouts
+<PaperSection 
+  paperSize={{ width: 21, height: 29.7, widthUnit: 'cm', heightUnit: 'cm', orientation: 'portrait', paperSize: 'A4' }}
+  margins={{ top: 2.5, right: 2.5, bottom: 2.5, left: 2.5, topUnit: 'cm', rightUnit: 'cm', bottomUnit: 'cm', leftUnit: 'cm' }}
+  onPaperSizeChange={handlePaperSizeChange}
+  onMarginsChange={handleMarginsChange}
+/>
+
+// Or use individual panels with layout provider
 <FormLayoutProvider size="medium">
-  <PositionSelector value="center" onChange={handlePositionChange} />
-  <DimensionInput value={100} unit="px" onChange={handleDimensionChange} />
-  <LockAspectRatio checked={true} onChange={handleLockChange} />
+  <PaperSizePanel onChange={handlePaperSizeChange} />
+  <MarginsPanel onChange={handleMarginsChange} />
 </FormLayoutProvider>
-
-// Or use complete panels
-<PaperSizePanel onChange={handlePaperSizeChange} />
 ```
 
 ## 🛠️ Technology Stack
 
 - **React 18+** - Modern React with hooks and concurrent features
 - **TypeScript** - Type safety and better developer experience
-- **Fluent UI v9** - Microsoft's design system
+- **Fluent UI v9** - Microsoft's design system with Card components
 - **CSS-in-JS** - Scoped styling with makeStyles
 - **Design Tokens** - Consistent spacing, colors, and typography
 - **React Context** - Layout system state management
+- **Card Components** - Professional container styling for organized layouts
 
 ## 📁 Project Structure
 
 ```
 src/
 ├── components/
-│   ├── panels/             # Level 4: Layout containers
-│   ├── compositions/       # Level 3: Complex functional units
-│   ├── components/         # Level 2: Molecule-level components
-│   ├── primitives/         # Level 1: Atomic components
-│   ├── legacy/             # Level 5: Backward compatibility
-│   └── inputs/             # Re-exports for backward compatibility
-├── hooks/                  # Custom React hooks
-├── styles/                 # Layout system and design tokens
-│   ├── layoutTokens.ts     # Centralized layout constants
+│   ├── sections/            # Level 5: High-level functional areas
+│   ├── panels/              # Level 4: Layout containers
+│   ├── compositions/        # Level 3: Complex functional units
+│   ├── components/          # Level 2: Molecule-level components
+│   ├── primitives/          # Level 1: Atomic components
+│   ├── legacy/              # Level 6: Backward compatibility
+│   └── inputs/              # Re-exports for backward compatibility
+├── hooks/                   # Custom React hooks
+├── styles/                  # Layout system and design tokens
+│   ├── layoutTokens.ts      # Centralized layout constants
 │   ├── FormLayoutContext.tsx # Layout context provider
-│   └── commonStyles.ts     # Shared styles
-├── types/                  # TypeScript type definitions
-└── utils/                  # Utility functions
+│   └── commonStyles.ts      # Shared styles
+├── types/                   # TypeScript type definitions
+└── utils/                   # Utility functions
 ```
 
 ## 🎨 Component Categories
+
+### Sections (Level 5)
+High-level functional areas with Card-based containers:
+- `PaperSection` - Complete paper configuration with Card styling
+- `NotesSection` - Notes layout management with organized panels
+- `SlidesSection` - Slides configuration with professional appearance
 
 ### Panels (Level 4)
 Complete layout containers with integrated functionality:
@@ -136,7 +164,7 @@ Fundamental building blocks with integrated layout support:
 - `ColorSliderInput` - Color-specific slider with label
 - `LockAspectRatio` - Aspect ratio lock checkbox with perfect positioning
 
-### Legacy (Level 5)
+### Legacy (Level 6)
 Backward compatibility components:
 - `FluentColorPicker` - Original Fluent UI color picker wrapper
 - `HorizontalColorPicker` - Horizontal layout color picker
@@ -197,6 +225,7 @@ export const MyComponent = () => {
 **For new development with layout system:**
 ```typescript
 import { FormLayoutProvider } from './components/primitives';
+import { PaperSection } from './components/sections/PaperSection';
 import { PaperSizePanel } from './components/panels/PaperSizePanel';
 import { DimensionInput } from './components/compositions/DimensionInput';
 import { LockAspectRatio } from './components/primitives/LockAspectRatio';
@@ -209,11 +238,13 @@ import { HexInput, ColorInput } from './components/inputs';
 
 ## 🎯 Integration
 
-All components are built on top of Fluent UI v9 and integrate seamlessly with existing Fluent UI applications. They follow the same design patterns, use the same design tokens, and maintain accessibility standards. The layout system extends Fluent UI's design philosophy with precise alignment capabilities.
+All components are built on top of Fluent UI v9 and integrate seamlessly with existing Fluent UI applications. They follow the same design patterns, use the same design tokens, and maintain accessibility standards. The layout system extends Fluent UI's design philosophy with precise alignment capabilities, while the new Section components provide organized, Card-based layouts perfect for sidebar integration.
 
 ### Key Integration Features
 
 - **Fluent UI v9 Compatible**: All components use Fluent UI tokens and patterns
+- **Card-Based Sections**: Professional container styling for organized layouts
+- **Sidebar Optimized**: Dimensions and spacing designed for sidebar menu integration
 - **Accessibility First**: ARIA labels, keyboard navigation, screen reader support
 - **Theme Integration**: Automatic adaptation to Fluent UI themes
 - **Responsive Design**: Components adapt to different screen sizes
@@ -254,9 +285,11 @@ For questions or issues:
 ## 🌟 Key Features
 
 - **Pixel-Perfect Alignment**: Advanced layout system ensures consistent spacing and alignment
-- **"Lego Brick" Architecture**: Components fit together seamlessly without manual adjustments  
+- **"Lego Brick" Architecture**: Components fit together seamlessly without manual adjustments
+- **Card-Based Sections**: Professional container styling for organized, sidebar-ready layouts
 - **Fluent UI v9 Integration**: Built on Microsoft's latest design system
 - **Type Safety**: Comprehensive TypeScript support throughout
 - **Responsive Design**: Automatic scaling and adaptation
 - **Accessibility First**: WCAG compliance and screen reader support
 - **Production Ready**: Battle-tested components for professional applications
+- **Sidebar Optimized**: Perfect for template layout design tools and sidebar menus
