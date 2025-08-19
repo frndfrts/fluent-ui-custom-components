@@ -50,6 +50,9 @@ import { PositionFields } from './components/panels/PositionFields';
 import { SizeFields } from './components/panels/SizeFields';
 import { SizeAndPositionPanel } from './components/panels/SizeAndPositionPanel';
 import { LockAspectRatio } from './components/primitives/LockAspectRatio';
+import { PaperSection } from './components/sections/PaperSection';
+import { NotesSection } from './components/sections/NotesSection';
+import { SlidesSection } from './components/sections/SlidesSection';
 
 interface ComponentExample {
   description: string;
@@ -359,7 +362,9 @@ const categories = [
   {
     name: 'Sections',
     items: [
-      // Placeholder for future section components
+      { name: 'PaperSection', key: 'paperSection' },
+      { name: 'NotesSection', key: 'notesSection' },
+      { name: 'SlidesSection', key: 'slidesSection' },
     ]
   },
   {
@@ -802,6 +807,54 @@ const getComponentExamples = (key: string): ComponentExample[] => {
           settings: { paperSize: "custom 300x400mm", units: "['mm', 'cm', 'in']" }
         }
       ];
+    case 'paperSection':
+      return [
+        {
+          description: "Paper section with paper size and margins panels",
+          demo: <PaperSection />,
+          settings: { units: "['px', 'pt', 'cm', 'mm', 'in']" }
+        },
+        {
+          description: "Paper section with custom paper size and margins",
+          demo: <PaperSection 
+            paperSize={{ width: 21, height: 29.7, widthUnit: 'cm', heightUnit: 'cm', orientation: 'portrait', paperSize: 'A4' }}
+            margins={{ top: 2.5, right: 2.5, bottom: 2.5, left: 2.5, topUnit: 'cm', rightUnit: 'cm', bottomUnit: 'cm', leftUnit: 'cm' }}
+          />,
+          settings: { paperSize: "A4 (21x29.7cm)", margins: "2.5cm all sides" }
+        }
+      ];
+    case 'notesSection':
+      return [
+        {
+          description: "Notes section with size, position, and margins panels",
+          demo: <NotesSection />,
+          settings: { units: "['px', 'pt', 'cm', 'mm', 'in']", showLockAspectRatio: true }
+        },
+        {
+          description: "Notes section with custom size and position",
+          demo: <NotesSection 
+            size={{ width: 800, height: 600, widthUnit: 'px', heightUnit: 'px' }}
+            position={{ position: 'center', x: 0, y: 0, xUnit: 'px', yUnit: 'px' }}
+          />,
+          settings: { size: "800x600px", position: "center" }
+        }
+      ];
+    case 'slidesSection':
+      return [
+        {
+          description: "Slides section with size, position, and margins panels",
+          demo: <SlidesSection />,
+          settings: { units: "['px', 'pt', 'cm', 'mm', 'in']", showLockAspectRatio: true }
+        },
+        {
+          description: "Slides section with HD resolution",
+          demo: <SlidesSection 
+            size={{ width: 1920, height: 1080, widthUnit: 'px', heightUnit: 'px' }}
+            position={{ position: 'center', x: 0, y: 0, xUnit: 'px', yUnit: 'px' }}
+          />,
+          settings: { size: "1920x1080px (HD)", position: "center" }
+        }
+      ];
     case 'sizeAndPositionPanel':
       return [
         {
@@ -878,6 +931,12 @@ const getComponentName = (key: string): string => {
       return 'Paper Size Panel';
     case 'sizeAndPositionPanel':
       return 'Size and Position Panel';
+    case 'paperSection':
+      return 'Paper Section';
+    case 'notesSection':
+      return 'Notes Section';
+    case 'slidesSection':
+      return 'Slides Section';
     default:
       return 'Component';
   }
@@ -943,6 +1002,12 @@ const getComponentDescription = (key: string): string => {
       return "An integrated panel for paper size selection, dimensions, and orientation. Combines paper size presets with custom dimension inputs and orientation controls for complete paper configuration.";
     case 'sizeAndPositionPanel':
       return "A comprehensive panel that combines size and position controls. Features width/height inputs with aspect ratio locking and position selection with X/Y coordinates. Perfect for layout and positioning applications.";
+    case 'paperSection':
+      return "A complete section for paper configuration including paper size selection, dimensions, orientation, and margin settings. Combines PaperSizePanel and MarginsPanel for comprehensive paper layout management.";
+    case 'notesSection':
+      return "A complete section for notes configuration including size, position, and margin settings. Combines SizeAndPositionPanel and MarginsPanel for comprehensive notes layout management.";
+    case 'slidesSection':
+      return "A complete section for slides configuration including size, position, and margin settings. Combines SizeAndPositionPanel and MarginsPanel for comprehensive slides layout management.";
     default:
       return "A specialized UI component built with Microsoft Fluent UI v9.";
   }

@@ -1,6 +1,9 @@
-// Sections - High-level layout sections for complete application areas
-// This folder will contain section-level components that combine multiple panels
-// and compositions to create complete functional areas of an application.
+// Section components - Level 4.5: Organized collections of panels
+export { PaperSection } from './PaperSection';
+export { NotesSection } from './NotesSection';
+export { SlidesSection } from './SlidesSection';
 
-// Placeholder for future section components
-export {}; 
+// Re-export types for convenience
+export type { PaperSectionProps } from './PaperSection';
+export type { NotesSectionProps } from './NotesSection';
+export type { SlidesSectionProps } from './SlidesSection'; 
