@@ -18,8 +18,8 @@ const useStyles = makeStyles({
   },
   card: {
     width: '100%',
-    maxWidth: '420px',
-    minWidth: '380px',
+    maxWidth: '380px',
+    minWidth: '360px',
   },
 });
 
