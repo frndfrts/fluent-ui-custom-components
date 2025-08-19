@@ -3,7 +3,7 @@
  * Integrated panel for paper size selection, dimensions, and orientation.
  */
 import * as React from 'react';
-import { makeStyles, tokens, Title3 } from '@fluentui/react-components';
+import { makeStyles, tokens, Text } from '@fluentui/react-components';
 import { PaperSelector } from '../components/PaperSelector';
 import { SizeFields } from './SizeFields';
 import { OrientationSelector } from '../components/OrientationSelector';
@@ -24,6 +24,9 @@ const useStyles = makeStyles({
     rowGap: tokens.spacingVerticalS,
   },
   sectionTitle: {
+    fontSize: tokens.fontSizeBase300,
+    fontWeight: tokens.fontWeightSemibold,
+    color: 'var(--colorNeutralForeground1)',
     marginBottom: tokens.spacingVerticalXS,
   },
 });
@@ -111,7 +114,7 @@ export const PaperSizePanel = React.memo<PaperSizePanelProps>(({
   return (
     <FormLayoutProvider>
       <div className={styles.panel}>
-        <Title3>Paper Size</Title3>
+        <Text className={styles.sectionTitle}>Paper Size</Text>
 
         <div className={styles.section}>
           <PaperSelector

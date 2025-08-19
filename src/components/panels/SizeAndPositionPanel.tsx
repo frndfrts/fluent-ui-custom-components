@@ -8,19 +8,17 @@ import { SizeFields } from './SizeFields';
 import { PositionFields } from './PositionFields';
 
 const useStyles = makeStyles({
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: tokens.spacingVerticalL,
-    padding: tokens.spacingHorizontalM,
+  panel: {
+    display: 'grid',
+    rowGap: tokens.spacingVerticalM,
+    paddingTop: tokens.spacingVerticalM,
     width: '100%',
     maxWidth: '320px',
     minWidth: '240px',
   },
   section: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: tokens.spacingVerticalS,
+    display: 'grid',
+    rowGap: tokens.spacingVerticalS,
   },
   sectionTitle: {
     fontSize: tokens.fontSizeBase300,
@@ -91,7 +89,7 @@ export const SizeAndPositionPanel = React.memo<SizeAndPositionPanelProps>(({
   const styles = useStyles();
 
   return (
-    <div className={styles.container}>
+    <div className={styles.panel}>
       {/* Size Section */}
       <div className={styles.section}>
         <Text className={styles.sectionTitle}>Size</Text>

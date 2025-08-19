@@ -4,7 +4,7 @@
  * Panel for padding settings with individual unit controls for each side.
  */
 import * as React from 'react';
-import { makeStyles, tokens, Title3 } from '@fluentui/react-components';
+import { makeStyles, tokens, Text } from '@fluentui/react-components';
 import { DimensionInput } from '../compositions/DimensionInput';
 import { FormLayoutProvider } from '../../styles/FormLayoutContext';
 
@@ -22,6 +22,9 @@ const useStyles = makeStyles({
     rowGap: tokens.spacingVerticalS,
   },
   sectionTitle: {
+    fontSize: tokens.fontSizeBase300,
+    fontWeight: tokens.fontWeightSemibold,
+    color: 'var(--colorNeutralForeground1)',
     marginBottom: tokens.spacingVerticalXS,
   },
 });
@@ -87,7 +90,7 @@ export const PaddingPanel = React.memo<PaddingPanelProps>(({
   return (
     <FormLayoutProvider>
       <div className={styles.panel}>
-        <Title3>Padding</Title3>
+        <Text className={styles.sectionTitle}>Padding</Text>
         <div className={styles.section}>
           <DimensionInput label="Top" value={padding.top} unit={padding.topUnit} units={units} onChange={handleTopChange} disabled={disabled} />
           <DimensionInput label="Right" value={padding.right} unit={padding.rightUnit} units={units} onChange={handleRightChange} disabled={disabled} />

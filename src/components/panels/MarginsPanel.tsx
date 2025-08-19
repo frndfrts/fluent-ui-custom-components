@@ -4,7 +4,7 @@
  * Panel for margin settings with individual unit controls for each side.
  */
 import * as React from 'react';
-import { makeStyles, tokens, Title3 } from '@fluentui/react-components';
+import { makeStyles, tokens, Text } from '@fluentui/react-components';
 import { DimensionInput } from '../compositions/DimensionInput';
 import { FormLayoutProvider } from '../../styles/FormLayoutContext';
 
@@ -22,6 +22,9 @@ const useStyles = makeStyles({
     rowGap: tokens.spacingVerticalS,
   },
   sectionTitle: {
+    fontSize: tokens.fontSizeBase300,
+    fontWeight: tokens.fontWeightSemibold,
+    color: 'var(--colorNeutralForeground1)',
     marginBottom: tokens.spacingVerticalXS,
   },
 });
@@ -87,7 +90,7 @@ export const MarginsPanel = React.memo<MarginsPanelProps>(({
   return (
     <FormLayoutProvider>
       <div className={styles.panel}>
-        <Title3>Margins</Title3>
+        <Text className={styles.sectionTitle}>Margins</Text>
         <div className={styles.section}>
           <DimensionInput label="Top" value={margins.top} unit={margins.topUnit} units={units} onChange={handleTopChange} disabled={disabled} />
           <DimensionInput label="Right" value={margins.right} unit={margins.rightUnit} units={units} onChange={handleRightChange} disabled={disabled} />
