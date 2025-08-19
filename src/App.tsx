@@ -1,6 +1,7 @@
 /**
  * App.tsx
- * Comprehensive sample application demonstrating all atomic, elemental, sub-components, and integrated panels.
+ * Comprehensive sample application demonstrating all primitives, components, compositions, and panels
+ * with the integrated layout system for pixel-perfect alignment across all form components.
  */
 import {
   FluentProvider,
@@ -48,6 +49,7 @@ import { PaperSizePanel } from './components/panels/PaperSizePanel';
 import { PositionFields } from './components/panels/PositionFields';
 import { SizeFields } from './components/panels/SizeFields';
 import { SizeAndPositionPanel } from './components/panels/SizeAndPositionPanel';
+import { LockAspectRatio } from './components/primitives/LockAspectRatio';
 
 interface ComponentExample {
   description: string;
@@ -348,6 +350,7 @@ const categories = [
     items: [
       { name: 'ColorSliderInput', key: 'colorSliderInput' },
       { name: 'HexInput', key: 'hexInput' },
+      { name: 'LockAspectRatio', key: 'lockAspectRatio' },
       { name: 'NumericInput', key: 'numericInput' },
       { name: 'SliderInput', key: 'sliderInput' },
       { name: 'UnitSelector', key: 'unitSelector' },
@@ -429,6 +432,24 @@ const getComponentExamples = (key: string): ComponentExample[] => {
           description: "Slider with step increments",
           demo: <SliderInput value={25} min={0} max={100} step={5} label="Volume" onChange={() => {}} />,
           settings: { value: 25, min: 0, max: 100, step: 5, label: "Volume" }
+        }
+      ];
+    case 'lockAspectRatio':
+      return [
+        {
+          description: "Basic lock aspect ratio checkbox",
+          demo: <LockAspectRatio checked={false} onChange={() => {}} />,
+          settings: { checked: false, disabled: false }
+        },
+        {
+          description: "Checked state",
+          demo: <LockAspectRatio checked={true} onChange={() => {}} />,
+          settings: { checked: true, disabled: false }
+        },
+        {
+          description: "Disabled state",
+          demo: <LockAspectRatio checked={false} disabled={true} onChange={() => {}} />,
+          settings: { checked: false, disabled: true }
         }
       ];
     case 'colorSliderInput':
@@ -813,6 +834,8 @@ const getComponentName = (key: string): string => {
       return 'RGB/HSL Color Sliders Input';
     case 'hexInput':
       return 'Hex Input';
+    case 'lockAspectRatio':
+      return 'Lock Aspect Ratio';
     case 'colorHexInput':
       return 'Color Hex Input';
     case 'largeSwatchColorHexInput':
@@ -876,6 +899,8 @@ const getComponentDescription = (key: string): string => {
       return "A specialized color slider component that displays RGB or HSL color channels using stacked ColorSliderInput components. Features mode switching between RGB and HSL, individual channel control, and consistent styling. Perfect for color picker applications requiring precise color channel manipulation.";
     case 'hexInput':
       return "A hex color input component with real-time validation and formatting. Supports variable length hex codes, automatic uppercase conversion, and placeholder text. Features monospace font and right-aligned text for professional appearance.";
+    case 'lockAspectRatio':
+      return "A specialized checkbox component for toggling aspect ratio lock functionality. Features integrated label ownership and perfect alignment with form layout system. Automatically positions itself below dimension inputs within the control area for consistent spacing and visual hierarchy.";
     case 'colorHexInput':
       return "A color hex input component that combines a color preview swatch with hex input functionality. Supports clickable swatches for color picker integration and provides visual feedback for invalid colors.";
     case 'largeSwatchColorHexInput':
@@ -985,6 +1010,15 @@ const getComponentFeatures = (key: string): { title: string; description: string
         { title: "Monospace Font", description: "Professional monospace font with right-aligned text for hex values." },
         { title: "Flexible Sizing", description: "Small, medium, large, and auto size variants with custom width support." },
         { title: "Placeholder Support", description: "Configurable placeholder text with proper validation handling." }
+      ];
+    case 'lockAspectRatio':
+      return [
+        { title: "Integrated Label", description: "Built-in 'Lock aspect ratio:' label with consistent styling and spacing." },
+        { title: "Layout System Integration", description: "Automatically aligns with FormLayoutContext for perfect positioning." },
+        { title: "Control Area Positioning", description: "Positions itself within the control area, ignoring label columns." },
+        { title: "Center Alignment", description: "Centers the checkbox within the available control width." },
+        { title: "Disabled State Support", description: "Proper handling of disabled state with visual feedback." },
+        { title: "Responsive Sizing", description: "Adapts to different form layout sizes (small, medium, large)." }
       ];
     case 'colorHexInput':
       return [
@@ -1259,6 +1293,13 @@ const getComponentProps = (key: string): ComponentProp[] => {
         { name: "maxWidth", type: "string | number", default: "undefined", description: "Maximum width constraint." },
         { name: "fullWidth", type: "boolean", default: "false", description: "Whether to take full width of container." },
         { name: "className", type: "string", default: "undefined", description: "Additional CSS class name." }
+      ];
+    case 'lockAspectRatio':
+      return [
+        { name: "checked", type: "boolean", default: "required", description: "Whether the aspect ratio is locked." },
+        { name: "onChange", type: "(checked: boolean) => void", default: "required", description: "Callback fired when the lock state changes." },
+        { name: "disabled", type: "boolean", default: "false", description: "Whether the checkbox is disabled." },
+        { name: "size", type: "'small' | 'medium' | 'large'", default: "'medium'", description: "Size variant for the component." }
       ];
     case 'colorHexInput':
       return [
@@ -1585,6 +1626,11 @@ const InteractiveHexInputDemo: React.FC = () => {
   return <HexInput value={value} onChange={setValue} />;
 };
 
+const InteractiveLockAspectRatioDemo: React.FC = () => {
+  const [checked, setChecked] = React.useState(false);
+  return <LockAspectRatio checked={checked} onChange={setChecked} />;
+};
+
 const InteractiveUniversalSelectorDemo: React.FC = () => {
   const [value, setValue] = React.useState("option1");
   return <UniversalSelector value={value} options={["option1", "option2", "option3"]} onChange={setValue} />;
@@ -1803,6 +1849,8 @@ const renderDemo = (key: string): React.ReactNode => {
       return <InteractiveRGBHSLColorSlidersInputDemo />;
     case 'hexInput':
       return <InteractiveHexInputDemo />;
+    case 'lockAspectRatio':
+      return <InteractiveLockAspectRatioDemo />;
     case 'universalSelector':
       return <InteractiveUniversalSelectorDemo />;
     case 'colorHexInput':

@@ -1,10 +1,10 @@
 # Fluent UI Custom Components
 
-A comprehensive collection of specialized UI components built with Microsoft Fluent UI v9, designed specifically for dimension and color management applications.
+A comprehensive collection of specialized UI components built with Microsoft Fluent UI v9, designed specifically for dimension and color management applications with a sophisticated layout system for pixel-perfect alignment.
 
 ## 🎯 Purpose & Scope
 
-This component library addresses the specific needs of applications requiring precise dimension controls, color management, and layout tools. Whether you're building design software, CAD applications, or document editors, these components provide the building blocks for professional-grade user interfaces.
+This component library addresses the specific needs of applications requiring precise dimension controls, color management, and layout tools. Whether you're building design software, CAD applications, or document editors, these components provide the building blocks for professional-grade user interfaces with consistent alignment and spacing.
 
 ## 🏗️ Component Hierarchy
 
@@ -18,6 +18,26 @@ The components are organized into a 5-level hierarchy based on complexity and in
 
 See [Component Hierarchy Documentation](./src/components/README.md) for detailed information.
 
+## 🎨 Layout System
+
+The component library features a sophisticated layout system that ensures pixel-perfect alignment across all form components:
+
+### Design Tokens (`src/styles/layoutTokens.ts`)
+- Centralized layout constants for label widths, control widths, and spacing
+- Responsive sizing support (small, medium, large)
+- Consistent grid-based layouts
+
+### Form Layout Context (`src/styles/FormLayoutContext.tsx`)
+- React Context provider for layout specifications
+- Automatic sizing calculations based on component size
+- Seamless integration with all form components
+
+### Key Features
+- **Perfect Alignment**: All labels and controls align precisely across different component types
+- **"Lego Brick" Architecture**: Components fit together naturally without manual adjustments
+- **Responsive Design**: Automatic scaling based on component size
+- **Context-Driven**: Layout specifications provided via React Context
+
 ## 🚀 Quick Start
 
 ### Installation
@@ -30,13 +50,20 @@ npm start
 ### Basic Usage
 
 ```typescript
-import { HexInput } from './components/primitives/HexInput';
-import { ColorInput } from './components/compositions/ColorInput';
+import { FormLayoutProvider } from './components/primitives';
+import { DimensionInput } from './components/compositions/DimensionInput';
+import { PositionSelector } from './components/components/PositionSelector';
+import { LockAspectRatio } from './components/primitives/LockAspectRatio';
 import { PaperSizePanel } from './components/panels/PaperSizePanel';
 
-// Use components directly
-<HexInput value="#FF0000" onChange={handleColorChange} />
-<ColorInput value="#00FF00" onChange={handleColorChange} />
+// Wrap components in layout provider for perfect alignment
+<FormLayoutProvider size="medium">
+  <PositionSelector value="center" onChange={handlePositionChange} />
+  <DimensionInput value={100} unit="px" onChange={handleDimensionChange} />
+  <LockAspectRatio checked={true} onChange={handleLockChange} />
+</FormLayoutProvider>
+
+// Or use complete panels
 <PaperSizePanel onChange={handlePaperSizeChange} />
 ```
 
@@ -47,6 +74,7 @@ import { PaperSizePanel } from './components/panels/PaperSizePanel';
 - **Fluent UI v9** - Microsoft's design system
 - **CSS-in-JS** - Scoped styling with makeStyles
 - **Design Tokens** - Consistent spacing, colors, and typography
+- **React Context** - Layout system state management
 
 ## 📁 Project Structure
 
@@ -60,7 +88,10 @@ src/
 │   ├── legacy/             # Level 5: Backward compatibility
 │   └── inputs/             # Re-exports for backward compatibility
 ├── hooks/                  # Custom React hooks
-├── styles/                 # Shared styles and design tokens
+├── styles/                 # Layout system and design tokens
+│   ├── layoutTokens.ts     # Centralized layout constants
+│   ├── FormLayoutContext.tsx # Layout context provider
+│   └── commonStyles.ts     # Shared styles
 ├── types/                  # TypeScript type definitions
 └── utils/                  # Utility functions
 ```
@@ -68,36 +99,48 @@ src/
 ## 🎨 Component Categories
 
 ### Panels (Level 4)
-Layout containers with specific functionality areas:
-- `MarginsPanel` - Margin settings panel
-- `PaddingPanel` - Padding settings panel
-- `PaperSizePanel` - Paper size and orientation panel
-- `SizeAndPositionPanel` - Combined size and position panel
+Complete layout containers with integrated functionality:
+- `MarginsPanel` - Margin settings with pixel-perfect alignment
+- `PaddingPanel` - Padding settings with consistent spacing
+- `PaperSizePanel` - Paper size, dimensions, and orientation selection
+- `SizeAndPositionPanel` - Combined size and position controls
+- `PositionFields` - Position selector with X/Y coordinates
+- `SizeFields` - Width/height inputs with aspect ratio lock
 
 ### Compositions (Level 3)
-Complete panels and complex UI patterns ready for production use:
+Complex functional units combining multiple components:
 - `ColorInput` - Complete color input with model selection
 - `ColorPicker` - Full color picker with standard colors and custom input
 - `ColorSelector` - Color palette selector with tooltips
-- `DimensionInput` - Dimension input with unit selection
+- `DimensionInput` - Dimension input with unit selection (supports layout context)
 - `ResponsiveColorPicker` - Responsive color picker with layout adaptation
+- `ColorHexInput` - Hex input with color swatch and validation
+- `MultipleSlidersInput` - Stack of sliders with aligned labels
+- `RGBHSLColorSlidersInput` - RGB/HSL color sliders
 
 ### Components (Level 2)
-Specialized combinations of atomic components for specific use cases:
+Specialized combinations of atomic components:
 - `AspectRatioSelector` - Aspect ratio selection with custom option
 - `ColorModelSelector` - RGB/HSL color model selection
 - `OrientationSelector` - Portrait/landscape orientation selection
-- `PaperSelector` - Paper size selection dropdown
-- `PositionSelector` - Position selection (top, center, bottom, etc.)
+- `PaperSelector` - Paper size selection dropdown (supports layout context)
+- `PositionSelector` - Position selection (top, center, bottom, etc.) (supports layout context)
 - `UniversalSelector` - Generic selector with custom options
 
 ### Primitives (Level 1)
-Fundamental building blocks like inputs, selectors, and sliders:
+Fundamental building blocks with integrated layout support:
 - `HexInput` - Hex color input with validation
-- `NumericInput` - Numeric input with precision control
+- `NumericInput` - Numeric input with precision control and stepper buttons
 - `SliderInput` - Generic slider with label and value display
 - `UnitSelector` - Unit selection dropdown
 - `ColorSliderInput` - Color-specific slider with label
+- `LockAspectRatio` - Aspect ratio lock checkbox with perfect positioning
+
+### Legacy (Level 5)
+Backward compatibility components:
+- `FluentColorPicker` - Original Fluent UI color picker wrapper
+- `HorizontalColorPicker` - Horizontal layout color picker
+- `LegacyColorPicker` - Legacy color picker implementation
 
 ## 🔧 Development
 
@@ -110,21 +153,53 @@ npm test           # Run tests
 npm run lint       # Run ESLint
 ```
 
+### Layout System Integration
+
+When creating new components:
+
+1. **Use FormLayoutProvider** at the panel level
+2. **Consume useFormLayout()** in components that need alignment
+3. **Follow sizing patterns** from existing components
+4. **Test alignment** with other components in the same panel
+
+Example:
+```typescript
+import { useFormLayout } from '../../styles/FormLayoutContext';
+
+export const MyComponent = () => {
+  const layout = useFormLayout();
+  
+  const labelStyle = {
+    width: `${layout.labelWidth}px`,
+    textAlign: 'right'
+  };
+  
+  return (
+    <div style={{ display: 'flex', gap: '4px' }}>
+      <div style={labelStyle}>Label:</div>
+      <input style={{ width: `${layout.combinedControlWidth}px` }} />
+    </div>
+  );
+};
+```
+
 ### Adding New Components
 
 1. **Choose the appropriate level** based on component complexity
 2. **Follow naming conventions**: PascalCase for components, `ComponentNameProps` for interfaces
-3. **Add to index file**: Export from the appropriate level's index.ts
-4. **Update documentation**: Add to the component hierarchy documentation
-5. **Add to navigation**: Update the categories in App.tsx
+3. **Integrate with layout system** if the component renders labels or form controls
+4. **Add to index file**: Export from the appropriate level's index.ts
+5. **Update documentation**: Add to this README and component hierarchy documentation
+6. **Add to navigation**: Update the categories in App.tsx
 
 ### Import Guidelines
 
-**For new development:**
+**For new development with layout system:**
 ```typescript
+import { FormLayoutProvider } from './components/primitives';
 import { PaperSizePanel } from './components/panels/PaperSizePanel';
-import { ColorInput } from './components/compositions/ColorInput';
-import { HexInput } from './components/primitives/HexInput';
+import { DimensionInput } from './components/compositions/DimensionInput';
+import { LockAspectRatio } from './components/primitives/LockAspectRatio';
 ```
 
 **For backward compatibility:**
@@ -134,21 +209,32 @@ import { HexInput, ColorInput } from './components/inputs';
 
 ## 🎯 Integration
 
-All components are built on top of Fluent UI v9 and integrate seamlessly with existing Fluent UI applications. They follow the same design patterns, use the same design tokens, and maintain accessibility standards.
+All components are built on top of Fluent UI v9 and integrate seamlessly with existing Fluent UI applications. They follow the same design patterns, use the same design tokens, and maintain accessibility standards. The layout system extends Fluent UI's design philosophy with precise alignment capabilities.
+
+### Key Integration Features
+
+- **Fluent UI v9 Compatible**: All components use Fluent UI tokens and patterns
+- **Accessibility First**: ARIA labels, keyboard navigation, screen reader support
+- **Theme Integration**: Automatic adaptation to Fluent UI themes
+- **Responsive Design**: Components adapt to different screen sizes
+- **TypeScript Support**: Full type safety with comprehensive interfaces
 
 ## 📚 Documentation
 
 - [Component Hierarchy](./src/components/README.md) - Detailed component organization
+- [Layout System](./src/styles/) - Design tokens and context documentation
 - [Individual Component Files](./src/components/) - Component-specific documentation
 - [Example Usage](./src/App.tsx) - Live examples and demonstrations
 
 ## 🤝 Contributing
 
 1. Follow the existing component hierarchy
-2. Maintain backward compatibility where possible
-3. Add comprehensive TypeScript types
-4. Include proper documentation
-5. Test thoroughly before submitting
+2. Integrate with the layout system for form components
+3. Maintain backward compatibility where possible
+4. Add comprehensive TypeScript types
+5. Include proper documentation
+6. Test alignment with other components
+7. Test thoroughly before submitting
 
 ## 📄 License
 
@@ -158,6 +244,19 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 For questions or issues:
 1. Check the component hierarchy documentation
-2. Review the example usage in App.tsx
-3. Examine TypeScript definitions for prop interfaces
-4. Open an issue with detailed information about your use case 
+2. Review the layout system implementation in `/src/styles/`
+3. Examine the example usage in App.tsx
+4. Look at TypeScript definitions for prop interfaces
+5. Open an issue with detailed information about your use case
+
+---
+
+## 🌟 Key Features
+
+- **Pixel-Perfect Alignment**: Advanced layout system ensures consistent spacing and alignment
+- **"Lego Brick" Architecture**: Components fit together seamlessly without manual adjustments  
+- **Fluent UI v9 Integration**: Built on Microsoft's latest design system
+- **Type Safety**: Comprehensive TypeScript support throughout
+- **Responsive Design**: Automatic scaling and adaptation
+- **Accessibility First**: WCAG compliance and screen reader support
+- **Production Ready**: Battle-tested components for professional applications
