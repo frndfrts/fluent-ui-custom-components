@@ -10,10 +10,10 @@ This component library addresses the specific needs of applications requiring pr
 
 The components are organized into a 5-level hierarchy based on complexity and integration level:
 
-- **Primitives** (Level 1): Atomic Fluent UI component wrappers
-- **Components** (Level 2): Molecule-level combinations of primitives
-- **Compositions** (Level 3): Complex functional units combining multiple components
 - **Panels** (Level 4): Layout containers with specific functionality areas
+- **Compositions** (Level 3): Complex functional units combining multiple components
+- **Components** (Level 2): Molecule-level combinations of primitives
+- **Primitives** (Level 1): Atomic Fluent UI component wrappers
 - **Legacy** (Level 5): Older components maintained for backward compatibility
 
 See [Component Hierarchy Documentation](./src/components/README.md) for detailed information.
@@ -53,10 +53,10 @@ import { PaperSizePanel } from './components/panels/PaperSizePanel';
 ```
 src/
 ├── components/
-│   ├── primitives/          # Level 1: Atomic components
-│   ├── components/          # Level 2: Molecule-level components
-│   ├── compositions/        # Level 3: Complex functional units
 │   ├── panels/             # Level 4: Layout containers
+│   ├── compositions/       # Level 3: Complex functional units
+│   ├── components/         # Level 2: Molecule-level components
+│   ├── primitives/         # Level 1: Atomic components
 │   ├── legacy/             # Level 5: Backward compatibility
 │   └── inputs/             # Re-exports for backward compatibility
 ├── hooks/                  # Custom React hooks
@@ -67,13 +67,20 @@ src/
 
 ## 🎨 Component Categories
 
-### Primitives (Level 1)
-Fundamental building blocks like inputs, selectors, and sliders:
-- `HexInput` - Hex color input with validation
-- `NumericInput` - Numeric input with precision control
-- `SliderInput` - Generic slider with label and value display
-- `UnitSelector` - Unit selection dropdown
-- `ColorSliderInput` - Color-specific slider with label
+### Panels (Level 4)
+Layout containers with specific functionality areas:
+- `MarginsPanel` - Margin settings panel
+- `PaddingPanel` - Padding settings panel
+- `PaperSizePanel` - Paper size and orientation panel
+- `SizeAndPositionPanel` - Combined size and position panel
+
+### Compositions (Level 3)
+Complete panels and complex UI patterns ready for production use:
+- `ColorInput` - Complete color input with model selection
+- `ColorPicker` - Full color picker with standard colors and custom input
+- `ColorSelector` - Color palette selector with tooltips
+- `DimensionInput` - Dimension input with unit selection
+- `ResponsiveColorPicker` - Responsive color picker with layout adaptation
 
 ### Components (Level 2)
 Specialized combinations of atomic components for specific use cases:
@@ -84,20 +91,13 @@ Specialized combinations of atomic components for specific use cases:
 - `PositionSelector` - Position selection (top, center, bottom, etc.)
 - `UniversalSelector` - Generic selector with custom options
 
-### Compositions (Level 3)
-Complete panels and complex UI patterns ready for production use:
-- `ColorInput` - Complete color input with model selection
-- `ColorPicker` - Full color picker with standard colors and custom input
-- `ColorSelector` - Color palette selector with tooltips
-- `DimensionInput` - Dimension input with unit selection
-- `ResponsiveColorPicker` - Responsive color picker with layout adaptation
-
-### Panels (Level 4)
-Layout containers with specific functionality areas:
-- `MarginsPanel` - Margin settings panel
-- `PaddingPanel` - Padding settings panel
-- `PaperSizePanel` - Paper size and orientation panel
-- `SizeAndPositionPanel` - Combined size and position panel
+### Primitives (Level 1)
+Fundamental building blocks like inputs, selectors, and sliders:
+- `HexInput` - Hex color input with validation
+- `NumericInput` - Numeric input with precision control
+- `SliderInput` - Generic slider with label and value display
+- `UnitSelector` - Unit selection dropdown
+- `ColorSliderInput` - Color-specific slider with label
 
 ## 🔧 Development
 
@@ -122,8 +122,9 @@ npm run lint       # Run ESLint
 
 **For new development:**
 ```typescript
-import { HexInput } from './components/primitives/HexInput';
+import { PaperSizePanel } from './components/panels/PaperSizePanel';
 import { ColorInput } from './components/compositions/ColorInput';
+import { HexInput } from './components/primitives/HexInput';
 ```
 
 **For backward compatibility:**

@@ -10,7 +10,7 @@ const useStyles = makeStyles({
   container: {
     display: 'flex',
     alignItems: 'center',
-    gap: '4px', // Reduced gap for tighter integration
+    gap: '4px', // Same gap as DimensionInput
     width: '100%',
     maxWidth: '320px',
     minWidth: '240px',
@@ -34,6 +34,7 @@ const useStyles = makeStyles({
   labelLarge: {
     width: '200px',
   },
+
 });
 
 export interface PositionSelectorProps {
@@ -49,6 +50,7 @@ export interface PositionSelectorProps {
   customOptionText?: string;
   sortAlphabetically?: boolean;
   disabled?: boolean;
+  hideLabel?: boolean;
 }
 
 export const PositionSelector = React.memo<PositionSelectorProps>(({ 
@@ -63,7 +65,8 @@ export const PositionSelector = React.memo<PositionSelectorProps>(({
   fullWidth = false,
   customOptionText = 'Custom',
   sortAlphabetically = false,
-  disabled = false
+  disabled = false,
+  hideLabel = false,
 }) => {
   const styles = useStyles();
 
@@ -78,23 +81,36 @@ export const PositionSelector = React.memo<PositionSelectorProps>(({
     }
   }, [styles.label, styles.labelSmall, styles.labelMedium, styles.labelLarge, size]);
 
+  // Calculate the exact width needed to match DimensionInput layout
+  // Width must equal: NumericInput + gap + UnitSelector to align left edges correctly
+  const getSelectorWidth = React.useCallback(() => {
+    if (size === 'small') {
+      return 80 + 4 + 60; // NumericInput small + gap + UnitSelector small
+    } else if (size === 'large') {
+      return 160 + 4 + 80; // NumericInput large + gap + UnitSelector large
+    } else {
+      return 120 + 4 + 70; // NumericInput medium + gap + UnitSelector medium
+    }
+  }, [size]);
 
-
+  const selectorWidth = React.useMemo(() => getSelectorWidth(), [getSelectorWidth]);
   const labelClassName = React.useMemo(() => getLabelClassName(), [getLabelClassName]);
 
   return (
     <div className={styles.container}>
-      <div className={labelClassName}>
-        {label}:&nbsp;
-      </div>
+      {!hideLabel && (
+        <div className={labelClassName}>
+          {label}:&nbsp;
+        </div>
+      )}
       <UniversalSelector
         value={position}
         options={positions}
         onChange={onChange}
-        width={width}
+        width={selectorWidth} // Use calculated width for perfect alignment
         minWidth={minWidth}
         maxWidth={maxWidth}
-        fullWidth={true}
+        fullWidth={false} // Use calculated width instead of full width
         showCustomOption={true}
         customOptionText={customOptionText}
         sortAlphabetically={sortAlphabetically}

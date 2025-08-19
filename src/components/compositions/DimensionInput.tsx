@@ -48,6 +48,7 @@ export interface DimensionInputProps {
   onChange: (value: number | '', unit: string) => void; // value is always in cm
   size?: 'small' | 'medium' | 'large';
   disabled?: boolean;
+  hideLabel?: boolean;
 }
 
 export const DimensionInput = React.memo<DimensionInputProps>(({ 
@@ -57,7 +58,8 @@ export const DimensionInput = React.memo<DimensionInputProps>(({
   units, 
   onChange, 
   size = 'medium',
-  disabled = false
+  disabled = false,
+  hideLabel = false,
 }) => {
   const styles = useStyles();
   const { cmToDisplay, displayToCm } = useUnitConversion();
@@ -102,9 +104,11 @@ export const DimensionInput = React.memo<DimensionInputProps>(({
 
   return (
     <div className={styles.container}>
-      <div className={labelClassName}>
-        {label}:&nbsp;
-      </div>
+      {!hideLabel && (
+        <div className={labelClassName}>
+          {label}:&nbsp;
+        </div>
+      )}
       <NumericInput 
         value={displayValue} 
         onChange={handleNumericChange} 

@@ -308,24 +308,14 @@ const OnThisPage: React.FC<{ sections: { id: string; title: string }[] }> = ({ s
 
 const categories = [
   {
-    name: 'Primitives',
+    name: 'Panels',
     items: [
-      { name: 'ColorSliderInput', key: 'colorSliderInput' },
-      { name: 'HexInput', key: 'hexInput' },
-      { name: 'NumericInput', key: 'numericInput' },
-      { name: 'SliderInput', key: 'sliderInput' },
-      { name: 'UnitSelector', key: 'unitSelector' },
-    ]
-  },
-  {
-    name: 'Components',
-    items: [
-      { name: 'AspectRatioSelector', key: 'aspectRatioSelector' },
-      { name: 'ColorModelSelector', key: 'colorModelSelector' },
-      { name: 'OrientationSelector', key: 'orientationSelector' },
-      { name: 'PaperSelector', key: 'paperSelector' },
-      { name: 'PositionSelector', key: 'positionSelector' },
-      { name: 'UniversalSelector', key: 'universalSelector' },
+      { name: 'MarginsPanel', key: 'marginsPanel' },
+      { name: 'PaddingPanel', key: 'paddingPanel' },
+      { name: 'PaperSizePanel', key: 'paperSizePanel' },
+      { name: 'PositionFields', key: 'positionFields' },
+      { name: 'SizeAndPositionPanel', key: 'sizeAndPositionPanel' },
+      { name: 'SizeFields', key: 'sizeFields' },
     ]
   },
   {
@@ -343,14 +333,24 @@ const categories = [
     ]
   },
   {
-    name: 'Panels',
+    name: 'Components',
     items: [
-      { name: 'MarginsPanel', key: 'marginsPanel' },
-      { name: 'PaddingPanel', key: 'paddingPanel' },
-      { name: 'PaperSizePanel', key: 'paperSizePanel' },
-      { name: 'PositionFields', key: 'positionFields' },
-      { name: 'SizeAndPositionPanel', key: 'sizeAndPositionPanel' },
-      { name: 'SizeFields', key: 'sizeFields' },
+      { name: 'AspectRatioSelector', key: 'aspectRatioSelector' },
+      { name: 'ColorModelSelector', key: 'colorModelSelector' },
+      { name: 'OrientationSelector', key: 'orientationSelector' },
+      { name: 'PaperSelector', key: 'paperSelector' },
+      { name: 'PositionSelector', key: 'positionSelector' },
+      { name: 'UniversalSelector', key: 'universalSelector' },
+    ]
+  },
+  {
+    name: 'Primitives',
+    items: [
+      { name: 'ColorSliderInput', key: 'colorSliderInput' },
+      { name: 'HexInput', key: 'hexInput' },
+      { name: 'NumericInput', key: 'numericInput' },
+      { name: 'SliderInput', key: 'sliderInput' },
+      { name: 'UnitSelector', key: 'unitSelector' },
     ]
   },
   {

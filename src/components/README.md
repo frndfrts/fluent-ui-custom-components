@@ -6,38 +6,22 @@ This document describes the organization and hierarchy of custom Fluent UI compo
 
 The components are organized into 5 levels based on their complexity and integration level:
 
-### Level 1: Primitives (`/primitives`)
-**Purpose**: Atomic Fluent UI component wrappers - the fundamental building blocks.
+### Level 4: Panels (`/panels`)
+**Purpose**: Layout containers with specific functionality areas.
 
 **Components**:
-- `ColorSliderInput` - Color-specific slider with label
-- `HexInput` - Hex color input with validation
-- `NumericInput` - Numeric input with precision control
-- `SliderInput` - Generic slider with label and value display
-- `UnitSelector` - Unit selection dropdown
+- `MarginsPanel` - Margin settings panel
+- `PaddingPanel` - Padding settings panel
+- `PaperSizePanel` - Paper size and orientation panel
+- `PositionFields` - Position and alignment fields
+- `SizeAndPositionPanel` - Combined size and position panel
+- `SizeFields` - Size and aspect ratio fields
 
 **Characteristics**:
-- Direct Fluent UI component inheritance
-- Single responsibility
-- Minimal customization
-- Reusable across the entire application
-
-### Level 2: Components (`/components`)
-**Purpose**: Molecule-level combinations of primitives for specific use cases.
-
-**Components**:
-- `AspectRatioSelector` - Aspect ratio selection with custom option
-- `ColorModelSelector` - RGB/HSL color model selection
-- `OrientationSelector` - Portrait/landscape orientation selection
-- `PaperSelector` - Paper size selection dropdown
-- `PositionSelector` - Position selection (top, center, bottom, etc.)
-- `UniversalSelector` - Generic selector with custom options
-
-**Characteristics**:
-- Combine 2-3 primitives
-- Simple state management
-- Domain-specific functionality
-- Used by compositions and panels
+- Layout containers
+- Multiple compositions
+- Form sections
+- Specific functionality areas
 
 ### Level 3: Compositions (`/compositions`)
 **Purpose**: Complex functional units combining multiple components.
@@ -58,22 +42,38 @@ The components are organized into 5 levels based on their complexity and integra
 - Business logic implementation
 - Complete functional units
 
-### Level 4: Panels (`/panels`)
-**Purpose**: Layout containers with specific functionality areas.
+### Level 2: Components (`/components`)
+**Purpose**: Molecule-level combinations of primitives for specific use cases.
 
 **Components**:
-- `MarginsPanel` - Margin settings panel
-- `PaddingPanel` - Padding settings panel
-- `PaperSizePanel` - Paper size and orientation panel
-- `PositionFields` - Position and alignment fields
-- `SizeAndPositionPanel` - Combined size and position panel
-- `SizeFields` - Size and aspect ratio fields
+- `AspectRatioSelector` - Aspect ratio selection with custom option
+- `ColorModelSelector` - RGB/HSL color model selection
+- `OrientationSelector` - Portrait/landscape orientation selection
+- `PaperSelector` - Paper size selection dropdown
+- `PositionSelector` - Position selection (top, center, bottom, etc.)
+- `UniversalSelector` - Generic selector with custom options
 
 **Characteristics**:
-- Layout containers
-- Multiple compositions
-- Form sections
-- Specific functionality areas
+- Combine 2-3 primitives
+- Simple state management
+- Domain-specific functionality
+- Used by compositions and panels
+
+### Level 1: Primitives (`/primitives`)
+**Purpose**: Atomic Fluent UI component wrappers - the fundamental building blocks.
+
+**Components**:
+- `ColorSliderInput` - Color-specific slider with label
+- `HexInput` - Hex color input with validation
+- `NumericInput` - Numeric input with precision control
+- `SliderInput` - Generic slider with label and value display
+- `UnitSelector` - Unit selection dropdown
+
+**Characteristics**:
+- Direct Fluent UI component inheritance
+- Single responsibility
+- Minimal customization
+- Reusable across the entire application
 
 ### Level 5: Legacy (`/legacy`)
 **Purpose**: Older components maintained for backward compatibility.
@@ -92,10 +92,10 @@ The components are organized into 5 levels based on their complexity and integra
 ### For New Development
 ```typescript
 // Import from the appropriate level
-import { HexInput } from './components/primitives/HexInput';
-import { ColorModelSelector } from './components/components/ColorModelSelector';
-import { ColorInput } from './components/compositions/ColorInput';
 import { PaperSizePanel } from './components/panels/PaperSizePanel';
+import { ColorInput } from './components/compositions/ColorInput';
+import { ColorModelSelector } from './components/components/ColorModelSelector';
+import { HexInput } from './components/primitives/HexInput';
 ```
 
 ### For Backward Compatibility
