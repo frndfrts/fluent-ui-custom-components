@@ -4,8 +4,9 @@
  * Panel for width and height input with optional lock aspect ratio toggle.
  */
 import * as React from 'react';
-import { Checkbox, makeStyles, tokens } from '@fluentui/react-components';
+import { makeStyles, tokens } from '@fluentui/react-components';
 import { DimensionInput } from '../compositions/DimensionInput';
+import { LockAspectRatio } from '../primitives/LockAspectRatio';
 import { FormLayoutProvider } from '../../styles/FormLayoutContext';
 import { useAspectRatioLock } from '../../hooks/useAspectRatioLock';
 
@@ -16,15 +17,6 @@ const useStyles = makeStyles({
     width: '100%',
     maxWidth: '320px',
     minWidth: '240px',
-  },
-  checkboxContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    marginTop: tokens.spacingVerticalS,
-  },
-  checkbox: {
-    margin: 0,
   },
 });
 
@@ -95,9 +87,8 @@ export const SizeFields = React.memo<SizeFieldsProps>(({
     }
   }, [width, widthUnit, updateDimensions, onChange]);
 
-  const handleLockToggle = React.useCallback((e: React.FormEvent<HTMLInputElement>, data: { checked: string | boolean }) => {
-    const isChecked = Boolean(data.checked);
-    setIsLocked(isChecked);
+  const handleLockToggle = React.useCallback((checked: boolean) => {
+    setIsLocked(checked);
   }, []);
 
   return (
@@ -120,15 +111,11 @@ export const SizeFields = React.memo<SizeFieldsProps>(({
           disabled={disabled}
         />
         {showLockAspectRatio && (
-          <div className={styles.checkboxContainer}>
-            <Checkbox
-              className={styles.checkbox}
-              checked={isLocked}
-              label="Lock aspect ratio"
-              onChange={handleLockToggle}
-              disabled={disabled}
-            />
-          </div>
+          <LockAspectRatio
+            checked={isLocked}
+            onChange={handleLockToggle}
+            disabled={disabled}
+          />
         )}
       </div>
     </FormLayoutProvider>
