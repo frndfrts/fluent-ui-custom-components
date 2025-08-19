@@ -110,7 +110,7 @@ export const HexInput: React.FC<HexInputProps> = ({
       return `${baseClass} ${styles.labelLarge}`;
     }
     return `${baseClass} ${styles.labelSmall}`; // Default to small instead of medium
-  }, [styles.label, styles.labelSmall, styles.labelMedium, styles.labelLarge, size]);
+  }, [styles.label, styles.labelSmall, styles.labelLarge, size]);
 
   // Update editing value when prop value changes
   React.useEffect(() => {

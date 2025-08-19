@@ -6,6 +6,7 @@
 import * as React from 'react';
 import { Checkbox, makeStyles, tokens } from '@fluentui/react-components';
 import { DimensionInput } from '../compositions/DimensionInput';
+import { FormLayoutProvider } from '../../styles/FormLayoutContext';
 import { useAspectRatioLock } from '../../hooks/useAspectRatioLock';
 
 const useStyles = makeStyles({
@@ -16,16 +17,11 @@ const useStyles = makeStyles({
     maxWidth: '320px',
     minWidth: '240px',
   },
-  dimensionsContainer: {
-    display: 'grid',
-    rowGap: tokens.spacingVerticalS,
-  },
   checkboxContainer: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-start',
     marginTop: tokens.spacingVerticalS,
-    paddingLeft: '160px', // Align with the numeric input fields (label width)
   },
   checkbox: {
     margin: 0,
@@ -48,7 +44,7 @@ export interface SizeFieldsProps {
   }) => void;
 }
 
-export const SizeFields = React.memo<SizeFieldsProps>(({
+export const SizeFields = React.memo<SizeFieldsProps>(({ 
   width,
   height,
   widthUnit,
@@ -105,10 +101,10 @@ export const SizeFields = React.memo<SizeFieldsProps>(({
   }, []);
 
   return (
-    <div className={styles.group}>
-      <div className={styles.dimensionsContainer}>
+    <FormLayoutProvider>
+      <div className={styles.group}>
         <DimensionInput 
-          label="Width" 
+          label="Width"
           value={width} 
           unit={widthUnit} 
           units={units} 
@@ -116,25 +112,25 @@ export const SizeFields = React.memo<SizeFieldsProps>(({
           disabled={disabled}
         />
         <DimensionInput 
-          label="Height" 
+          label="Height"
           value={height} 
           unit={heightUnit} 
           units={units} 
           onChange={updateHeight}
           disabled={disabled}
         />
+        {showLockAspectRatio && (
+          <div className={styles.checkboxContainer}>
+            <Checkbox
+              className={styles.checkbox}
+              checked={isLocked}
+              label="Lock aspect ratio"
+              onChange={handleLockToggle}
+              disabled={disabled}
+            />
+          </div>
+        )}
       </div>
-      {showLockAspectRatio && (
-        <div className={styles.checkboxContainer}>
-          <Checkbox
-            className={styles.checkbox}
-            checked={isLocked}
-            label="Lock aspect ratio"
-            onChange={handleLockToggle}
-            disabled={disabled}
-          />
-        </div>
-      )}
-    </div>
+    </FormLayoutProvider>
   );
 });

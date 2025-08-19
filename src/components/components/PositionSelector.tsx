@@ -4,6 +4,7 @@
  */
 import * as React from 'react';
 import { makeStyles } from '@fluentui/react-components';
+import { useFormLayout } from '../../styles/FormLayoutContext';
 import { UniversalSelector } from './UniversalSelector';
 
 const useStyles = makeStyles({
@@ -12,8 +13,6 @@ const useStyles = makeStyles({
     alignItems: 'center',
     gap: '4px', // Same gap as DimensionInput
     width: '100%',
-    maxWidth: '320px',
-    minWidth: '240px',
   },
   label: {
     textAlign: 'right',
@@ -25,15 +24,7 @@ const useStyles = makeStyles({
     alignItems: 'center',
     justifyContent: 'flex-end',
   },
-  labelSmall: {
-    width: '120px',
-  },
-  labelMedium: {
-    width: '160px',
-  },
-  labelLarge: {
-    width: '200px',
-  },
+  labelFixed: {},
 
 });
 
@@ -69,37 +60,25 @@ export const PositionSelector = React.memo<PositionSelectorProps>(({
   hideLabel = false,
 }) => {
   const styles = useStyles();
+  const layout = useFormLayout();
 
-  const getLabelClassName = React.useCallback(() => {
-    const baseClass = styles.label;
-    if (size === 'small') {
-      return `${baseClass} ${styles.labelSmall}`;
-    } else if (size === 'large') {
-      return `${baseClass} ${styles.labelLarge}`;
-    } else {
-      return `${baseClass} ${styles.labelMedium}`;
-    }
-  }, [styles.label, styles.labelSmall, styles.labelMedium, styles.labelLarge, size]);
+  const getLabelStyle = React.useCallback((): React.CSSProperties => {
+    return { width: `${layout.labelWidth}px` };
+  }, [layout.labelWidth]);
 
   // Calculate the exact width needed to match DimensionInput layout
   // Width must equal: NumericInput + gap + UnitSelector to align left edges correctly
   const getSelectorWidth = React.useCallback(() => {
-    if (size === 'small') {
-      return 80 + 4 + 60; // NumericInput small + gap + UnitSelector small
-    } else if (size === 'large') {
-      return 160 + 4 + 80; // NumericInput large + gap + UnitSelector large
-    } else {
-      return 120 + 4 + 70; // NumericInput medium + gap + UnitSelector medium
-    }
-  }, [size]);
+    return layout.combinedControlWidth;
+  }, [layout.combinedControlWidth]);
 
   const selectorWidth = React.useMemo(() => getSelectorWidth(), [getSelectorWidth]);
-  const labelClassName = React.useMemo(() => getLabelClassName(), [getLabelClassName]);
+  const labelStyle = React.useMemo(() => getLabelStyle(), [getLabelStyle]);
 
   return (
     <div className={styles.container}>
       {!hideLabel && (
-        <div className={labelClassName}>
+        <div className={styles.label} style={labelStyle}>
           {label}:&nbsp;
         </div>
       )}

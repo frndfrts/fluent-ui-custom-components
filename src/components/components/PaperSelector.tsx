@@ -4,13 +4,14 @@
  */
 import * as React from 'react';
 import { makeStyles } from '@fluentui/react-components';
+import { useFormLayout } from '../../styles/FormLayoutContext';
 import { UniversalSelector } from './UniversalSelector';
 
 const useStyles = makeStyles({
   container: {
     display: 'flex',
     alignItems: 'center',
-    gap: '4px', // Reduced gap for tighter integration
+    gap: '4px',
   },
   label: {
     textAlign: 'right',
@@ -22,15 +23,7 @@ const useStyles = makeStyles({
     alignItems: 'center',
     justifyContent: 'flex-end',
   },
-  labelSmall: {
-    width: '120px',
-  },
-  labelMedium: {
-    width: '160px',
-  },
-  labelLarge: {
-    width: '200px',
-  },
+  labelFixed: {},
 });
 
 export interface PaperSelectorProps {
@@ -61,33 +54,25 @@ export const PaperSelector = React.memo<PaperSelectorProps>(({
   sortAlphabetically = true
 }) => {
   const styles = useStyles();
+  const layout = useFormLayout();
 
-  const getLabelClassName = React.useCallback(() => {
-    const baseClass = styles.label;
-    if (size === 'small') {
-      return `${baseClass} ${styles.labelSmall}`;
-    } else if (size === 'large') {
-      return `${baseClass} ${styles.labelLarge}`;
-    } else {
-      return `${baseClass} ${styles.labelMedium}`;
-    }
-  }, [styles.label, styles.labelSmall, styles.labelMedium, styles.labelLarge, size]);
+  const getLabelStyle = React.useCallback((): React.CSSProperties => {
+    return { width: `${layout.labelWidth}px` };
+  }, [layout.labelWidth]);
 
   // PaperSelector defines its own sizing logic
   const getPaperSelectorWidth = React.useCallback(() => {
     if (width) return width;
     if (fullWidth) return '100%';
-    
-    if (size === 'small') return '120px';
-    if (size === 'large') return '160px';
-    return '140px'; // medium default
-  }, [width, fullWidth, size]);
+    // Align to combined control area
+    return `${layout.combinedControlWidth}px`;
+  }, [width, fullWidth, layout.combinedControlWidth]);
 
-  const labelClassName = React.useMemo(() => getLabelClassName(), [getLabelClassName]);
+  const labelStyle = React.useMemo(() => getLabelStyle(), [getLabelStyle]);
 
   return (
     <div className={styles.container}>
-      <div className={labelClassName}>
+      <div className={styles.label} style={labelStyle}>
         {label}:&nbsp;
       </div>
       <UniversalSelector

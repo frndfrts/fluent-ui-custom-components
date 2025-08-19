@@ -7,6 +7,7 @@ import { makeStyles, tokens, Title3 } from '@fluentui/react-components';
 import { PaperSelector } from '../components/PaperSelector';
 import { SizeFields } from './SizeFields';
 import { OrientationSelector } from '../components/OrientationSelector';
+import { FormLayoutProvider } from '../../styles/FormLayoutContext';
 import { usePaperSizeManager } from '../../hooks/usePaperSizeManager';
 
 const useStyles = makeStyles({
@@ -108,39 +109,40 @@ export const PaperSizePanel = React.memo<PaperSizePanelProps>(({
   }, [updateOrientation, externalOnChange, paperSizeData]);
 
   return (
-    <div className={styles.panel}>
-      <Title3>Paper Size</Title3>
+    <FormLayoutProvider>
+      <div className={styles.panel}>
+        <Title3>Paper Size</Title3>
 
-      <div className={styles.section}>
-        <PaperSelector
-          label="Paper Type"
-          paperSize={paperSizeData.paperSize}
-          paperSizes={standardPaperSizes}
-          onChange={handlePaperSizeChange}
-          size="medium"
-        />
-      </div>
+        <div className={styles.section}>
+          <PaperSelector
+            label="Paper Type"
+            paperSize={paperSizeData.paperSize}
+            paperSizes={standardPaperSizes}
+            onChange={handlePaperSizeChange}
+          />
+        </div>
 
-      <div className={styles.section}>
-        <SizeFields
-          width={paperSizeData.width}
-          height={paperSizeData.height}
-          widthUnit={paperSizeData.widthUnit}
-          heightUnit={paperSizeData.heightUnit}
-          units={units}
-          showLockAspectRatio={true}
-          disabled={!areDimensionsEditable}
-          onChange={handleDimensionsChange}
-        />
-      </div>
+        <div className={styles.section}>
+          <SizeFields
+            width={paperSizeData.width}
+            height={paperSizeData.height}
+            widthUnit={paperSizeData.widthUnit}
+            heightUnit={paperSizeData.heightUnit}
+            units={units}
+            showLockAspectRatio={true}
+            disabled={!areDimensionsEditable}
+            onChange={handleDimensionsChange}
+          />
+        </div>
 
-      <div className={styles.section}>
-        <OrientationSelector
-          label="Orientation"
-          orientation={paperSizeData.orientation}
-          onChange={handleOrientationChange}
-        />
+        <div className={styles.section}>
+          <OrientationSelector
+            label="Orientation"
+            orientation={paperSizeData.orientation}
+            onChange={handleOrientationChange}
+          />
+        </div>
       </div>
-    </div>
+    </FormLayoutProvider>
   );
 }); 

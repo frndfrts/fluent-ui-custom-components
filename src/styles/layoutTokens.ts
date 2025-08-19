@@ -1,4 +1,4 @@
-import { tokens } from '@fluentui/react-components';
+// Layout tokens for grid-based form rows; keep this file free of unused imports
 
 export type ComponentSize = 'small' | 'medium' | 'large';
 

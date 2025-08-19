@@ -6,6 +6,7 @@
 import * as React from 'react';
 import { makeStyles, tokens, Title3 } from '@fluentui/react-components';
 import { DimensionInput } from '../compositions/DimensionInput';
+import { FormLayoutProvider } from '../../styles/FormLayoutContext';
 
 const useStyles = makeStyles({
   panel: {
@@ -84,43 +85,16 @@ export const PaddingPanel = React.memo<PaddingPanelProps>(({
   }, [padding, onChange]);
 
   return (
-    <div className={styles.panel}>
-      <Title3>Padding</Title3>
-      
-      <div className={styles.section}>
-        <DimensionInput
-          label="Top"
-          value={padding.top}
-          unit={padding.topUnit}
-          units={units}
-          onChange={handleTopChange}
-          disabled={disabled}
-        />
-        <DimensionInput
-          label="Right"
-          value={padding.right}
-          unit={padding.rightUnit}
-          units={units}
-          onChange={handleRightChange}
-          disabled={disabled}
-        />
-        <DimensionInput
-          label="Bottom"
-          value={padding.bottom}
-          unit={padding.bottomUnit}
-          units={units}
-          onChange={handleBottomChange}
-          disabled={disabled}
-        />
-        <DimensionInput
-          label="Left"
-          value={padding.left}
-          unit={padding.leftUnit}
-          units={units}
-          onChange={handleLeftChange}
-          disabled={disabled}
-        />
+    <FormLayoutProvider>
+      <div className={styles.panel}>
+        <Title3>Padding</Title3>
+        <div className={styles.section}>
+          <DimensionInput label="Top" value={padding.top} unit={padding.topUnit} units={units} onChange={handleTopChange} disabled={disabled} />
+          <DimensionInput label="Right" value={padding.right} unit={padding.rightUnit} units={units} onChange={handleRightChange} disabled={disabled} />
+          <DimensionInput label="Bottom" value={padding.bottom} unit={padding.bottomUnit} units={units} onChange={handleBottomChange} disabled={disabled} />
+          <DimensionInput label="Left" value={padding.left} unit={padding.leftUnit} units={units} onChange={handleLeftChange} disabled={disabled} />
+        </div>
       </div>
-    </div>
+    </FormLayoutProvider>
   );
 });

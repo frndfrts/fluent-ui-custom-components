@@ -6,6 +6,7 @@
 import * as React from 'react';
 import { makeStyles, tokens, Title3 } from '@fluentui/react-components';
 import { DimensionInput } from '../compositions/DimensionInput';
+import { FormLayoutProvider } from '../../styles/FormLayoutContext';
 
 const useStyles = makeStyles({
   panel: {
@@ -84,43 +85,16 @@ export const MarginsPanel = React.memo<MarginsPanelProps>(({
   }, [margins, onChange]);
 
   return (
-    <div className={styles.panel}>
-      <Title3>Margins</Title3>
-      
-      <div className={styles.section}>
-        <DimensionInput
-          label="Top"
-          value={margins.top}
-          unit={margins.topUnit}
-          units={units}
-          onChange={handleTopChange}
-          disabled={disabled}
-        />
-        <DimensionInput
-          label="Right"
-          value={margins.right}
-          unit={margins.rightUnit}
-          units={units}
-          onChange={handleRightChange}
-          disabled={disabled}
-        />
-        <DimensionInput
-          label="Bottom"
-          value={margins.bottom}
-          unit={margins.bottomUnit}
-          units={units}
-          onChange={handleBottomChange}
-          disabled={disabled}
-        />
-        <DimensionInput
-          label="Left"
-          value={margins.left}
-          unit={margins.leftUnit}
-          units={units}
-          onChange={handleLeftChange}
-          disabled={disabled}
-        />
+    <FormLayoutProvider>
+      <div className={styles.panel}>
+        <Title3>Margins</Title3>
+        <div className={styles.section}>
+          <DimensionInput label="Top" value={margins.top} unit={margins.topUnit} units={units} onChange={handleTopChange} disabled={disabled} />
+          <DimensionInput label="Right" value={margins.right} unit={margins.rightUnit} units={units} onChange={handleRightChange} disabled={disabled} />
+          <DimensionInput label="Bottom" value={margins.bottom} unit={margins.bottomUnit} units={units} onChange={handleBottomChange} disabled={disabled} />
+          <DimensionInput label="Left" value={margins.left} unit={margins.leftUnit} units={units} onChange={handleLeftChange} disabled={disabled} />
+        </div>
       </div>
-    </div>
+    </FormLayoutProvider>
   );
 });

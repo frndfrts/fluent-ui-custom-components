@@ -8,6 +8,7 @@ import { makeStyles } from '@fluentui/react-components';
 import { NumericInput } from '../primitives/NumericInput';
 import { UnitSelector } from '../primitives/UnitSelector';
 import { useUnitConversion, Unit } from '../../hooks/useUnitConversion';
+import { useFormLayout } from '../../styles/FormLayoutContext';
 import { useDecimalPlaces } from '../../hooks/useDecimalPlaces';
 
 const useStyles = makeStyles({
@@ -16,8 +17,6 @@ const useStyles = makeStyles({
     alignItems: 'center',
     gap: '4px', // Reduced gap for tighter integration
     width: '100%',
-    maxWidth: '320px',
-    minWidth: '240px',
   },
   label: {
     textAlign: 'right',
@@ -62,19 +61,13 @@ export const DimensionInput = React.memo<DimensionInputProps>(({
   hideLabel = false,
 }) => {
   const styles = useStyles();
+  const layout = useFormLayout();
   const { cmToDisplay, displayToCm } = useUnitConversion();
   const decimalPlaces = useDecimalPlaces(unit as Unit);
 
-  const getLabelClassName = React.useCallback(() => {
-    const baseClass = styles.label;
-    if (size === 'small') {
-      return `${baseClass} ${styles.labelSmall}`;
-    } else if (size === 'large') {
-      return `${baseClass} ${styles.labelLarge}`;
-    } else {
-      return `${baseClass} ${styles.labelMedium}`;
-    }
-  }, [styles.label, styles.labelSmall, styles.labelMedium, styles.labelLarge, size]);
+  const getLabelStyle = React.useCallback((): React.CSSProperties => {
+    return { width: `${layout.labelWidth}px` };
+  }, [layout.labelWidth]);
 
   // Convert cm value to display value in current unit
   const displayValue = React.useMemo(() => {
@@ -100,12 +93,12 @@ export const DimensionInput = React.memo<DimensionInputProps>(({
     onChange(value, newUnit);
   }, [value, onChange]);
 
-  const labelClassName = React.useMemo(() => getLabelClassName(), [getLabelClassName]);
+  const labelStyle = React.useMemo(() => getLabelStyle(), [getLabelStyle]);
 
   return (
     <div className={styles.container}>
       {!hideLabel && (
-        <div className={labelClassName}>
+        <div className={styles.label} style={labelStyle}>
           {label}:&nbsp;
         </div>
       )}

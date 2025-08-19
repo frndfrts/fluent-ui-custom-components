@@ -7,8 +7,7 @@ import * as React from 'react';
 import { makeStyles, tokens } from '@fluentui/react-components';
 import { PositionSelector } from '../components/PositionSelector';
 import { DimensionInput } from '../compositions/DimensionInput';
-import { FormLayoutProvider, useFormLayout } from '../../styles/FormLayoutContext';
-import { getGridTemplateColumns } from '../../styles/layoutTokens';
+import { FormLayoutProvider } from '../../styles/FormLayoutContext';
 
 const useStyles = makeStyles({
   group: {
@@ -18,16 +17,7 @@ const useStyles = makeStyles({
     maxWidth: '320px',
     minWidth: '240px',
   },
-  row: {
-    display: 'grid',
-    gridAutoRows: 'auto',
-    alignItems: 'center',
-    columnGap: '0px',
-  },
-  labelCell: {
-    justifySelf: 'end',
-    color: 'var(--colorNeutralForeground1)',
-  },
+  
 });
 
 export interface PositionFieldsProps {
@@ -62,7 +52,6 @@ const PositionFieldsInner = ({
   disabled = false,
 }: PositionFieldsProps) => {
   const styles = useStyles();
-  const layout = useFormLayout();
 
   // Check if position fields should be disabled (when a preset position is selected)
   const arePositionFieldsDisabled = React.useMemo(() => {
@@ -99,55 +88,33 @@ const PositionFieldsInner = ({
     });
   }, [position, x, xUnit, onChange]);
 
-  const gridTemplateColumns = getGridTemplateColumns(layout.size);
-
   return (
     <div className={styles.group}>
-      {/* Row 1: Position (spans numeric + gap + unit) */}
-      <div className={styles.row} style={{ gridTemplateColumns }}>
-        <div className={styles.labelCell}>Position:&nbsp;</div>
-        <div style={{ gridColumn: '2 / span 3' }}>
-          <PositionSelector
-            position={position}
-            positions={positions}
-            onChange={handlePositionChange}
-            size={size}
-            disabled={disabled}
-            hideLabel={true}
-            fullWidth={true}
-          />
-        </div>
-      </div>
-
-      {/* Row 2: Horizontal */}
-      <div className={styles.row} style={{ gridTemplateColumns }}>
-        <div className={styles.labelCell}>Horizontal:&nbsp;</div>
-        <DimensionInput 
-          label=""
-          value={x} 
-          unit={xUnit} 
-          units={units} 
-          onChange={handleXChange}
-          disabled={arePositionFieldsDisabled}
-          size={size}
-          hideLabel={true}
-        />
-      </div>
-
-      {/* Row 3: Vertical */}
-      <div className={styles.row} style={{ gridTemplateColumns }}>
-        <div className={styles.labelCell}>Vertical:&nbsp;</div>
-        <DimensionInput 
-          label=""
-          value={y} 
-          unit={yUnit} 
-          units={units} 
-          onChange={handleYChange}
-          disabled={arePositionFieldsDisabled}
-          size={size}
-          hideLabel={true}
-        />
-      </div>
+      <PositionSelector
+        position={position}
+        positions={positions}
+        onChange={handlePositionChange}
+        size={size}
+        disabled={disabled}
+      />
+      <DimensionInput 
+        label="Horizontal"
+        value={x} 
+        unit={xUnit} 
+        units={units} 
+        onChange={handleXChange}
+        disabled={arePositionFieldsDisabled}
+        size={size}
+      />
+      <DimensionInput 
+        label="Vertical"
+        value={y} 
+        unit={yUnit} 
+        units={units} 
+        onChange={handleYChange}
+        disabled={arePositionFieldsDisabled}
+        size={size}
+      />
     </div>
   );
 };
