@@ -4,19 +4,30 @@
  * Panel for width and height input with optional lock aspect ratio toggle.
  */
 import * as React from 'react';
-import { makeStyles, tokens } from '@fluentui/react-components';
+import { makeStyles, tokens, Text } from '@fluentui/react-components';
 import { DimensionInput } from '../compositions/DimensionInput';
 import { LockAspectRatio } from '../primitives/LockAspectRatio';
 import { FormLayoutProvider } from '../../styles/FormLayoutContext';
 import { useAspectRatioLock } from '../../hooks/useAspectRatioLock';
 
 const useStyles = makeStyles({
-  group: {
+  panel: {
     display: 'grid',
-    rowGap: tokens.spacingVerticalS,
+    rowGap: tokens.spacingVerticalM,
+    paddingTop: tokens.spacingVerticalM,
     width: '100%',
     maxWidth: '320px',
     minWidth: '240px',
+  },
+  section: {
+    display: 'grid',
+    rowGap: tokens.spacingVerticalS,
+  },
+  sectionTitle: {
+    fontSize: tokens.fontSizeBase300,
+    fontWeight: tokens.fontWeightSemibold,
+    color: 'var(--colorNeutralForeground1)',
+    marginBottom: tokens.spacingVerticalXS,
   },
 });
 
@@ -93,30 +104,33 @@ export const SizeFields = React.memo<SizeFieldsProps>(({
 
   return (
     <FormLayoutProvider>
-      <div className={styles.group}>
-        <DimensionInput 
-          label="Width"
-          value={width} 
-          unit={widthUnit} 
-          units={units} 
-          onChange={updateWidth}
-          disabled={disabled}
-        />
-        <DimensionInput 
-          label="Height"
-          value={height} 
-          unit={heightUnit} 
-          units={units} 
-          onChange={updateHeight}
-          disabled={disabled}
-        />
-        {showLockAspectRatio && (
-          <LockAspectRatio
-            checked={isLocked}
-            onChange={handleLockToggle}
+      <div className={styles.panel}>
+        <Text className={styles.sectionTitle}>Size</Text>
+        <div className={styles.section}>
+          <DimensionInput 
+            label="Width"
+            value={width} 
+            unit={widthUnit} 
+            units={units} 
+            onChange={updateWidth}
             disabled={disabled}
           />
-        )}
+          <DimensionInput 
+            label="Height"
+            value={height} 
+            unit={heightUnit} 
+            units={units} 
+            onChange={updateHeight}
+            disabled={disabled}
+          />
+          {showLockAspectRatio && (
+            <LockAspectRatio
+              checked={isLocked}
+              onChange={handleLockToggle}
+              disabled={disabled}
+            />
+          )}
+        </div>
       </div>
     </FormLayoutProvider>
   );

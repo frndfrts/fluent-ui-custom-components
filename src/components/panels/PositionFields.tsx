@@ -4,20 +4,30 @@
  * Panel for position selection and X/Y position inputs using DimensionInput.
  */
 import * as React from 'react';
-import { makeStyles, tokens } from '@fluentui/react-components';
+import { makeStyles, tokens, Text } from '@fluentui/react-components';
 import { PositionSelector } from '../components/PositionSelector';
 import { DimensionInput } from '../compositions/DimensionInput';
 import { FormLayoutProvider } from '../../styles/FormLayoutContext';
 
 const useStyles = makeStyles({
-  group: {
+  panel: {
     display: 'grid',
-    rowGap: tokens.spacingVerticalS,
+    rowGap: tokens.spacingVerticalM,
+    paddingTop: tokens.spacingVerticalM,
     width: '100%',
     maxWidth: '320px',
     minWidth: '240px',
   },
-  
+  section: {
+    display: 'grid',
+    rowGap: tokens.spacingVerticalS,
+  },
+  sectionTitle: {
+    fontSize: tokens.fontSizeBase300,
+    fontWeight: tokens.fontWeightSemibold,
+    color: 'var(--colorNeutralForeground1)',
+    marginBottom: tokens.spacingVerticalXS,
+  },
 });
 
 export interface PositionFieldsProps {
@@ -89,32 +99,35 @@ const PositionFieldsInner = ({
   }, [position, x, xUnit, onChange]);
 
   return (
-    <div className={styles.group}>
-      <PositionSelector
-        position={position}
-        positions={positions}
-        onChange={handlePositionChange}
-        size={size}
-        disabled={disabled}
-      />
-      <DimensionInput 
-        label="Horizontal"
-        value={x} 
-        unit={xUnit} 
-        units={units} 
-        onChange={handleXChange}
-        disabled={arePositionFieldsDisabled}
-        size={size}
-      />
-      <DimensionInput 
-        label="Vertical"
-        value={y} 
-        unit={yUnit} 
-        units={units} 
-        onChange={handleYChange}
-        disabled={arePositionFieldsDisabled}
-        size={size}
-      />
+    <div className={styles.panel}>
+              <Text className={styles.sectionTitle}>Position</Text>
+      <div className={styles.section}>
+        <PositionSelector
+          position={position}
+          positions={positions}
+          onChange={handlePositionChange}
+          size={size}
+          disabled={disabled}
+        />
+        <DimensionInput 
+          label="Horizontal"
+          value={x} 
+          unit={xUnit} 
+          units={units} 
+          onChange={handleXChange}
+          disabled={arePositionFieldsDisabled}
+          size={size}
+        />
+        <DimensionInput 
+          label="Vertical"
+          value={y} 
+          unit={yUnit} 
+          units={units} 
+          onChange={handleYChange}
+          disabled={arePositionFieldsDisabled}
+          size={size}
+        />
+      </div>
     </div>
   );
 };

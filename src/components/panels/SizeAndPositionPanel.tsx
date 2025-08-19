@@ -3,7 +3,7 @@
  * Panel for size and position controls using SizeFields and PositionFields components.
  */
 import * as React from 'react';
-import { makeStyles, tokens, Text } from '@fluentui/react-components';
+import { makeStyles, tokens } from '@fluentui/react-components';
 import { SizeFields } from './SizeFields';
 import { PositionFields } from './PositionFields';
 
@@ -26,11 +26,7 @@ const useStyles = makeStyles({
     color: 'var(--colorNeutralForeground1)',
     marginBottom: tokens.spacingVerticalXS,
   },
-  divider: {
-    height: '1px',
-    backgroundColor: 'var(--colorNeutralStroke2)',
-    margin: `${tokens.spacingVerticalM} 0`,
-  },
+
 });
 
 export interface SizeAndPositionPanelProps {
@@ -92,7 +88,6 @@ export const SizeAndPositionPanel = React.memo<SizeAndPositionPanelProps>(({
     <div className={styles.panel}>
       {/* Size Section */}
       <div className={styles.section}>
-        <Text className={styles.sectionTitle}>Size</Text>
         <SizeFields
           width={width}
           height={height}
@@ -105,12 +100,10 @@ export const SizeAndPositionPanel = React.memo<SizeAndPositionPanelProps>(({
         />
       </div>
 
-      {/* Divider */}
-      <div className={styles.divider} />
+
 
       {/* Position Section */}
       <div className={styles.section}>
-        <Text className={styles.sectionTitle}>Position</Text>
         <PositionFields
           position={position}
           positions={positions}
