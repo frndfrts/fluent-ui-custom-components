@@ -5,6 +5,7 @@
 import * as React from 'react';
 import { RadioGroup, Radio, makeStyles } from '@fluentui/react-components';
 import { ColorModel } from '../compositions/ColorInput';
+import { useFormLayout } from '../../styles/FormLayoutContext';
 
 const useStyles = makeStyles({
   container: {
@@ -13,7 +14,6 @@ const useStyles = makeStyles({
     gap: '4px',
     flexDirection: 'row',
     flexWrap: 'nowrap',
-    width: '240px',
     justifyContent: 'flex-start',
   },
   label: {
@@ -27,15 +27,6 @@ const useStyles = makeStyles({
     justifyContent: 'flex-end',
     flexShrink: 0,
     minWidth: 'fit-content',
-  },
-  labelSmall: {
-    width: '60px',
-  },
-  labelMedium: {
-    width: '80px',
-  },
-  labelLarge: {
-    width: '100px',
   },
   radioGroup: {
     display: 'flex',
@@ -52,50 +43,71 @@ const useStyles = makeStyles({
 
 });
 
+// Standard color model options with RGB as default
+export const DEFAULT_COLOR_MODELS: ColorModel[] = ['rgb', 'hsl'];
+export const DEFAULT_COLOR_MODEL: ColorModel = 'rgb';
+
 export interface ColorModelSelectorProps {
   label?: string;
-  colorModel: ColorModel;
+  colorModel?: ColorModel;
   onChange: (colorModel: ColorModel) => void;
   size?: 'small' | 'medium' | 'large';
   disabled?: boolean;
+  onError?: (error: Error) => void;
 }
 
 export const ColorModelSelector = React.memo<ColorModelSelectorProps>(({ 
   label = 'Color Model',
-  colorModel, 
+  colorModel = DEFAULT_COLOR_MODEL, 
   onChange,
   size = 'medium',
-  disabled = false
+  disabled = false,
+  onError
 }) => {
   const styles = useStyles();
+  const layout = useFormLayout();
 
-  const getLabelClassName = React.useCallback(() => {
-    const baseClass = styles.label;
-    if (size === 'small') {
-      return `${baseClass} ${styles.labelSmall}`;
-    } else if (size === 'large') {
-      return `${baseClass} ${styles.labelLarge}`;
-    } else {
-      return `${baseClass} ${styles.labelMedium}`;
+  const getLabelStyle = React.useCallback((): React.CSSProperties => {
+    try {
+      return { width: `${layout.labelWidth}px` };
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in label style calculation');
+      onError?.(errorObj);
+      return { width: '100px' }; // Return fallback width
     }
-  }, [styles.label, styles.labelSmall, styles.labelMedium, styles.labelLarge, size]);
+  }, [layout.labelWidth, onError]);
 
   const handleChange = React.useCallback((ev: React.FormEvent<HTMLDivElement>, data: { value: string }) => {
-    onChange(data.value as ColorModel);
-  }, [onChange]);
+    try {
+      onChange(data.value as ColorModel);
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in color model change');
+      onError?.(errorObj);
+    }
+  }, [onChange, onError]);
 
-  const labelClassName = React.useMemo(() => getLabelClassName(), [getLabelClassName]);
+  const labelStyle = React.useMemo(() => getLabelStyle(), [getLabelStyle]);
+  const containerStyle = React.useMemo(() => {
+    try {
+      return {
+        width: `${layout.labelWidth + layout.combinedControlWidth}px`
+      };
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in container style calculation');
+      onError?.(errorObj);
+      return { width: '240px' }; // Return fallback width
+    }
+  }, [layout.labelWidth, layout.combinedControlWidth, onError]);
 
   return (
-    <div className={styles.container}>
-        <div className={labelClassName}>
+    <div className={styles.container} style={containerStyle}>
+        <div className={styles.label} style={labelStyle}>
           {label}:&nbsp;
         </div>
         <RadioGroup 
           value={colorModel} 
           onChange={handleChange}
           className={styles.radioGroup}
-          layout="horizontal"
           disabled={disabled}
         >
           <Radio value="rgb" label="RGB" />

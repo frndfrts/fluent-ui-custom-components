@@ -3,6 +3,7 @@ import { makeStyles } from '@fluentui/react-components';
 import { ColorModelSelector } from '../components/ColorModelSelector';
 import { ColorHexInput } from './ColorHexInput';
 import { RGBHSLColorSlidersInput } from './RGBHSLColorSlidersInput';
+import { ErrorBoundary } from '../error/ErrorBoundary';
 
 export type ColorModel = 'rgb' | 'hsl';
 
@@ -11,6 +12,7 @@ export interface ColorInputProps {
   onChange: (hexColor: string) => void;
   size?: 'small' | 'medium' | 'large';
   disabled?: boolean;
+  onError?: (error: Error, errorInfo?: React.ErrorInfo) => void;
 }
 
 const useStyles = makeStyles({
@@ -127,11 +129,55 @@ const hslToHex = (h: number, s: number, l: number): string => {
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`.toUpperCase();
 };
 
-export const ColorInput: React.FC<ColorInputProps> = ({
+// Custom error fallback for ColorInput
+const ColorInputErrorFallback: React.FC<{ error: Error; resetError: () => void }> = ({ error, resetError }) => {
+  const styles = useStyles();
+  
+  return (
+    <div className={styles.container}>
+      <div style={{
+        padding: 'var(--spacingVerticalM)',
+        color: 'var(--colorPaletteRedForeground1)',
+        textAlign: 'center',
+        border: '1px solid var(--colorPaletteRedBorder1)',
+        borderRadius: 'var(--borderRadiusMedium)',
+        backgroundColor: 'var(--colorPaletteRedBackground1)',
+        width: '100%'
+      }}>
+        <div style={{ marginBottom: 'var(--spacingVerticalS)' }}>
+          Failed to load color input
+        </div>
+        <div style={{ 
+          fontSize: 'var(--fontSizeBase200)', 
+          color: 'var(--colorPaletteRedForeground2)',
+          marginBottom: 'var(--spacingVerticalM)' 
+        }}>
+          {error.message}
+        </div>
+        <button 
+          onClick={resetError}
+          style={{
+            padding: 'var(--spacingVerticalS) var(--spacingHorizontalM)',
+            backgroundColor: 'var(--colorPaletteRedBackground2)',
+            border: '1px solid var(--colorPaletteRedBorder2)',
+            borderRadius: 'var(--borderRadiusMedium)',
+            color: 'var(--colorPaletteRedForeground1)',
+            cursor: 'pointer'
+          }}
+        >
+          Try Again
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export const ColorInput = React.memo<ColorInputProps>(({
   value,
   onChange,
   size = 'medium',
   disabled = false,
+  onError,
 }) => {
   const styles = useStyles();
   
@@ -140,57 +186,88 @@ export const ColorInput: React.FC<ColorInputProps> = ({
   const [red, green, blue] = React.useMemo(() => hexToRgb(value), [value]);
   const [hue, saturation, lightness] = React.useMemo(() => hexToHsl(value), [value]);
 
-
-
   const handleHexChange = React.useCallback((newHex: string) => {
-    if (/^#[0-9A-F]{6}$/i.test(newHex)) {
-      onChange(newHex.toUpperCase());
+    try {
+      if (/^#[0-9A-F]{6}$/i.test(newHex)) {
+        onChange(newHex.toUpperCase());
+      }
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in hex color change');
+      onError?.(errorObj);
     }
-  }, [onChange]);
+  }, [onChange, onError]);
 
   const handleColorModelChange = React.useCallback((newModel: ColorModel) => {
-    setColorModel(newModel);
-  }, []);
+    try {
+      setColorModel(newModel);
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in color model change');
+      onError?.(errorObj);
+    }
+  }, [onError]);
 
   const handleRGBChange = React.useCallback((values: { r: number; g: number; b: number }) => {
-    onChange(rgbToHex(values.r, values.g, values.b));
-  }, [onChange]);
+    try {
+      onChange(rgbToHex(values.r, values.g, values.b));
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in RGB color change');
+      onError?.(errorObj);
+    }
+  }, [onChange, onError]);
 
   const handleHSLChange = React.useCallback((values: { h: number; s: number; l: number }) => {
-    onChange(hslToHex(values.h, values.s, values.l));
-  }, [onChange]);
+    try {
+      onChange(hslToHex(values.h, values.s, values.l));
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in HSL color change');
+      onError?.(errorObj);
+    }
+  }, [onChange, onError]);
+
+  const handleError = React.useCallback((error: Error, errorInfo?: React.ErrorInfo) => {
+    onError?.(error, errorInfo);
+  }, [onError]);
 
   return (
-    <div className={styles.container}>
-      <div className={styles.modelRow}>
-        <ColorModelSelector
-          colorModel={colorModel}
-          onChange={handleColorModelChange}
-          size={size}
-          disabled={disabled}
-        />
-      </div>
+    <ErrorBoundary 
+      fallback={ColorInputErrorFallback}
+      onError={handleError}
+      resetOnPropsChange={true}
+    >
+      <div className={styles.container}>
+        <div className={styles.modelRow}>
+          <ColorModelSelector
+            colorModel={colorModel}
+            onChange={handleColorModelChange}
+            size={size}
+            disabled={disabled}
+            onError={onError}
+          />
+        </div>
 
-      <div className={styles.sliderRow}>
-        <RGBHSLColorSlidersInput
-          mode={colorModel}
-          rgbValues={{ r: red, g: green, b: blue }}
-          hslValues={{ h: hue, s: saturation, l: lightness }}
-          onRGBChange={handleRGBChange}
-          onHSLChange={handleHSLChange}
-        />
-      </div>
+        <div className={styles.sliderRow}>
+          <RGBHSLColorSlidersInput
+            mode={colorModel}
+            rgbValues={{ r: red, g: green, b: blue }}
+            hslValues={{ h: hue, s: saturation, l: lightness }}
+            onRGBChange={handleRGBChange}
+            onHSLChange={handleHSLChange}
+            onError={onError}
+          />
+        </div>
 
-      <div className={styles.hexRow}>
-        <ColorHexInput
-          value={value}
-          onChange={handleHexChange}
-          size="small"
-          length={6}
-          disabled={disabled}
-          swatchClickable={false}
-        />
+        <div className={styles.hexRow}>
+          <ColorHexInput
+            value={value}
+            onChange={handleHexChange}
+            size="small"
+            length={6}
+            disabled={disabled}
+            swatchClickable={false}
+            onError={onError}
+          />
+        </div>
       </div>
-    </div>
+    </ErrorBoundary>
   );
-}; 
+}); 

@@ -21,6 +21,7 @@ export interface ErrorHandlingTemplateProps {
   disabled?: boolean;
   className?: string;
   onValueChange?: (value: number | '') => void;
+  onError?: (error: Error) => void;
 }
 
 export const ErrorHandlingTemplate = React.memo<ErrorHandlingTemplateProps>(({
@@ -32,9 +33,10 @@ export const ErrorHandlingTemplate = React.memo<ErrorHandlingTemplateProps>(({
   disabled = false,
   className,
   onValueChange,
+  onError,
 }) => {
   const styles = useCommonStyles();
-  const sizeConfig = useComponentSize(size);
+  const sizeConfig = useComponentSize(size, onError);
 
   // Use validation hook
   const {

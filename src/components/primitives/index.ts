@@ -2,7 +2,7 @@
 export { HexInput } from './HexInput';
 export { NumericInput } from './NumericInput';
 export { SliderInput } from './SliderInput';
-export { UnitSelector } from './UnitSelector';
+export { UnitSelector } from '../components/UnitSelector';
 export { ColorSliderInput } from './ColorSliderInput';
 export { LockAspectRatio } from './LockAspectRatio';
 
@@ -10,7 +10,7 @@ export { LockAspectRatio } from './LockAspectRatio';
 export type { HexInputProps } from './HexInput';
 export type { NumericInputProps } from './NumericInput';
 export type { SliderInputProps } from './SliderInput';
-export type { UnitSelectorProps } from './UnitSelector';
+export type { UnitSelectorProps } from '../components/UnitSelector';
 export type { ColorSliderInputProps } from './ColorSliderInput'; 
 export type { LockAspectRatioProps } from './LockAspectRatio';
 

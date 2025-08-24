@@ -3,8 +3,9 @@
  * Custom hook for real-time input validation with error handling and user feedback.
  */
 import { useState, useCallback, useMemo } from 'react';
-import { ValidationOptions, ValidationResult } from '../types/common';
+import { ValidationOptions, ValidationResult, HexValidationOptions } from '../types/common';
 import { validateNumericInput, validateUnit, validateDimension } from '../utils/validation';
+import React from 'react'; // Added for useCallback
 
 export interface ValidationState {
   isValid: boolean;
@@ -30,142 +31,98 @@ export interface UseInputValidationReturn<T> {
   setDirty: (dirty: boolean) => void;
 }
 
-export const useInputValidation = <T>(
-  initialValue: T,
-  options: UseInputValidationOptions = {}
-): UseInputValidationReturn<T> => {
-  const {
-    validateOnChange = true,
-    validateOnBlur = true,
-    validateOnMount = false,
-    debounceMs = 0,
-    ...validationOptions
-  } = options;
+export const useInputValidation = (onError?: (error: Error) => void) => {
+  const validateNumericInput = React.useCallback((input: string, options: ValidationOptions = {}): ValidationResult => {
+    try {
+      const {
+        allowNegative = true,
+        allowDecimal = true,
+        minValue = -Infinity,
+        maxValue = Infinity,
+        maxDecimalPlaces = 10
+      } = options;
 
-  const [value, setValueState] = useState<T>(initialValue);
-  const [validation, setValidation] = useState<ValidationState>({
-    isValid: true,
-    error: null,
-    isDirty: false,
-    isTouched: false,
-  });
+      // Check if input is empty
+      if (input === '') {
+        return { isValid: true, value: '', error: null };
+      }
 
-  // Debounced validation
-  const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(null);
+      // Check if input is a valid number
+      const num = parseFloat(input);
+      if (isNaN(num)) {
+        return { isValid: false, value: input, error: 'Input must be a valid number' };
+      }
 
-  const clearDebounce = useCallback(() => {
-    if (debounceTimeout) {
-      clearTimeout(debounceTimeout);
-      setDebounceTimeout(null);
+      // Check negative constraint
+      if (!allowNegative && num < 0) {
+        return { isValid: false, value: input, error: 'Negative values are not allowed' };
+      }
+
+      // Check decimal constraint
+      if (!allowDecimal && !Number.isInteger(num)) {
+        return { isValid: false, value: input, error: 'Decimal values are not allowed' };
+      }
+
+      // Check decimal places constraint
+      const decimalPlaces = input.includes('.') ? input.split('.')[1].length : 0;
+      if (decimalPlaces > maxDecimalPlaces) {
+        return { isValid: false, value: input, error: `Maximum ${maxDecimalPlaces} decimal places allowed` };
+      }
+
+      // Check value range constraints
+      if (num < minValue) {
+        return { isValid: false, value: input, error: `Value must be at least ${minValue}` };
+      }
+      if (num > maxValue) {
+        return { isValid: false, value: input, error: `Value must be at most ${maxValue}` };
+      }
+
+      return { isValid: true, value: input, error: null };
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in numeric input validation');
+      onError?.(errorObj);
+      return { isValid: false, value: input, error: 'Validation error occurred' };
     }
-  }, [debounceTimeout]);
+  }, [onError]);
 
-  const debouncedValidate = useCallback((newValue: T) => {
-    clearDebounce();
-    
-    if (debounceMs > 0) {
-      const timeout = setTimeout(() => {
-        const result = validateValue(newValue);
-        setValidation(prev => ({
-          ...prev,
-          isValid: result.isValid,
-          error: result.error,
-        }));
-      }, debounceMs);
-      setDebounceTimeout(timeout);
-    } else {
-      const result = validateValue(newValue);
-      setValidation(prev => ({
-        ...prev,
-        isValid: result.isValid,
-        error: result.error,
-      }));
+  const validateHexColor = React.useCallback((input: string, options: HexValidationOptions = {}): ValidationResult => {
+    try {
+      const { requireHash = true, maxLength = 6 } = options;
+
+      // Check if input is empty
+      if (input === '') {
+        return { isValid: true, value: '', error: null };
+      }
+
+      // Check hash requirement
+      if (requireHash && !input.startsWith('#')) {
+        return { isValid: false, value: input, error: 'Hex color must start with #' };
+      }
+
+      // Remove hash for validation
+      const hexValue = input.startsWith('#') ? input.slice(1) : input;
+
+      // Check length
+      if (hexValue.length > maxLength) {
+        return { isValid: false, value: input, error: `Hex color must be at most ${maxLength} characters` };
+      }
+
+      // Check if all characters are valid hex
+      if (!/^[0-9A-Fa-f]*$/.test(hexValue)) {
+        return { isValid: false, value: input, error: 'Hex color must contain only 0-9, A-F, and a-f' };
+      }
+
+      return { isValid: true, value: input, error: null };
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in hex color validation');
+      onError?.(errorObj);
+      return { isValid: false, value: input, error: 'Validation error occurred' };
     }
-  }, [debounceMs, clearDebounce]);
-
-  // Validation function based on value type
-  const validateValue = useCallback((val: T): ValidationResult => {
-    if (typeof val === 'string') {
-      return validateNumericInput(val, validationOptions);
-    }
-    
-    // For other types, return valid by default
-    return { isValid: true, value: val as string | number | null, error: null };
-  }, [validationOptions]);
-
-  // Set value with optional validation
-  const setValue = useCallback((newValue: T) => {
-    setValueState(newValue);
-    
-    if (validateOnChange) {
-      debouncedValidate(newValue);
-    }
-    
-    setValidation(prev => ({
-      ...prev,
-      isDirty: true,
-    }));
-  }, [validateOnChange, debouncedValidate]);
-
-  // Manual validation
-  const validate = useCallback((): ValidationResult => {
-    const result = validateValue(value);
-    setValidation(prev => ({
-      ...prev,
-      isValid: result.isValid,
-      error: result.error,
-    }));
-    return result;
-  }, [value, validateValue]);
-
-  // Reset validation state
-  const reset = useCallback(() => {
-    setValueState(initialValue);
-    setValidation({
-      isValid: true,
-      error: null,
-      isDirty: false,
-      isTouched: false,
-    });
-    clearDebounce();
-  }, [initialValue, clearDebounce]);
-
-  // Set touched state
-  const setTouched = useCallback((touched: boolean) => {
-    setValidation(prev => ({ ...prev, isTouched: touched }));
-    
-    if (touched && validateOnBlur) {
-      validate();
-    }
-  }, [validateOnBlur, validate]);
-
-  // Set dirty state
-  const setDirty = useCallback((dirty: boolean) => {
-    setValidation(prev => ({ ...prev, isDirty: dirty }));
-  }, []);
-
-  // Validate on mount if enabled
-  useMemo(() => {
-    if (validateOnMount) {
-      validate();
-    }
-  }, [validateOnMount, validate]);
-
-  // Cleanup debounce on unmount
-  useMemo(() => {
-    return () => {
-      clearDebounce();
-    };
-  }, [clearDebounce]);
+  }, [onError]);
 
   return {
-    value,
-    setValue,
-    validation,
-    validate,
-    reset,
-    setTouched,
-    setDirty,
+    validateNumericInput,
+    validateHexColor,
   };
 };
 
@@ -174,7 +131,33 @@ export const useNumericValidation = (
   initialValue: number | '',
   options: UseInputValidationOptions = {}
 ) => {
-  return useInputValidation<number | ''>(initialValue, options);
+  const [value, setValueState] = useState<number | ''>(initialValue);
+  const [validation, setValidation] = useState<ValidationState>({
+    isValid: true,
+    error: null,
+    isDirty: false,
+    isTouched: false,
+  });
+
+  const setValue = useCallback((newValue: number | '') => {
+    setValueState(newValue);
+  }, []);
+
+  const setTouched = useCallback((touched: boolean) => {
+    setValidation(prev => ({ ...prev, isTouched: touched }));
+  }, []);
+
+  const setDirty = useCallback((dirty: boolean) => {
+    setValidation(prev => ({ ...prev, isDirty: dirty }));
+  }, []);
+
+  return {
+    value,
+    setValue,
+    validation,
+    setTouched,
+    setDirty,
+  };
 };
 
 export const useUnitValidation = (

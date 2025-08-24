@@ -7,6 +7,8 @@ import { makeStyles, tokens } from '@fluentui/react-components';
 import { SizeFields } from './SizeFields';
 import { PositionFields } from './PositionFields';
 
+import { ErrorBoundary } from '../error/ErrorBoundary';
+
 const useStyles = makeStyles({
   panel: {
     display: 'grid',
@@ -26,27 +28,36 @@ const useStyles = makeStyles({
     color: 'var(--colorNeutralForeground1)',
     marginBottom: tokens.spacingVerticalXS,
   },
-
+  errorFallback: {
+    padding: tokens.spacingVerticalM,
+    color: tokens.colorPaletteRedForeground1,
+    textAlign: 'center',
+    border: `1px solid ${tokens.colorPaletteRedBorder1}`,
+    borderRadius: tokens.borderRadiusMedium,
+    backgroundColor: tokens.colorPaletteRedBackground1,
+  },
 });
 
 export interface SizeAndPositionPanelProps {
   // Size properties
-  width: number;
-  height: number;
-  widthUnit: string;
-  heightUnit: string;
+  width?: number;
+  height?: number;
+  widthUnit?: string;
+  heightUnit?: string;
   
   // Position properties
-  position: string;
-  positions: string[];
-  x: number;
-  y: number;
-  xUnit: string;
-  yUnit: string;
+  position?: string;
+  positions?: string[];
+  x?: number;
+  y?: number;
+  xUnit?: string;
+  yUnit?: string;
   
   // Common properties
-  units: string[];
+  units?: string[];
   showLockAspectRatio?: boolean;
+  lockAspectRatio?: boolean;
+  onLockAspectRatioChange?: (locked: boolean) => void;
   disabled?: boolean;
   
   // Change handlers
@@ -63,60 +74,110 @@ export interface SizeAndPositionPanelProps {
     xUnit: string;
     yUnit: string;
   }) => void;
+  
+  // Error handling
+  onError?: (error: Error, errorInfo?: React.ErrorInfo) => void;
 }
 
+// Custom error fallback for SizeAndPositionPanel
+const SizeAndPositionPanelErrorFallback: React.FC<{ error: Error; resetError: () => void }> = ({ error, resetError }) => {
+  const styles = useStyles();
+  
+  return (
+    <div className={styles.errorFallback}>
+      <div style={{ marginBottom: tokens.spacingVerticalS }}>
+        Failed to load size and position settings
+      </div>
+      <div style={{ 
+        fontSize: tokens.fontSizeBase200, 
+        color: tokens.colorPaletteRedForeground2,
+        marginBottom: tokens.spacingVerticalM 
+      }}>
+        {error.message}
+      </div>
+      <button 
+        onClick={resetError}
+        style={{
+          padding: `${tokens.spacingVerticalS} ${tokens.spacingHorizontalM}`,
+          backgroundColor: tokens.colorPaletteRedBackground2,
+          border: `1px solid ${tokens.colorPaletteRedBorder2}`,
+          borderRadius: tokens.borderRadiusMedium,
+          color: tokens.colorPaletteRedForeground1,
+          cursor: 'pointer'
+        }}
+      >
+        Try Again
+      </button>
+    </div>
+  );
+};
+
 export const SizeAndPositionPanel = React.memo<SizeAndPositionPanelProps>(({
-  width,
-  height,
+  width = 15,
+  height = 10,
   widthUnit,
   heightUnit,
-  position,
-  positions,
-  x,
-  y,
+  position = 'Custom',
+  positions = ['top-left', 'top-center', 'top-right', 'center', 'bottom-left', 'bottom-center', 'bottom-right', 'Custom'],
+  x = 0,
+  y = 0,
   xUnit,
   yUnit,
   units,
   showLockAspectRatio = true,
+  lockAspectRatio,
+  onLockAspectRatioChange,
   disabled = false,
   onSizeChange,
   onPositionChange,
+  onError,
 }) => {
   const styles = useStyles();
 
+  const handleError = React.useCallback((error: Error, errorInfo?: React.ErrorInfo) => {
+    onError?.(error, errorInfo);
+  }, [onError]);
+
   return (
-    <div className={styles.panel}>
-      {/* Size Section */}
-      <div className={styles.section}>
-        <SizeFields
-          width={width}
-          height={height}
-          widthUnit={widthUnit}
-          heightUnit={heightUnit}
-          units={units}
-          showLockAspectRatio={showLockAspectRatio}
-          disabled={disabled}
-          onChange={onSizeChange}
-        />
+    <ErrorBoundary 
+      fallback={SizeAndPositionPanelErrorFallback}
+      onError={handleError}
+      resetOnPropsChange={true}
+    >
+      <div className={styles.panel}>
+        {/* Size Section */}
+        <div className={styles.section}>
+          <SizeFields
+            width={width}
+            height={height}
+            widthUnit={widthUnit}
+            heightUnit={heightUnit}
+            units={units}
+            showLockAspectRatio={showLockAspectRatio}
+            lockAspectRatio={lockAspectRatio}
+            onLockAspectRatioChange={onLockAspectRatioChange}
+            disabled={disabled}
+            onChange={onSizeChange}
+            onError={onError}
+          />
+        </div>
+        
+        {/* Position Section */}
+        <div className={styles.section}>
+          <PositionFields
+            position={position}
+            positions={positions}
+            x={x}
+            y={y}
+            xUnit={xUnit}
+            yUnit={yUnit}
+            units={units}
+            onChange={onPositionChange}
+            onError={onError}
+            disabled={disabled}
+          />
+        </div>
       </div>
-
-
-
-      {/* Position Section */}
-      <div className={styles.section}>
-        <PositionFields
-          position={position}
-          positions={positions}
-          x={x}
-          y={y}
-          xUnit={xUnit}
-          yUnit={yUnit}
-          units={units}
-          onChange={onPositionChange}
-          size="medium"
-          disabled={disabled}
-        />
-      </div>
-    </div>
+    </ErrorBoundary>
   );
 });

@@ -97,6 +97,7 @@ export interface ColorPickerProps {
   placeholder?: string;
   allowEmpty?: boolean;
   validateOnChange?: boolean;
+  onError?: (error: Error) => void;
 }
 
 export const LegacyColorPicker = React.memo<ColorPickerProps>(({
@@ -108,10 +109,11 @@ export const LegacyColorPicker = React.memo<ColorPickerProps>(({
   placeholder = '#000000',
   allowEmpty = false,
   validateOnChange = true,
+  onError,
 }) => {
   const styles = useStyles();
   const commonStyles = useCommonStyles();
-  const sizeConfig = useComponentSize(size);
+  const sizeConfig = useComponentSize(size, onError);
 
   // State for color picker
   const [isOpen, setIsOpen] = React.useState(false);

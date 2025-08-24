@@ -37,16 +37,16 @@ export interface DimensionComponentProps extends BaseComponentProps {
 export interface SizeFieldsData {
   width: number;
   height: number;
-  widthUnit: string;
-  heightUnit: string;
+  widthUnit?: string;
+  heightUnit?: string;
 }
 
 export interface PositionFieldsData {
   position: string;
   x: number;
   y: number;
-  xUnit: string;
-  yUnit: string;
+  xUnit?: string;
+  yUnit?: string;
 }
 
 export interface MarginsData {
@@ -54,10 +54,10 @@ export interface MarginsData {
   right: number;
   bottom: number;
   left: number;
-  topUnit: string;
-  rightUnit: string;
-  bottomUnit: string;
-  leftUnit: string;
+  topUnit?: string;
+  rightUnit?: string;
+  bottomUnit?: string;
+  leftUnit?: string;
 }
 
 export interface PaddingData {
@@ -65,10 +65,10 @@ export interface PaddingData {
   right: number;
   bottom: number;
   left: number;
-  topUnit: string;
-  rightUnit: string;
-  bottomUnit: string;
-  leftUnit: string;
+  topUnit?: string;
+  rightUnit?: string;
+  bottomUnit?: string;
+  leftUnit?: string;
 }
 
 export interface PaperSizeData {
@@ -86,12 +86,22 @@ export interface ValidationOptions {
   max?: number;
   nonNegative?: boolean;
   allowEmpty?: boolean;
+  allowNegative?: boolean;
+  allowDecimal?: boolean;
+  minValue?: number;
+  maxValue?: number;
+  maxDecimalPlaces?: number;
 }
 
 export interface ValidationResult {
   isValid: boolean;
   value: number | string | null;
   error: string | null;
+}
+
+export interface HexValidationOptions {
+  requireHash?: boolean;
+  maxLength?: number;
 }
 
 // Event handler types

@@ -6,10 +6,10 @@
 import * as React from 'react';
 import { makeStyles } from '@fluentui/react-components';
 import { NumericInput } from '../primitives/NumericInput';
-import { UnitSelector } from '../primitives/UnitSelector';
+import { UnitSelector, DEFAULT_UNIT } from '../components/UnitSelector';
 import { useUnitConversion, Unit } from '../../hooks/useUnitConversion';
 import { useFormLayout } from '../../styles/FormLayoutContext';
-import { useDecimalPlaces } from '../../hooks/useDecimalPlaces';
+import { ErrorBoundary } from '../error/ErrorBoundary';
 
 const useStyles = makeStyles({
   container: {
@@ -42,13 +42,57 @@ const useStyles = makeStyles({
 export interface DimensionInputProps {
   label: string;
   value: number | ''; // This is the cm value (internal storage)
-  unit: string; // This is the display unit
-  units: string[];
+  unit?: string; // This is the display unit, UnitSelector will default to cm
+  units?: string[]; // Available units, UnitSelector will default to standard units with cm first
   onChange: (value: number | '', unit: string) => void; // value is always in cm
+  onError?: (error: Error) => void;
   size?: 'small' | 'medium' | 'large';
   disabled?: boolean;
   hideLabel?: boolean;
 }
+
+// Custom error fallback for DimensionInput
+const DimensionInputErrorFallback: React.FC<{ error: Error; resetError: () => void }> = ({ error, resetError }) => {
+  const styles = useStyles();
+  
+  return (
+    <div className={styles.container}>
+      <div style={{
+        padding: 'var(--spacingVerticalS)',
+        color: 'var(--colorPaletteRedForeground1)',
+        textAlign: 'center',
+        border: '1px solid var(--colorPaletteRedBorder1)',
+        borderRadius: 'var(--borderRadiusMedium)',
+        backgroundColor: 'var(--colorPaletteRedBackground1)',
+        width: '100%'
+      }}>
+        <div style={{ marginBottom: 'var(--spacingVerticalS)' }}>
+          Failed to load dimension input
+        </div>
+        <div style={{ 
+          fontSize: 'var(--fontSizeBase200)', 
+          color: 'var(--colorPaletteRedForeground2)',
+          marginBottom: 'var(--spacingVerticalM)' 
+        }}>
+          {error.message}
+        </div>
+        <button 
+          onClick={resetError}
+          style={{
+            padding: 'var(--spacingVerticalS) var(--spacingHorizontalM)',
+            backgroundColor: 'var(--colorPaletteRedBackground2)',
+            border: '1px solid var(--colorPaletteRedBorder2)',
+            borderRadius: 'var(--borderRadiusMedium)',
+            color: 'var(--colorPaletteRedForeground1)',
+            cursor: 'pointer'
+          }}
+        >
+          Try Again
+        </button>
+      </div>
+    </div>
+  );
+};
 
 export const DimensionInput = React.memo<DimensionInputProps>(({ 
   label, 
@@ -56,6 +100,7 @@ export const DimensionInput = React.memo<DimensionInputProps>(({
   unit, 
   units, 
   onChange, 
+  onError,
   size = 'medium',
   disabled = false,
   hideLabel = false,
@@ -63,59 +108,102 @@ export const DimensionInput = React.memo<DimensionInputProps>(({
   const styles = useStyles();
   const layout = useFormLayout();
   const { cmToDisplay, displayToCm } = useUnitConversion();
-  const decimalPlaces = useDecimalPlaces(unit as Unit);
 
   const getLabelStyle = React.useCallback((): React.CSSProperties => {
-    return { width: `${layout.labelWidth}px` };
-  }, [layout.labelWidth]);
+    try {
+      return { width: `${layout.labelWidth}px` };
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in label style calculation');
+      onError?.(errorObj);
+      return { width: '100px' }; // Return fallback width
+    }
+  }, [layout.labelWidth, onError]);
 
   // Convert cm value to display value in current unit
   const displayValue = React.useMemo(() => {
-    if (typeof value === 'number') {
-      return cmToDisplay(value, unit as Unit);
+    try {
+      if (typeof value === 'number') {
+        const currentUnit = unit || DEFAULT_UNIT;
+        return cmToDisplay(value, currentUnit as Unit);
+      }
+      return value;
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in display value conversion');
+      onError?.(errorObj);
+      return value; // Return original value on error
     }
-    return value;
-  }, [value, unit, cmToDisplay]);
+  }, [value, unit, cmToDisplay, onError]);
 
   // Handle numeric input change (convert display value back to cm)
   const handleNumericChange = React.useCallback((displayValue: number | '') => {
-    if (typeof displayValue === 'number') {
-      const cmValue = displayToCm(displayValue, unit as Unit);
-      onChange(cmValue, unit);
-    } else {
-      onChange(displayValue, unit);
+    try {
+      const currentUnit = unit || DEFAULT_UNIT;
+      if (typeof displayValue === 'number') {
+        const cmValue = displayToCm(displayValue, currentUnit as Unit);
+        onChange(cmValue, currentUnit);
+      } else {
+        onChange(displayValue, currentUnit);
+      }
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in numeric input change');
+      onError?.(errorObj);
     }
-  }, [unit, displayToCm, onChange]);
+  }, [unit, displayToCm, onChange, onError]);
 
   // Handle unit change (convert cm value to new display unit)
   const handleUnitChange = React.useCallback((newUnit: string) => {
-    // The internal cm value stays the same, only the display unit changes
-    onChange(value, newUnit);
-  }, [value, onChange]);
+    try {
+      // The internal cm value stays the same, only the display unit changes
+      onChange(value, newUnit);
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in unit change');
+      onError?.(errorObj);
+    }
+  }, [value, onChange, onError]);
 
-  const labelStyle = React.useMemo(() => getLabelStyle(), [getLabelStyle]);
+  const labelStyle = React.useMemo(() => {
+    try {
+      return getLabelStyle();
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in label style memo');
+      onError?.(errorObj);
+      return { width: '100px' }; // Return fallback width
+    }
+  }, [getLabelStyle, onError]);
+
+  const handleError = React.useCallback((error: Error, errorInfo?: React.ErrorInfo) => {
+    onError?.(error);
+  }, [onError]);
 
   return (
-    <div className={styles.container}>
-      {!hideLabel && (
-        <div className={styles.label} style={labelStyle}>
-          {label}:&nbsp;
-        </div>
-      )}
-      <NumericInput 
-        value={displayValue} 
-        onChange={handleNumericChange} 
-        size={size}
-        disabled={disabled}
-        decimalPlaces={decimalPlaces}
-      />
-      <UnitSelector 
-        unit={unit} 
-        units={units} 
-        onChange={handleUnitChange} 
-        size={size}
-        disabled={disabled}
-      />
-    </div>
+    <ErrorBoundary 
+      fallback={DimensionInputErrorFallback}
+      onError={handleError}
+      resetOnPropsChange={true}
+    >
+      <div className={styles.container}>
+        {!hideLabel && (
+          <div className={styles.label} style={labelStyle}>
+            {label}:&nbsp;
+          </div>
+        )}
+        <NumericInput
+          value={displayValue}
+          onChange={handleNumericChange}
+          size={size}
+          disabled={disabled}
+          onError={onError}
+        />
+        
+        <UnitSelector
+          {...(unit !== undefined && { unit })}
+          {...(units !== undefined && { units })}
+          onChange={handleUnitChange}
+          size={size}
+          disabled={disabled}
+          onError={onError}
+        />
+      </div>
+    </ErrorBoundary>
   );
 });

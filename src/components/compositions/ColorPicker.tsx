@@ -122,6 +122,7 @@ export interface ResponsiveColorPickerProps {
   allowEmpty?: boolean;
   validateOnChange?: boolean;
   breakpoint?: number; // Screen width breakpoint for layout switching
+  onError?: (error: Error) => void;
 }
 
 export const ResponsiveColorPicker = React.memo<ResponsiveColorPickerProps>(({
@@ -134,10 +135,11 @@ export const ResponsiveColorPicker = React.memo<ResponsiveColorPickerProps>(({
   allowEmpty = false,
   validateOnChange = true,
   breakpoint = 768, // Default breakpoint for mobile/desktop
+  onError,
 }) => {
   const styles = useStyles();
   const commonStyles = useCommonStyles();
-  const sizeConfig = useComponentSize(size);
+  const sizeConfig = useComponentSize(size, onError);
 
   // State for color picker
   const [isOpen, setIsOpen] = React.useState(false);

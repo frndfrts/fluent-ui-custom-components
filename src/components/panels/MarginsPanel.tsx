@@ -1,12 +1,14 @@
 
 /**
  * MarginsPanel.tsx
- * Panel for margin settings with individual unit controls for each side.
+ * Panel for managing margin settings with individual controls for each side.
  */
 import * as React from 'react';
 import { makeStyles, tokens, Text } from '@fluentui/react-components';
 import { DimensionInput } from '../compositions/DimensionInput';
 import { FormLayoutProvider } from '../../styles/FormLayoutContext';
+import { ErrorBoundary } from '../error/ErrorBoundary';
+import { DEFAULT_UNIT } from '../components/UnitSelector';
 
 const useStyles = makeStyles({
   panel: {
@@ -27,6 +29,14 @@ const useStyles = makeStyles({
     color: 'var(--colorNeutralForeground1)',
     marginBottom: tokens.spacingVerticalXS,
   },
+  errorFallback: {
+    padding: tokens.spacingVerticalM,
+    color: tokens.colorPaletteRedForeground1,
+    textAlign: 'center',
+    border: `1px solid ${tokens.colorPaletteRedBorder1}`,
+    borderRadius: tokens.borderRadiusMedium,
+    backgroundColor: tokens.colorPaletteRedBackground1,
+  },
 });
 
 export interface Margins {
@@ -34,70 +44,158 @@ export interface Margins {
   right: number;
   bottom: number;
   left: number;
-  topUnit: string;
-  rightUnit: string;
-  bottomUnit: string;
-  leftUnit: string;
+  topUnit?: string;
+  rightUnit?: string;
+  bottomUnit?: string;
+  leftUnit?: string;
 }
 
 export interface MarginsPanelProps {
-  margins: Margins;
-  units: string[];
-  onChange: (margins: Margins) => void;
+  margins?: Margins;
+  units?: string[];
+  onChange?: (margins: Margins) => void;
+  onError?: (error: Error, errorInfo?: React.ErrorInfo) => void;
   disabled?: boolean;
 }
 
+// Custom error fallback for MarginsPanel
+const MarginsPanelErrorFallback: React.FC<{ error: Error; resetError: () => void }> = ({ error, resetError }) => {
+  const styles = useStyles();
+  
+  return (
+    <div className={styles.errorFallback}>
+      <div style={{ marginBottom: tokens.spacingVerticalS }}>
+        Failed to load margins settings
+      </div>
+      <div style={{ 
+        fontSize: tokens.fontSizeBase200, 
+        color: tokens.colorPaletteRedForeground2,
+        marginBottom: tokens.spacingVerticalM 
+      }}>
+        {error.message}
+      </div>
+      <button 
+        onClick={resetError}
+        style={{
+          padding: `${tokens.spacingVerticalS} ${tokens.spacingHorizontalM}`,
+          backgroundColor: tokens.colorPaletteRedBackground2,
+          border: `1px solid ${tokens.colorPaletteRedBorder2}`,
+          borderRadius: tokens.borderRadiusMedium,
+          color: tokens.colorPaletteRedForeground1,
+          cursor: 'pointer'
+        }}
+      >
+        Try Again
+      </button>
+    </div>
+  );
+};
+
 export const MarginsPanel = React.memo<MarginsPanelProps>(({
-  margins,
+  margins: externalMargins,
   units,
-  onChange,
+  onChange: externalOnChange,
+  onError,
   disabled = false,
 }) => {
   const styles = useStyles();
 
-  const handleTopChange = React.useCallback((value: number | '', unit: string) => {
-    onChange({
-      ...margins,
-      top: typeof value === 'number' ? value : 0,
-      topUnit: unit,
-    });
-  }, [margins, onChange]);
+  // Use default margins if none provided, wrapped in useMemo to prevent unnecessary re-renders
+  const margins = React.useMemo(() => externalMargins || { 
+    top: 0, 
+    right: 0, 
+    bottom: 0, 
+    left: 0, 
+    topUnit: DEFAULT_UNIT, 
+    rightUnit: DEFAULT_UNIT, 
+    bottomUnit: DEFAULT_UNIT, 
+    leftUnit: DEFAULT_UNIT 
+  }, [externalMargins]);
 
-  const handleRightChange = React.useCallback((value: number | '', unit: string) => {
-    onChange({
-      ...margins,
-      right: typeof value === 'number' ? value : 0,
-      rightUnit: unit,
-    });
-  }, [margins, onChange]);
+  const handleMarginChange = React.useCallback((side: 'top' | 'right' | 'bottom' | 'left') => {
+    return (value: number | '', unit: string) => {
+      try {
+        if (externalOnChange) {
+          const updatedMargins = { ...margins };
+          if (side === 'top') {
+            updatedMargins.top = typeof value === 'number' ? value : 0;
+            updatedMargins.topUnit = unit;
+          } else if (side === 'right') {
+            updatedMargins.right = typeof value === 'number' ? value : 0;
+            updatedMargins.rightUnit = unit;
+          } else if (side === 'bottom') {
+            updatedMargins.bottom = typeof value === 'number' ? value : 0;
+            updatedMargins.bottomUnit = unit;
+          } else if (side === 'left') {
+            updatedMargins.left = typeof value === 'number' ? value : 0;
+            updatedMargins.leftUnit = unit;
+          }
+          externalOnChange(updatedMargins);
+        }
+      } catch (error) {
+        const errorObj = error instanceof Error ? error : new Error('Unknown error in margin change');
+        onError?.(errorObj);
+      }
+    };
+  }, [margins, externalOnChange, onError]);
 
-  const handleBottomChange = React.useCallback((value: number | '', unit: string) => {
-    onChange({
-      ...margins,
-      bottom: typeof value === 'number' ? value : 0,
-      bottomUnit: unit,
-    });
-  }, [margins, onChange]);
-
-  const handleLeftChange = React.useCallback((value: number | '', unit: string) => {
-    onChange({
-      ...margins,
-      left: typeof value === 'number' ? value : 0,
-      leftUnit: unit,
-    });
-  }, [margins, onChange]);
+  const handleError = React.useCallback((error: Error, errorInfo?: React.ErrorInfo) => {
+    onError?.(error, errorInfo);
+  }, [onError]);
 
   return (
-    <FormLayoutProvider>
-      <div className={styles.panel}>
-        <Text className={styles.sectionTitle}>Margins</Text>
-        <div className={styles.section}>
-          <DimensionInput label="Top" value={margins.top} unit={margins.topUnit} units={units} onChange={handleTopChange} disabled={disabled} />
-          <DimensionInput label="Right" value={margins.right} unit={margins.rightUnit} units={units} onChange={handleRightChange} disabled={disabled} />
-          <DimensionInput label="Bottom" value={margins.bottom} unit={margins.bottomUnit} units={units} onChange={handleBottomChange} disabled={disabled} />
-          <DimensionInput label="Left" value={margins.left} unit={margins.leftUnit} units={units} onChange={handleLeftChange} disabled={disabled} />
+    <ErrorBoundary 
+      fallback={MarginsPanelErrorFallback}
+      onError={handleError}
+      resetOnPropsChange={true}
+    >
+      <FormLayoutProvider>
+        <div className={styles.panel}>
+          <Text className={styles.sectionTitle}>Margins</Text>
+          
+          <div className={styles.section}>
+            <DimensionInput
+              label="Top"
+              value={margins.top}
+              {...(margins.topUnit !== undefined && { unit: margins.topUnit })}
+              {...(units !== undefined && { units })}
+              onChange={handleMarginChange('top')}
+              disabled={disabled}
+              onError={onError}
+            />
+            
+            <DimensionInput
+              label="Right"
+              value={margins.right}
+              {...(margins.rightUnit !== undefined && { unit: margins.rightUnit })}
+              {...(units !== undefined && { units })}
+              onChange={handleMarginChange('right')}
+              disabled={disabled}
+              onError={onError}
+            />
+            
+            <DimensionInput
+              label="Bottom"
+              value={margins.bottom}
+              {...(margins.bottomUnit !== undefined && { unit: margins.bottomUnit })}
+              {...(units !== undefined && { units })}
+              onChange={handleMarginChange('bottom')}
+              disabled={disabled}
+              onError={onError}
+            />
+            
+            <DimensionInput
+              label="Left"
+              value={margins.left}
+              {...(margins.leftUnit !== undefined && { unit: margins.leftUnit })}
+              {...(units !== undefined && { units })}
+              onChange={handleMarginChange('left')}
+              disabled={disabled}
+              onError={onError}
+            />
+          </div>
         </div>
-      </div>
-    </FormLayoutProvider>
+      </FormLayoutProvider>
+    </ErrorBoundary>
   );
 });

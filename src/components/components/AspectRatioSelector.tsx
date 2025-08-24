@@ -4,7 +4,8 @@
  */
 import * as React from 'react';
 import { makeStyles } from '@fluentui/react-components';
-import { UniversalSelector } from './UniversalSelector';
+import { UniversalSelector } from '../primitives/UniversalSelector';
+import { useFormLayout } from '../../styles/FormLayoutContext';
 
 const useStyles = makeStyles({
   container: {
@@ -36,77 +37,89 @@ const useStyles = makeStyles({
   },
 });
 
+// Standard aspect ratio options with Custom as default
+export const DEFAULT_ASPECT_RATIOS = ['1:1', '4:3', '16:9', '3:2', '5:4', 'Custom'];
+export const DEFAULT_ASPECT_RATIO = '1:1';
+
 export interface AspectRatioSelectorProps {
-  label?: string;
-  aspectRatio: string;
-  aspectRatios: string[];
-  onChange: (aspectRatio: string) => void;
+  value?: string;
+  options?: string[];
+  onChange: (value: string) => void;
+  onError?: (error: Error) => void;
   size?: 'small' | 'medium' | 'large';
-  width?: string | number;
-  minWidth?: string | number;
-  maxWidth?: string | number;
-  fullWidth?: boolean;
-  customOptionText?: string;
-  sortAlphabetically?: boolean;
   disabled?: boolean;
 }
 
 export const AspectRatioSelector = React.memo<AspectRatioSelectorProps>(({ 
-  label = 'Aspect Ratio',
-  aspectRatio, 
-  aspectRatios, 
+  value = DEFAULT_ASPECT_RATIO, 
+  options = DEFAULT_ASPECT_RATIOS, 
   onChange,
+  onError,
   size = 'medium',
-  width,
-  minWidth,
-  maxWidth,
-  fullWidth = false,
-  customOptionText = 'Custom',
-  sortAlphabetically = false,
-  disabled = false
+  disabled = false,
 }) => {
   const styles = useStyles();
+  const layout = useFormLayout();
 
-  const getLabelClassName = React.useCallback(() => {
-    const baseClass = styles.label;
-    if (size === 'small') {
-      return `${baseClass} ${styles.labelSmall}`;
-    } else if (size === 'large') {
-      return `${baseClass} ${styles.labelLarge}`;
-    } else {
-      return `${baseClass} ${styles.labelMedium}`;
+  const getLabelStyle = React.useCallback((): React.CSSProperties => {
+    try {
+      return { width: `${layout.labelWidth}px` };
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in label style calculation');
+      onError?.(errorObj);
+      return { width: '100px' }; // Return fallback width
     }
-  }, [styles.label, styles.labelSmall, styles.labelMedium, styles.labelLarge, size]);
+  }, [layout.labelWidth, onError]);
 
-  // AspectRatioSelector defines its own sizing logic
-  const getAspectRatioSelectorWidth = React.useCallback(() => {
-    if (width) return width;
-    if (fullWidth) return '100%';
-    
-    if (size === 'small') return '100px';
-    if (size === 'large') return '140px';
-    return '120px'; // medium default
-  }, [width, fullWidth, size]);
+  // Calculate the exact width needed to match DimensionInput layout
+  const getSelectorWidth = React.useCallback(() => {
+    try {
+      return layout.combinedControlWidth;
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in selector width calculation');
+      onError?.(errorObj);
+      return 200; // Return fallback width
+    }
+  }, [layout.combinedControlWidth, onError]);
 
-  const labelClassName = React.useMemo(() => getLabelClassName(), [getLabelClassName]);
+  const selectorWidth = React.useMemo(() => {
+    try {
+      return getSelectorWidth();
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in selector width memo');
+      onError?.(errorObj);
+      return 200; // Return fallback width
+    }
+  }, [getSelectorWidth, onError]);
+  
+  const labelStyle = React.useMemo(() => {
+    try {
+      return getLabelStyle();
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in label style memo');
+      onError?.(errorObj);
+      return { width: '100px' }; // Return fallback width
+    }
+  }, [getLabelStyle, onError]);
 
   return (
     <div className={styles.container}>
-      <div className={labelClassName}>
-        {label}:&nbsp;
+      <div className={styles.label} style={labelStyle}>
+        Aspect Ratio:&nbsp;
       </div>
       <UniversalSelector
-        value={aspectRatio}
-        options={aspectRatios}
+        value={value}
+        options={options}
         onChange={onChange}
-        width={getAspectRatioSelectorWidth()}
-        minWidth={minWidth}
-        maxWidth={maxWidth}
-        fullWidth={fullWidth}
+        width={selectorWidth}
+        minWidth={undefined}
+        maxWidth={undefined}
+        fullWidth={false}
         showCustomOption={true}
-        customOptionText={customOptionText}
-        sortAlphabetically={sortAlphabetically}
+        customOptionText="Custom"
+        sortAlphabetically={true}
         disabled={disabled}
+        onError={onError}
       />
     </div>
   );

@@ -16,6 +16,7 @@ export interface ComponentTemplateProps extends InputComponentProps {
   max?: number;
   step?: number;
   nonNegative?: boolean;
+  onError?: (error: Error) => void;
 }
 
 export const ComponentTemplate = React.memo<ComponentTemplateProps>(({
@@ -29,9 +30,10 @@ export const ComponentTemplate = React.memo<ComponentTemplateProps>(({
   max = 10000,
   step = 0.1,
   nonNegative = false,
+  onError,
 }) => {
   const styles = useCommonStyles();
-  const sizeConfig = useComponentSize(size);
+  const sizeConfig = useComponentSize(size, onError);
   const decimalPlaces = useDecimalPlaces('cm'); // Example unit
 
   // State management

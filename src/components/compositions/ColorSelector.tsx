@@ -7,6 +7,8 @@ import * as React from 'react';
 import { makeStyles, Tooltip, ColorSwatch } from '@fluentui/react-components';
 import { SwatchPicker, renderSwatchPickerGrid } from '@fluentui/react-swatch-picker';
 import type { ColorSwatchProps, SwatchProps } from '@fluentui/react-components';
+import { ErrorBoundary } from '../error/ErrorBoundary';
+import { useInputValidation } from '../../hooks/useInputValidation';
 
 const useStyles = makeStyles({
   container: {
@@ -18,9 +20,9 @@ const useStyles = makeStyles({
     borderRadius: 'var(--borderRadiusMedium)',
     width: '240px', // Fixed width
     height: '240px', // Fixed height
-    border: '1px solid red',
     boxSizing: 'border-box', // Ensure border is included in the total size
   },
+
 });
 
 // Professional color palette organized by color families (64 colors - 8x8 grid)
@@ -134,7 +136,56 @@ export interface ColorSelectorProps {
   columns?: number; // Number of columns in the grid, defaults to 8
   showTooltips?: boolean; // Whether to show color tooltips
   colorModel?: 'rgb' | 'hsl'; // Color model for tooltip display
+  onError?: (error: Error, errorInfo?: React.ErrorInfo) => void;
 }
+
+// Custom error fallback for ColorSelector
+const ColorSelectorErrorFallback: React.FC<{ error: Error; resetError: () => void }> = ({ error, resetError }) => {
+  const styles = useStyles();
+  
+  return (
+    <div className={styles.container}>
+      <div style={{
+        padding: 'var(--spacingVerticalM)',
+        color: 'var(--colorPaletteRedForeground1)',
+        textAlign: 'center',
+        border: '1px solid var(--colorPaletteRedBorder1)',
+        borderRadius: 'var(--borderRadiusMedium)',
+        backgroundColor: 'var(--colorPaletteRedBackground1)',
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+        <div style={{ marginBottom: 'var(--spacingVerticalS)' }}>
+          Failed to load color selector
+        </div>
+        <div style={{ 
+          fontSize: 'var(--fontSizeBase200)', 
+          color: 'var(--colorPaletteRedForeground2)',
+          marginBottom: 'var(--spacingVerticalM)' 
+        }}>
+          {error.message}
+        </div>
+        <button 
+          onClick={resetError}
+          style={{
+            padding: 'var(--spacingVerticalS) var(--spacingHorizontalM)',
+            backgroundColor: 'var(--colorPaletteRedBackground2)',
+            border: '1px solid var(--colorPaletteRedBorder2)',
+            borderRadius: 'var(--borderRadiusMedium)',
+            color: 'var(--colorPaletteRedForeground1)',
+            cursor: 'pointer'
+          }}
+        >
+          Try Again
+        </button>
+      </div>
+    </div>
+  );
+};
 
 export const ColorSelector = React.memo<ColorSelectorProps>(({
   value,
@@ -144,65 +195,94 @@ export const ColorSelector = React.memo<ColorSelectorProps>(({
   columns = 8,
   showTooltips = true,
   colorModel = 'rgb',
+  onError,
 }) => {
   const styles = useStyles();
+  const { validateHexColor } = useInputValidation(onError);
 
   const handleSelectionChange = React.useCallback((event: any, data: { selectedValue: string; selectedSwatch: string }) => {
-    if (!disabled) {
-      onChange(data.selectedValue);
+    try {
+      if (!disabled) {
+        // Validate the selected color
+        const validation = validateHexColor(data.selectedValue);
+        if (validation.isValid) {
+          onChange(data.selectedValue);
+        } else {
+          onError?.(new Error(`Invalid color selected: ${validation.error}`));
+        }
+      }
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in color selection');
+      onError?.(errorObj);
     }
-  }, [onChange, disabled]);
+  }, [onChange, disabled, validateHexColor, onError]);
 
   const swatchPickerSize = 'medium' as const;
 
-  const colorItems: SwatchProps[] = React.useMemo(() => 
-    colors.map(color => ({
-      color,
-      value: color,
-      disabled,
-      size: swatchPickerSize,
-      shape: 'square' as const,
-    })), [colors, disabled, swatchPickerSize]
-  );
+  const colorItems: SwatchProps[] = React.useMemo(() => {
+    try {
+      return colors.map(color => ({
+        color,
+        value: color,
+        disabled,
+        size: swatchPickerSize,
+        shape: 'square' as const,
+      }));
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in color items creation');
+      onError?.(errorObj);
+      return [];
+    }
+  }, [colors, disabled, swatchPickerSize, onError]);
+
+  const handleError = React.useCallback((error: Error, errorInfo?: React.ErrorInfo) => {
+    onError?.(error, errorInfo);
+  }, [onError]);
 
   return (
-    <div className={styles.container}>
-      <SwatchPicker
-        layout="grid"
-        selectedValue={value}
-        onSelectionChange={handleSelectionChange}
-        size={swatchPickerSize}
-        shape="square"
-        spacing="small"
-      >
-        {renderSwatchPickerGrid({
-          items: colorItems,
-          columnCount: columns,
-          renderSwatch: (item: SwatchProps) => (
-            showTooltips ? (
-              <ColorSwatchWithTooltip
-                key={item.value}
-                color={item.color ?? ""}
-                value={item.value}
-                size={item.size}
-                shape={item.shape}
-                disabled={item.disabled}
-                colorModel={colorModel}
-              />
-            ) : (
-              <ColorSwatch
-                key={item.value}
-                color={item.color ?? ""}
-                value={item.value}
-                size={item.size}
-                shape={item.shape}
-                disabled={item.disabled}
-              />
-            )
-          ),
-        })}
-      </SwatchPicker>
-    </div>
+    <ErrorBoundary 
+      fallback={ColorSelectorErrorFallback}
+      onError={handleError}
+      resetOnPropsChange={true}
+    >
+      <div className={styles.container}>
+        <SwatchPicker
+          layout="grid"
+          selectedValue={value}
+          onSelectionChange={handleSelectionChange}
+          size={swatchPickerSize}
+          shape="square"
+          spacing="small"
+        >
+          {renderSwatchPickerGrid({
+            items: colorItems,
+            columnCount: columns,
+            renderSwatch: (item: SwatchProps) => (
+              showTooltips ? (
+                <ColorSwatchWithTooltip
+                  key={item.value}
+                  color={item.color ?? ""}
+                  value={item.value}
+                  size={item.size}
+                  shape={item.shape}
+                  disabled={item.disabled}
+                  colorModel={colorModel}
+                />
+              ) : (
+                <ColorSwatch
+                  key={item.value}
+                  color={item.color ?? ""}
+                  value={item.value}
+                  size={item.size}
+                  shape={item.shape}
+                  disabled={item.disabled}
+                />
+              )
+            ),
+          })}
+        </SwatchPicker>
+      </div>
+    </ErrorBoundary>
   );
 });
 

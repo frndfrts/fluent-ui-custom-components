@@ -5,7 +5,7 @@
 import * as React from 'react';
 import { makeStyles } from '@fluentui/react-components';
 import { useFormLayout } from '../../styles/FormLayoutContext';
-import { UniversalSelector } from './UniversalSelector';
+import { UniversalSelector } from '../primitives/UniversalSelector';
 
 const useStyles = makeStyles({
   container: {
@@ -28,72 +28,115 @@ const useStyles = makeStyles({
 
 });
 
+// Standard position options with Custom as default (complete 3x3 grid + center + custom)
+export const DEFAULT_POSITIONS = [
+  'top-left', 'top-center', 'top-right',
+  'middle-left', 'middle-center', 'middle-right', 
+  'bottom-left', 'bottom-center', 'bottom-right',
+  'Custom'
+];
+export const DEFAULT_POSITION = 'Custom';
+
 export interface PositionSelectorProps {
-  label?: string;
-  position: string;
-  positions: string[];
-  onChange: (position: string) => void;
+  value?: string;
+  options?: string[];
+  onChange: (value: string) => void;
+  onError?: (error: Error) => void;
   size?: 'small' | 'medium' | 'large';
-  width?: string | number;
-  minWidth?: string | number;
-  maxWidth?: string | number;
-  fullWidth?: boolean;
-  customOptionText?: string;
-  sortAlphabetically?: boolean;
   disabled?: boolean;
-  hideLabel?: boolean;
 }
 
 export const PositionSelector = React.memo<PositionSelectorProps>(({ 
-  label = 'Position',
-  position, 
-  positions, 
+  value = DEFAULT_POSITION, 
+  options = DEFAULT_POSITIONS, 
   onChange,
+  onError,
   size = 'medium',
-  width,
-  minWidth,
-  maxWidth,
-  fullWidth = false,
-  customOptionText = 'Custom',
-  sortAlphabetically = false,
   disabled = false,
-  hideLabel = false,
 }) => {
   const styles = useStyles();
   const layout = useFormLayout();
 
   const getLabelStyle = React.useCallback((): React.CSSProperties => {
-    return { width: `${layout.labelWidth}px` };
-  }, [layout.labelWidth]);
+    try {
+      return { width: `${layout.labelWidth}px` };
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in label style calculation');
+      onError?.(errorObj);
+      return { width: '100px' }; // Return fallback width
+    }
+  }, [layout.labelWidth, onError]);
 
   // Calculate the exact width needed to match DimensionInput layout
   // Width must equal: NumericInput + gap + UnitSelector to align left edges correctly
   const getSelectorWidth = React.useCallback(() => {
-    return layout.combinedControlWidth;
-  }, [layout.combinedControlWidth]);
+    try {
+      return layout.combinedControlWidth;
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in selector width calculation');
+      onError?.(errorObj);
+      return 200; // Return fallback width
+    }
+  }, [layout.combinedControlWidth, onError]);
 
-  const selectorWidth = React.useMemo(() => getSelectorWidth(), [getSelectorWidth]);
-  const labelStyle = React.useMemo(() => getLabelStyle(), [getLabelStyle]);
+  const selectorWidth = React.useMemo(() => {
+    try {
+      return getSelectorWidth();
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in selector width memo');
+      onError?.(errorObj);
+      return 200; // Return fallback width
+    }
+  }, [getSelectorWidth, onError]);
+  
+  const labelStyle = React.useMemo(() => {
+    try {
+      return getLabelStyle();
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in label style memo');
+      onError?.(errorObj);
+      return { width: '100px' }; // Return fallback width
+    }
+  }, [getLabelStyle, onError]);
+
+  // Function to capitalize position labels for display
+  const capitalizePosition = React.useCallback((position: string): string => {
+    if (position === 'Custom') return 'Custom';
+    return position.split('-').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ');
+  }, []);
+
+  // Create display options with proper capitalization
+  const displayOptions = React.useMemo(() => {
+    return options.map(option => ({
+      value: option,
+      label: capitalizePosition(option)
+    }));
+  }, [options, capitalizePosition]);
+
+  const handlePositionChange = React.useCallback((selectedValue: string) => {
+    onChange(selectedValue);
+  }, [onChange]);
 
   return (
     <div className={styles.container}>
-      {!hideLabel && (
-        <div className={styles.label} style={labelStyle}>
-          {label}:&nbsp;
-        </div>
-      )}
+      <div className={styles.label} style={labelStyle}>
+        Position:&nbsp;
+      </div>
       <UniversalSelector
-        value={position}
-        options={positions}
-        onChange={onChange}
+        value={value}
+        options={displayOptions}
+        onChange={handlePositionChange}
         width={selectorWidth} // Use calculated width for perfect alignment
-        minWidth={minWidth}
-        maxWidth={maxWidth}
+        minWidth={undefined}
+        maxWidth={undefined}
         fullWidth={false} // Use calculated width instead of full width
-        showCustomOption={true}
-        customOptionText={customOptionText}
-        sortAlphabetically={sortAlphabetically}
+        showCustomOption={false} // Don't add duplicate Custom since it's already in the options
+        customOptionText=""
+        sortAlphabetically={false}
         disabled={disabled}
+        onError={onError}
       />
     </div>
   );

@@ -3,9 +3,9 @@
 export type ComponentSize = 'small' | 'medium' | 'large';
 
 export const labelColumnWidth: Record<ComponentSize, number> = {
-  small: 120,
-  medium: 160,
-  large: 200,
+  small: 80,
+  medium: 100,
+  large: 120,
 };
 
 export const numericTrackWidth: Record<ComponentSize, number> = {

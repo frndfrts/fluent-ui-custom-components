@@ -24,24 +24,27 @@ import {
 } from '@fluentui/react-components';
 import React from 'react';
 import { NumericInput } from './components/primitives/NumericInput';
+import { HexInput } from './components/primitives/HexInput';
 import { ColorSelector } from './components/compositions/ColorSelector';
 import { SliderInput } from './components/primitives/SliderInput';
 import { ColorSliderInput } from './components/primitives/ColorSliderInput';
 import { MultipleSlidersInput } from './components/compositions/MultipleSlidersInput';
-import { HexInput } from './components/primitives/HexInput';
+
+
 import { ColorHexInput } from './components/compositions/ColorHexInput';
+import { LabeledColorPicker } from './components/compositions/LabeledColorPicker';
 import { ColorModelSelector } from './components/components/ColorModelSelector';
 import { AspectRatioSelector } from './components/components/AspectRatioSelector';
 import { PaperSelector } from './components/components/PaperSelector';
-import { PositionSelector } from './components/components/PositionSelector';
+import { PositionSelector, DEFAULT_POSITIONS } from './components/components/PositionSelector';
 import { OrientationSelector } from './components/components/OrientationSelector';
-import { UnitSelector } from './components/primitives/UnitSelector';
-import { UniversalSelector } from './components/components/UniversalSelector';
+import { UnitSelector } from './components/components/UnitSelector';
+import { UniversalSelector } from './components/primitives/UniversalSelector';
 import { ColorInput } from './components/compositions/ColorInput';
 import { DimensionInput } from './components/compositions/DimensionInput';
 import { FluentColorPicker } from './components/legacy/FluentColorPicker';
 import { HorizontalColorPicker } from './components/legacy/HorizontalColorPicker';
-import { ResponsiveColorPicker } from './components/compositions/ResponsiveColorPicker';
+import { ResponsiveColorPicker } from './components/panels/ResponsiveColorPicker';
 import { RGBHSLColorSlidersInput } from './components/compositions/RGBHSLColorSlidersInput';
 import { MarginsPanel } from './components/panels/MarginsPanel';
 import { PaddingPanel } from './components/panels/PaddingPanel';
@@ -53,6 +56,14 @@ import { LockAspectRatio } from './components/primitives/LockAspectRatio';
 import { PaperSection } from './components/sections/PaperSection';
 import { NotesSection } from './components/sections/NotesSection';
 import { SlidesSection } from './components/sections/SlidesSection';
+import { TitlePlaceholderSection } from './components/sections/TitlePlaceholderSection';
+import { SubtitlePlaceholderSection } from './components/sections/SubtitlePlaceholderSection';
+import { BodyPlaceholderSection } from './components/sections/BodyPlaceholderSection';
+import { FootnotePlaceholderSection } from './components/sections/FootnotePlaceholderSection';
+import { SourcePlaceholderSection } from './components/sections/SourcePlaceholderSection';
+import { LogoPlaceholderSection } from './components/sections/LogoPlaceholderSection';
+import { PageNumberPlaceholderSection } from './components/sections/PageNumberPlaceholderSection';
+import { ColorsSection } from './components/sections/ColorsSection';
 
 interface ComponentExample {
   description: string;
@@ -318,6 +329,14 @@ const categories = [
       { name: 'PaperSection', key: 'paperSection' },
       { name: 'NotesSection', key: 'notesSection' },
       { name: 'SlidesSection', key: 'slidesSection' },
+      { name: 'TitlePlaceholderSection', key: 'titlePlaceholderSection' },
+      { name: 'SubtitlePlaceholderSection', key: 'subtitlePlaceholderSection' },
+      { name: 'BodyPlaceholderSection', key: 'bodyPlaceholderSection' },
+      { name: 'FootnotePlaceholderSection', key: 'footnotePlaceholderSection' },
+      { name: 'SourcePlaceholderSection', key: 'sourcePlaceholderSection' },
+      { name: 'LogoPlaceholderSection', key: 'logoPlaceholderSection' },
+      { name: 'PageNumberPlaceholderSection', key: 'pageNumberPlaceholderSection' },
+      { name: 'ColorsSection', key: 'colorsSection' },
     ]
   },
   {
@@ -339,6 +358,7 @@ const categories = [
       { name: 'ColorPicker', key: 'colorPicker' },
       { name: 'ColorSelector', key: 'colorSelector' },
       { name: 'DimensionInput', key: 'dimensionInput' },
+      { name: 'LabeledColorPicker', key: 'labeledColorPicker' },
       { name: 'Large Swatch ColorHexInput', key: 'largeSwatchColorHexInput' },
       { name: 'MultipleSlidersInput', key: 'multipleSlidersInput' },
       { name: 'ResponsiveColorPicker', key: 'responsiveColorPicker' },
@@ -361,8 +381,10 @@ const categories = [
     items: [
       { name: 'ColorSliderInput', key: 'colorSliderInput' },
       { name: 'HexInput', key: 'hexInput' },
+      
       { name: 'LockAspectRatio', key: 'lockAspectRatio' },
       { name: 'NumericInput', key: 'numericInput' },
+              { name: 'HexInput', key: 'newNumericInput' },
       { name: 'SliderInput', key: 'sliderInput' },
       { name: 'UnitSelector', key: 'unitSelector' },
     ]
@@ -403,6 +425,34 @@ const getComponentExamples = (key: string): ComponentExample[] => {
           settings: { value: '', placeholder: "Enter value", width: 150 }
         }
       ];
+    case 'newNumericInput':
+      return [
+        {
+          description: "Basic hexadecimal input with default settings (6 digits)",
+          demo: <HexInput value="#FF6B35" onChange={() => {}} />,
+          settings: { value: "#FF6B35", length: 6 }
+        },
+        {
+          description: "3-digit hex input (short format)",
+          demo: <HexInput value="#F0A" length={3} onChange={() => {}} />,
+          settings: { value: "#F0A", length: 3 }
+        },
+        {
+          description: "Demonstrates left-padding behavior (123 → #000123)",
+          demo: <HexInput value="#000123" placeholder="Try typing '123'" onChange={() => {}} />,
+          settings: { value: "#000123", length: 6, placeholder: "Try typing '123'" }
+        },
+        {
+          description: "Small size with custom placeholder",
+          demo: <HexInput value="#00FF00" size="small" placeholder="Enter hex" onChange={() => {}} />,
+          settings: { value: "#00FF00", size: "small", placeholder: "Enter hex", length: 6 }
+        },
+        {
+          description: "Large size with custom width",
+          demo: <HexInput value="#0000FF" size="large" width={200} onChange={() => {}} />,
+          settings: { value: "#0000FF", size: "large", width: 200, length: 6 }
+        }
+      ];
     case 'colorSelector':
       return [
         {
@@ -428,11 +478,7 @@ const getComponentExamples = (key: string): ComponentExample[] => {
           demo: <SliderInput value={50} min={0} max={100} label="Opacity" onChange={() => {}} />,
           settings: { value: 50, min: 0, max: 100, label: "Opacity" }
         },
-        {
-          description: "Slider with custom label and value widths",
-          demo: <SliderInput value={75} min={0} max={255} label="Brightness" labelWidth={80} valueWidth={50} onChange={() => {}} />,
-          settings: { value: 75, min: 0, max: 255, label: "Brightness", labelWidth: 80, valueWidth: 50 }
-        },
+
         {
           description: "Slider with step increments",
           demo: <SliderInput value={25} min={0} max={100} step={5} label="Volume" onChange={() => {}} />,
@@ -466,12 +512,12 @@ const getComponentExamples = (key: string): ComponentExample[] => {
         },
         {
           description: "Saturation slider with percentage",
-          demo: <ColorSliderInput value={75} label="Sat" suffix="%" onChange={() => {}} />,
+          demo: <ColorSliderInput value={75} label="Sat" onChange={() => {}} />,
           settings: { value: 75, label: "Sat", suffix: "%" }
         },
         {
           description: "Lightness slider for HSL color model",
-          demo: <ColorSliderInput value={60} label="Lum" suffix="%" onChange={() => {}} />,
+          demo: <ColorSliderInput value={60} label="Lum" onChange={() => {}} />,
           settings: { value: 60, label: "Lum", suffix: "%" }
         }
       ];
@@ -484,7 +530,7 @@ const getComponentExamples = (key: string): ComponentExample[] => {
         },
         {
           description: "HSL color sliders",
-          demo: <MultipleSlidersInput sliders={[{ value: 180, min: 0, max: 360, label: "Hue", onChange: () => {} }, { value: 50, min: 0, max: 100, label: "Sat", suffix: "%", onChange: () => {} }, { value: 60, min: 0, max: 100, label: "Lum", suffix: "%", onChange: () => {} }]} labelValueWidth={50} />,
+          demo: <MultipleSlidersInput sliders={[{ value: 180, min: 0, max: 360, label: "Hue", onChange: () => {} }, { value: 50, min: 0, max: 100, label: "Sat", onChange: () => {} }, { value: 60, min: 0, max: 100, label: "Lum", onChange: () => {} }]} labelValueWidth={50} />,
           settings: { sliders: "3 HSL sliders", labelValueWidth: 50 }
         }
       ];
@@ -524,6 +570,7 @@ const getComponentExamples = (key: string): ComponentExample[] => {
           settings: { value: "#0000FF", size: "large", width: 200 }
         }
       ];
+
     case 'colorHexInput':
       return [
         {
@@ -580,12 +627,12 @@ const getComponentExamples = (key: string): ComponentExample[] => {
       return [
         {
           description: "Aspect ratio selector with common ratios",
-          demo: <AspectRatioSelector aspectRatio="16:9" aspectRatios={["1:1", "4:3", "16:9", "21:9", "Custom"]} onChange={() => {}} />,
+          demo: <AspectRatioSelector value="16:9" options={["1:1", "4:3", "16:9", "21:9", "Custom"]} onChange={() => {}} />,
           settings: { aspectRatio: "16:9", aspectRatios: "['1:1', '4:3', '16:9', '21:9', 'Custom']" }
         },
         {
           description: "Small size with custom options",
-          demo: <AspectRatioSelector aspectRatio="4:3" aspectRatios={["3:2", "4:3", "5:4", "Custom"]} size="small" onChange={() => {}} />,
+          demo: <AspectRatioSelector value="4:3" options={["3:2", "4:3", "5:4", "Custom"]} size="small" onChange={() => {}} />,
           settings: { aspectRatio: "4:3", aspectRatios: "['3:2', '4:3', '5:4', 'Custom']", size: "small" }
         }
       ];
@@ -593,12 +640,12 @@ const getComponentExamples = (key: string): ComponentExample[] => {
       return [
         {
           description: "Paper size selector with standard sizes",
-          demo: <PaperSelector paperSize="A4" paperSizes={["A3", "A4", "A5", "Letter", "Legal", "Custom"]} onChange={() => {}} />,
+                      demo: <PaperSelector value="A4" onChange={() => {}} />,
           settings: { paperSize: "A4", paperSizes: "['A3', 'A4', 'A5', 'Letter', 'Legal', 'Custom']" }
         },
         {
           description: "Large size with custom options",
-          demo: <PaperSelector paperSize="Letter" paperSizes={["A4", "Letter", "Legal", "Tabloid", "Custom"]} size="large" onChange={() => {}} />,
+                      demo: <PaperSelector value="Letter" size="large" onChange={() => {}} />,
           settings: { paperSize: "Letter", paperSizes: "['A4', 'Letter', 'Legal', 'Tabloid', 'Custom']", size: "large" }
         }
       ];
@@ -606,12 +653,12 @@ const getComponentExamples = (key: string): ComponentExample[] => {
       return [
         {
           description: "Position selector with preset positions",
-          demo: <PositionSelector position="center" positions={["top-left", "top-center", "top-right", "center", "bottom-left", "bottom-center", "bottom-right", "Custom"]} onChange={() => {}} />,
-          settings: { position: "center", positions: "['top-left', 'top-center', 'top-right', 'center', 'bottom-left', 'bottom-center', 'bottom-right', 'Custom']" }
+          demo: <PositionSelector value="middle-center" options={DEFAULT_POSITIONS} onChange={() => {}} />,
+          settings: { position: "middle-center", positions: "DEFAULT_POSITIONS" }
         },
         {
           description: "Small size with custom positions",
-          demo: <PositionSelector position="Custom" positions={["left", "center", "right", "Custom"]} size="small" onChange={() => {}} />,
+          demo: <PositionSelector value="Custom" options={["left", "center", "right", "Custom"]} size="small" onChange={() => {}} />,
           settings: { position: "Custom", positions: "['left', 'center', 'right', 'Custom']", size: "small" }
         }
       ];
@@ -632,7 +679,7 @@ const getComponentExamples = (key: string): ComponentExample[] => {
       return [
         {
           description: "Unit selector for measurement units",
-          demo: <UnitSelector unit="cm" units={["px", "pt", "cm", "mm", "in"]} onChange={() => {}} />,
+                      demo: <UnitSelector onChange={() => {}} />,
           settings: { unit: "cm", units: "['px', 'pt', 'cm', 'mm', 'in']" }
         },
         {
@@ -677,16 +724,34 @@ const getComponentExamples = (key: string): ComponentExample[] => {
           settings: { value: "#0000FF", disabled: true }
         }
       ];
+    case 'labeledColorPicker':
+      return [
+        {
+          description: "Basic labeled color picker",
+          demo: <LabeledColorPicker value="#FF6B35" label="Primary Color" onChange={() => {}} />,
+          settings: { value: "#FF6B35", label: "Primary Color" }
+        },
+        {
+          description: "Required field with custom label width",
+          demo: <LabeledColorPicker value="#00FF00" label="Accent Color" required labelWidth={150} onChange={() => {}} />,
+          settings: { value: "#00FF00", label: "Accent Color", required: true, labelWidth: 150 }
+        },
+        {
+          description: "Disabled labeled color picker",
+          demo: <LabeledColorPicker value="#0000FF" label="Background" disabled onChange={() => {}} />,
+          settings: { value: "#0000FF", label: "Background", disabled: true }
+        }
+      ];
     case 'dimensionInput':
       return [
         {
           description: "Dimension input with width and height",
-          demo: <DimensionInput label="Width" value={100} unit="cm" units={["cm", "mm", "in"]} onChange={() => {}} />,
+                      demo: <DimensionInput label="Width" value={100} onChange={() => {}} />,
           settings: { label: "Width", value: 100, unit: "cm", units: "['cm', 'mm', 'in']" }
         },
         {
           description: "Dimension input with aspect ratio lock",
-          demo: <DimensionInput label="Height" value={200} unit="px" units={["px", "pt", "cm"]} size="large" onChange={() => {}} />,
+                      demo: <DimensionInput label="Height" value={200} size="large" onChange={() => {}} />,
           settings: { label: "Height", value: 200, unit: "px", units: "['px', 'pt', 'cm']", size: "large" }
         }
       ];
@@ -733,12 +798,12 @@ const getComponentExamples = (key: string): ComponentExample[] => {
       return [
         {
           description: "Position fields for X and Y coordinates",
-          demo: <PositionFields position="Custom" positions={["top-left", "top-center", "top-right", "center", "bottom-left", "bottom-center", "bottom-right", "Custom"]} x={100} y={200} xUnit="px" yUnit="px" units={["px", "%", "cm"]} onChange={() => {}} />,
+          demo: <PositionFields position="Custom" positions={DEFAULT_POSITIONS} x={100} y={200} xUnit="px" yUnit="px" units={["px", "%", "cm"]} onChange={() => {}} />,
           settings: { position: "Custom", x: 100, y: 200, xUnit: "px", yUnit: "px", units: "['px', '%', 'cm']" }
         },
         {
           description: "Position fields with percentage units",
-          demo: <PositionFields position="Custom" positions={["top-left", "top-center", "top-right", "center", "bottom-left", "bottom-center", "bottom-right", "Custom"]} x={50} y={75} xUnit="%" yUnit="%" units={["px", "%", "cm"]} onChange={() => {}} />,
+          demo: <PositionFields position="Custom" positions={DEFAULT_POSITIONS} x={50} y={75} xUnit="%" yUnit="%" units={["px", "%", "cm"]} onChange={() => {}} />,
           settings: { position: "Custom", x: 50, y: 75, xUnit: "%", yUnit: "%", units: "['px', '%', 'cm']" }
         }
       ];
@@ -746,12 +811,12 @@ const getComponentExamples = (key: string): ComponentExample[] => {
       return [
         {
           description: "Size fields for width and height",
-          demo: <SizeFields width={300} height={200} widthUnit="px" heightUnit="px" units={["px", "pt", "cm"]} onChange={() => {}} />,
+                      demo: <SizeFields width={300} height={200} onChange={() => {}} />,
           settings: { width: 300, height: 200, widthUnit: "px", heightUnit: "px", units: "['px', 'pt', 'cm']" }
         },
         {
           description: "Size fields with aspect ratio lock",
-          demo: <SizeFields width={400} height={300} widthUnit="cm" heightUnit="cm" units={["px", "pt", "cm"]} showLockAspectRatio onChange={() => {}} />,
+                      demo: <SizeFields width={400} height={300} showLockAspectRatio onChange={() => {}} />,
           settings: { width: 400, height: 300, widthUnit: "cm", heightUnit: "cm", units: "['px', 'pt', 'cm']", showLockAspectRatio: true }
         }
       ];
@@ -772,12 +837,12 @@ const getComponentExamples = (key: string): ComponentExample[] => {
       return [
         {
           description: "Margins panel for setting all margin values",
-          demo: <MarginsPanel margins={{ top: 10, right: 20, bottom: 10, left: 20, topUnit: "px", rightUnit: "px", bottomUnit: "px", leftUnit: "px" }} units={["px", "pt", "cm"]} onChange={() => {}} />,
+                      demo: <MarginsPanel onChange={() => {}} />,
           settings: { margins: "object with top/right/bottom/left values and units", units: "['px', 'pt', 'cm']" }
         },
         {
           description: "Uniform margins",
-          demo: <MarginsPanel margins={{ top: 15, right: 15, bottom: 15, left: 15, topUnit: "cm", rightUnit: "cm", bottomUnit: "cm", leftUnit: "cm" }} units={["px", "pt", "cm"]} onChange={() => {}} />,
+                      demo: <MarginsPanel margins={{ top: 15, right: 15, bottom: 15, left: 15, topUnit: "cm", rightUnit: "cm", bottomUnit: "cm", leftUnit: "cm" }} onChange={() => {}} />,
           settings: { margins: "uniform 15cm margins", units: "['px', 'pt', 'cm']" }
         }
       ];
@@ -785,12 +850,12 @@ const getComponentExamples = (key: string): ComponentExample[] => {
       return [
         {
           description: "Padding panel for setting all padding values",
-          demo: <PaddingPanel padding={{ top: 5, right: 10, bottom: 5, left: 10, topUnit: "px", rightUnit: "px", bottomUnit: "px", leftUnit: "px" }} units={["px", "pt", "cm"]} onChange={() => {}} />,
+                      demo: <PaddingPanel onChange={() => {}} />,
           settings: { padding: "object with top/right/bottom/left values and units", units: "['px', 'pt', 'cm']" }
         },
         {
           description: "Uniform padding",
-          demo: <PaddingPanel padding={{ top: 8, right: 8, bottom: 8, left: 8, topUnit: "cm", rightUnit: "cm", bottomUnit: "cm", leftUnit: "cm" }} units={["px", "pt", "cm"]} onChange={() => {}} />,
+                      demo: <PaddingPanel padding={{ top: 8, right: 8, bottom: 8, left: 8, topUnit: "cm", rightUnit: "cm", bottomUnit: "cm", leftUnit: "cm" }} onChange={() => {}} />,
           settings: { padding: "uniform 8cm padding", units: "['px', 'pt', 'cm']" }
         }
       ];
@@ -798,12 +863,12 @@ const getComponentExamples = (key: string): ComponentExample[] => {
       return [
         {
           description: "Paper size panel with A4 selection",
-          demo: <PaperSizePanel paperSize={{ width: 210, height: 297, widthUnit: "mm", heightUnit: "mm", orientation: "portrait", paperSize: "a4" }} units={["mm", "cm", "in"]} onChange={() => {}} />,
+                      demo: <PaperSizePanel onChange={() => {}} />,
           settings: { paperSize: "A4 portrait", units: "['mm', 'cm', 'in']" }
         },
         {
           description: "Custom paper size",
-          demo: <PaperSizePanel paperSize={{ width: 300, height: 400, widthUnit: "mm", heightUnit: "mm", orientation: "portrait", paperSize: "custom" }} units={["mm", "cm", "in"]} onChange={() => {}} />,
+                      demo: <PaperSizePanel paperSize={{ width: 300, height: 400, widthUnit: "mm", heightUnit: "mm", orientation: "portrait", paperSize: "custom" }} onChange={() => {}} />,
           settings: { paperSize: "custom 300x400mm", units: "['mm', 'cm', 'in']" }
         }
       ];
@@ -855,6 +920,152 @@ const getComponentExamples = (key: string): ComponentExample[] => {
           settings: { size: "1920x1080px (HD)", position: "center" }
         }
       ];
+    case 'titlePlaceholderSection':
+      return [
+        {
+          description: "Title placeholder section with size, position, and padding panels",
+          demo: <TitlePlaceholderSection />,
+          settings: { units: "['px', 'pt', 'cm', 'mm', 'in']", showLockAspectRatio: true }
+        },
+        {
+          description: "Title placeholder with custom size and position",
+          demo: <TitlePlaceholderSection 
+            size={{ width: 800, height: 200, widthUnit: 'px', heightUnit: 'px' }}
+            position={{ position: 'top-center', x: 0, y: 50, xUnit: 'px', yUnit: 'px' }}
+          />,
+          settings: { size: "800x200px", position: "top-center" }
+        }
+      ];
+    case 'subtitlePlaceholderSection':
+      return [
+        {
+          description: "Subtitle placeholder section with size, position, and padding panels",
+          demo: <SubtitlePlaceholderSection />,
+          settings: { units: "['px', 'pt', 'cm', 'mm', 'in']", showLockAspectRatio: true }
+        },
+        {
+          description: "Subtitle placeholder with custom size and position",
+          demo: <SubtitlePlaceholderSection 
+            size={{ width: 600, height: 150, widthUnit: 'px', heightUnit: 'px' }}
+            position={{ position: 'top-center', x: 0, y: 120, xUnit: 'px', yUnit: 'px' }}
+          />,
+          settings: { size: "600x150px", position: "top-center" }
+        }
+      ];
+    case 'bodyPlaceholderSection':
+      return [
+        {
+          description: "Body placeholder section with size, position, and padding panels",
+          demo: <BodyPlaceholderSection />,
+          settings: { units: "['px', 'pt', 'cm', 'mm', 'in']", showLockAspectRatio: true }
+        },
+        {
+          description: "Body placeholder with custom size and position",
+          demo: <BodyPlaceholderSection 
+            size={{ width: 700, height: 400, widthUnit: 'px', heightUnit: 'px' }}
+            position={{ position: 'center', x: 0, y: 0, xUnit: 'px', yUnit: 'px' }}
+          />,
+          settings: { size: "700x400px", position: "center" }
+        }
+      ];
+    case 'footnotePlaceholderSection':
+      return [
+        {
+          description: "Footnote placeholder section with size, position, and padding panels",
+          demo: <FootnotePlaceholderSection />,
+          settings: { units: "['px', 'pt', 'cm', 'mm', 'in']", showLockAspectRatio: true }
+        },
+        {
+          description: "Footnote placeholder with custom size and position",
+          demo: <FootnotePlaceholderSection 
+            size={{ width: 500, height: 100, widthUnit: 'px', heightUnit: 'px' }}
+            position={{ position: 'bottom-center', x: 0, y: -50, xUnit: 'px', yUnit: 'px' }}
+          />,
+          settings: { size: "500x100px", position: "bottom-center" }
+        }
+      ];
+    case 'sourcePlaceholderSection':
+      return [
+        {
+          description: "Source placeholder section with size, position, and padding panels",
+          demo: <SourcePlaceholderSection />,
+          settings: { units: "['px', 'pt', 'cm', 'mm', 'in']", showLockAspectRatio: true }
+        },
+        {
+          description: "Source placeholder with custom size and position",
+          demo: <SourcePlaceholderSection 
+            size={{ width: 400, height: 80, widthUnit: 'px', heightUnit: 'px' }}
+            position={{ position: 'bottom-left', x: 50, y: -30, xUnit: 'px', yUnit: 'px' }}
+          />,
+          settings: { size: "400x80px", position: "bottom-left" }
+        }
+      ];
+    case 'logoPlaceholderSection':
+      return [
+        {
+          description: "Logo placeholder section with size, position, and padding panels",
+          demo: <LogoPlaceholderSection />,
+          settings: { units: "['px', 'pt', 'cm', 'mm', 'in']", showLockAspectRatio: true }
+        },
+        {
+          description: "Logo placeholder with custom size and position",
+          demo: <LogoPlaceholderSection 
+            size={{ width: 200, height: 100, widthUnit: 'px', heightUnit: 'px' }}
+            position={{ position: 'top-left', x: 50, y: 50, xUnit: 'px', yUnit: 'px' }}
+          />,
+          settings: { size: "200x100px", position: "top-left" }
+        }
+      ];
+    case 'pageNumberPlaceholderSection':
+      return [
+        {
+          description: "Page number placeholder section with size, position, and padding panels",
+          demo: <PageNumberPlaceholderSection />,
+          settings: { units: "['px', 'pt', 'cm', 'mm', 'in']", showLockAspectRatio: true }
+        },
+        {
+          description: "Page number placeholder with custom size and position",
+          demo: <PageNumberPlaceholderSection 
+            size={{ width: 150, height: 50, widthUnit: 'px', heightUnit: 'px' }}
+            position={{ position: 'bottom-right', x: -50, y: -30, xUnit: 'px', yUnit: 'px' }}
+          />,
+          settings: { size: "150x50px", position: "bottom-right" }
+        }
+      ];
+    case 'colorsSection':
+      return [
+        {
+          description: "Colors section with predefined colors",
+          demo: <ColorsSection />,
+          settings: { colors: "STANDARD_COLORS" }
+        },
+        {
+          description: "Custom colors with custom accent colors",
+          demo: <ColorsSection colors={{
+            accent1: '#FF6B35',
+            accent2: '#00FF00',
+            accent3: '#0000FF',
+            accent4: '#FFFF00',
+            accent5: '#FF00FF',
+            accent6: '#00FFFF'
+          }} />,
+          settings: { colors: "custom" }
+        },
+        {
+          description: "Modified theme colors",
+          demo: <ColorsSection colors={{
+            accent1: '#FF0000',
+            accent2: '#00FF00',
+            accent3: '#0000FF',
+            accent4: '#FFFF00',
+            accent5: '#FF00FF',
+            accent6: '#00FFFF',
+            dark1: '#1A1A1A',
+            dark2: '#333333'
+          }} />,
+          settings: { colors: "modified" }
+        }
+      ];
     case 'sizeAndPositionPanel':
       return [
         {
@@ -877,6 +1088,8 @@ const getComponentName = (key: string): string => {
   switch (key) {
     case 'numericInput':
       return 'Numeric Input';
+    case 'newNumericInput':
+      return 'New Numeric Input';
     case 'colorSelector':
       return 'Color Selector';
     case 'colorSliderInput':
@@ -887,6 +1100,7 @@ const getComponentName = (key: string): string => {
       return 'RGB/HSL Color Sliders Input';
     case 'hexInput':
       return 'Hex Input';
+
     case 'lockAspectRatio':
       return 'Lock Aspect Ratio';
     case 'colorHexInput':
@@ -909,6 +1123,8 @@ const getComponentName = (key: string): string => {
       return 'Universal Selector';
     case 'colorInput':
       return 'Color Input';
+    case 'labeledColorPicker':
+      return 'Labeled Color Picker';
     case 'dimensionInput':
       return 'Dimension Input';
     case 'fluentColorPicker':
@@ -937,6 +1153,22 @@ const getComponentName = (key: string): string => {
       return 'Notes Section';
     case 'slidesSection':
       return 'Slides Section';
+    case 'titlePlaceholderSection':
+      return 'Title Placeholder Section';
+    case 'subtitlePlaceholderSection':
+      return 'Subtitle Placeholder Section';
+    case 'bodyPlaceholderSection':
+      return 'Body Placeholder Section';
+    case 'footnotePlaceholderSection':
+      return 'Footnote Placeholder Section';
+    case 'sourcePlaceholderSection':
+      return 'Source Placeholder Section';
+    case 'logoPlaceholderSection':
+      return 'Logo Placeholder Section';
+    case 'pageNumberPlaceholderSection':
+      return 'Page Number Placeholder Section';
+    case 'colorsSection':
+      return 'Colors Section';
     default:
       return 'Component';
   }
@@ -946,6 +1178,8 @@ const getComponentDescription = (key: string): string => {
   switch (key) {
     case 'numericInput':
       return "A specialized numeric input component with built-in validation, clamping, and step controls. Features right-aligned text, hover-activated stepper buttons, and support for decimal precision. Perfect for dimension inputs, measurements, and any numeric data entry requiring validation.";
+    case 'newNumericInput':
+      return "A brand new numeric input component built from scratch as a perfect clone of the existing NumericInput. Features identical functionality including built-in validation, clamping, and step controls. Features right-aligned text, hover-activated stepper buttons, and support for decimal precision. Perfect for dimension inputs, measurements, and any numeric data entry requiring validation.";
     case 'colorSelector':
       return "A professional color selection component using Fluent UI's SwatchPicker. Displays a grid of predefined colors with tooltips showing RGB and HSL values. Supports custom color palettes and provides a clean, accessible interface for color selection.";
     case 'sliderInput':
@@ -958,6 +1192,7 @@ const getComponentDescription = (key: string): string => {
       return "A specialized color slider component that displays RGB or HSL color channels using stacked ColorSliderInput components. Features mode switching between RGB and HSL, individual channel control, and consistent styling. Perfect for color picker applications requiring precise color channel manipulation.";
     case 'hexInput':
       return "A hex color input component with real-time validation and formatting. Supports variable length hex codes, automatic uppercase conversion, and placeholder text. Features monospace font and right-aligned text for professional appearance.";
+
     case 'lockAspectRatio':
       return "A specialized checkbox component for toggling aspect ratio lock functionality. Features integrated label ownership and perfect alignment with form layout system. Automatically positions itself below dimension inputs within the control area for consistent spacing and visual hierarchy.";
     case 'colorHexInput':
@@ -980,6 +1215,8 @@ const getComponentDescription = (key: string): string => {
       return "A flexible dropdown selector component that serves as the foundation for all selector types. Supports custom options, placeholders, and optional custom option text. Provides consistent styling and behavior across the application.";
     case 'colorInput':
       return "A comprehensive color input component that combines color model selection, RGB/HSL sliders, and hex input. Features real-time color conversion between models and provides a complete color editing interface.";
+    case 'labeledColorPicker':
+      return "A composition component that combines a right-aligned label with ResponsiveColorPicker. Features configurable label width, required field indicators, and maintains all ResponsiveColorPicker functionality with professional inline labeling.";
     case 'dimensionInput':
       return "A combined dimension input component that integrates numeric input with unit selection. Supports various measurement units and provides a unified interface for width, height, margin, and padding inputs.";
     case 'fluentColorPicker':
@@ -1008,6 +1245,22 @@ const getComponentDescription = (key: string): string => {
       return "A complete section for notes configuration including size, position, and margin settings. Combines SizeAndPositionPanel and MarginsPanel for comprehensive notes layout management.";
     case 'slidesSection':
       return "A complete section for slides configuration including size, position, and margin settings. Combines SizeAndPositionPanel and MarginsPanel for comprehensive slides layout management.";
+    case 'titlePlaceholderSection':
+      return "A complete section for title placeholder configuration including size, position, and padding settings. Combines SizeAndPositionPanel and PaddingPanel for comprehensive title placeholder layout management.";
+    case 'subtitlePlaceholderSection':
+      return "A complete section for subtitle placeholder configuration including size, position, and padding settings. Combines SizeAndPositionPanel and PaddingPanel for comprehensive subtitle placeholder layout management.";
+    case 'bodyPlaceholderSection':
+      return "A complete section for body placeholder configuration including size, position, and padding settings. Combines SizeAndPositionPanel and PaddingPanel for comprehensive body placeholder layout management.";
+    case 'footnotePlaceholderSection':
+      return "A complete section for footnote placeholder configuration including size, position, and padding settings. Combines SizeAndPositionPanel and PaddingPanel for comprehensive footnote placeholder layout management.";
+    case 'sourcePlaceholderSection':
+      return "A complete section for source placeholder configuration including size, position, and padding settings. Combines SizeAndPositionPanel and PaddingPanel for comprehensive source placeholder layout management.";
+    case 'logoPlaceholderSection':
+      return "A complete section for logo placeholder configuration including size, position, and padding settings. Combines SizeAndPositionPanel and PaddingPanel for comprehensive logo placeholder layout management.";
+    case 'pageNumberPlaceholderSection':
+      return "A complete section for page number placeholder configuration including size, position, and padding settings. Combines SizeAndPositionPanel and PaddingPanel for comprehensive page number placeholder layout management.";
+    case 'colorsSection':
+      return "A section for displaying predefined colors and custom colors with HSL and RGB tooltips.";
     default:
       return "A specialized UI component built with Microsoft Fluent UI v9.";
   }
@@ -1023,6 +1276,16 @@ const getComponentFeatures = (key: string): { title: string; description: string
         { title: "Flexible Sizing", description: "Small, medium, and large size variants with custom width support." },
         { title: "Right-Aligned Text", description: "Professional right-aligned text layout with monospace font for numeric data." },
         { title: "Keyboard Navigation", description: "Full keyboard support with arrow keys, page up/down, and direct number entry." }
+      ];
+    case 'newNumericInput':
+      return [
+        { title: "Validation & Clamping", description: "Built-in min/max validation with automatic value clamping to prevent invalid inputs." },
+        { title: "Step Controls", description: "Configurable step increments with hover-activated stepper buttons for precise value adjustment." },
+        { title: "Decimal Precision", description: "Support for decimal places with automatic formatting and validation." },
+        { title: "Flexible Sizing", description: "Small, medium, and large size variants with custom width support." },
+        { title: "Right-Aligned Text", description: "Professional right-aligned text layout with monospace font for numeric data." },
+        { title: "Keyboard Navigation", description: "Full keyboard support with arrow keys, page up/down, and direct number entry." },
+        { title: "Perfect Clone", description: "Built from scratch as an exact clone of the existing NumericInput with identical functionality and behavior." }
       ];
     case 'colorSelector':
       return [
@@ -1076,6 +1339,7 @@ const getComponentFeatures = (key: string): { title: string; description: string
         { title: "Flexible Sizing", description: "Small, medium, large, and auto size variants with custom width support." },
         { title: "Placeholder Support", description: "Configurable placeholder text with proper validation handling." }
       ];
+
     case 'lockAspectRatio':
       return [
         { title: "Integrated Label", description: "Built-in 'Lock aspect ratio:' label with consistent styling and spacing." },
@@ -1168,6 +1432,15 @@ const getComponentFeatures = (key: string): { title: string; description: string
         { title: "Hex Input", description: "Integrated hex color input with validation and formatting." },
         { title: "Real-time Conversion", description: "Automatic color conversion between RGB, HSL, and hex formats." },
         { title: "Professional Layout", description: "Organized layout with proper spacing and visual hierarchy." }
+      ];
+    case 'labeledColorPicker':
+      return [
+        { title: "Right-aligned Label", description: "Professional right-aligned label with colon separator." },
+        { title: "Configurable Label Width", description: "Customizable label container width with sensible defaults." },
+        { title: "Required Field Support", description: "Optional required field indicator with asterisk." },
+        { title: "ResponsiveColorPicker Integration", description: "Full ResponsiveColorPicker functionality maintained." },
+        { title: "Consistent Layout", description: "Flexbox layout ensuring proper alignment and spacing." },
+        { title: "Fluent UI Styling", description: "Native Fluent UI components and design tokens." }
       ];
     case 'dimensionInput':
       return [
@@ -1291,6 +1564,75 @@ const getComponentFeatures = (key: string): { title: string; description: string
         { title: "Flexible Configuration", description: "Support for custom sizes, positions, margins, and measurement units." },
         { title: "Event Handling", description: "Separate callbacks for size, position, and margin changes." }
       ];
+    case 'titlePlaceholderSection':
+      return [
+        { title: "Size and Position Panel", description: "Integrated size controls with aspect ratio locking and position selection." },
+        { title: "Padding Panel", description: "Comprehensive padding settings for all sides with individual unit control." },
+        { title: "FormLayoutProvider Integration", description: "Seamless integration with the layout system for perfect alignment." },
+        { title: "Professional Styling", description: "Consistent section styling with clear titles and organized layout." },
+        { title: "Flexible Configuration", description: "Support for custom sizes, positions, padding, and measurement units." },
+        { title: "Event Handling", description: "Separate callbacks for size, position, and padding changes." }
+      ];
+    case 'subtitlePlaceholderSection':
+      return [
+        { title: "Size and Position Panel", description: "Integrated size controls with aspect ratio locking and position selection." },
+        { title: "Padding Panel", description: "Comprehensive padding settings for all sides with individual unit control." },
+        { title: "FormLayoutProvider Integration", description: "Seamless integration with the layout system for perfect alignment." },
+        { title: "Professional Styling", description: "Consistent section styling with clear titles and organized layout." },
+        { title: "Flexible Configuration", description: "Support for custom sizes, positions, padding, and measurement units." },
+        { title: "Event Handling", description: "Separate callbacks for size, position, and padding changes." }
+      ];
+    case 'bodyPlaceholderSection':
+      return [
+        { title: "Size and Position Panel", description: "Integrated size controls with aspect ratio locking and position selection." },
+        { title: "Padding Panel", description: "Comprehensive padding settings for all sides with individual unit control." },
+        { title: "FormLayoutProvider Integration", description: "Seamless integration with the layout system for perfect alignment." },
+        { title: "Professional Styling", description: "Consistent section styling with clear titles and organized layout." },
+        { title: "Flexible Configuration", description: "Support for custom sizes, positions, padding, and measurement units." },
+        { title: "Event Handling", description: "Separate callbacks for size, position, and padding changes." }
+      ];
+    case 'footnotePlaceholderSection':
+      return [
+        { title: "Size and Position Panel", description: "Integrated size controls with aspect ratio locking and position selection." },
+        { title: "Padding Panel", description: "Comprehensive padding settings for all sides with individual unit control." },
+        { title: "FormLayoutProvider Integration", description: "Seamless integration with the layout system for perfect alignment." },
+        { title: "Professional Styling", description: "Consistent section styling with clear titles and organized layout." },
+        { title: "Flexible Configuration", description: "Support for custom sizes, positions, padding, and measurement units." },
+        { title: "Event Handling", description: "Separate callbacks for size, position, and padding changes." }
+      ];
+    case 'sourcePlaceholderSection':
+      return [
+        { title: "Size and Position Panel", description: "Integrated size controls with aspect ratio locking and position selection." },
+        { title: "Padding Panel", description: "Comprehensive padding settings for all sides with individual unit control." },
+        { title: "FormLayoutProvider Integration", description: "Seamless integration with the layout system for perfect alignment." },
+        { title: "Professional Styling", description: "Consistent section styling with clear titles and organized layout." },
+        { title: "Flexible Configuration", description: "Support for custom sizes, positions, padding, and measurement units." },
+        { title: "Event Handling", description: "Separate callbacks for size, position, and padding changes." }
+      ];
+    case 'logoPlaceholderSection':
+      return [
+        { title: "Size and Position Panel", description: "Integrated size controls with aspect ratio locking and position selection." },
+        { title: "Padding Panel", description: "Comprehensive padding settings for all sides with individual unit control." },
+        { title: "FormLayoutProvider Integration", description: "Seamless integration with the layout system for perfect alignment." },
+        { title: "Professional Styling", description: "Consistent section styling with clear titles and organized layout." },
+        { title: "Flexible Configuration", description: "Support for custom sizes, positions, padding, and measurement units." },
+        { title: "Event Handling", description: "Separate callbacks for size, position, and padding changes." }
+      ];
+    case 'pageNumberPlaceholderSection':
+      return [
+        { title: "Size and Position Panel", description: "Integrated size controls with aspect ratio locking and position selection." },
+        { title: "Padding Panel", description: "Comprehensive padding settings for all sides with individual unit control." },
+        { title: "FormLayoutProvider Integration", description: "Seamless integration with the layout system for perfect alignment." },
+        { title: "Professional Styling", description: "Consistent section styling with clear titles and organized layout." },
+        { title: "Flexible Configuration", description: "Support for custom sizes, positions, padding, and measurement units." },
+        { title: "Event Handling", description: "Separate callbacks for size, position, and padding changes." }
+      ];
+    case 'colorsSection':
+      return [
+        { title: "Standard Colors", description: "Predefined colors for quick selection." },
+        { title: "Custom Colors", description: "Add custom colors with HSL and RGB tooltips." },
+        { title: "Color Palettes", description: "Support for custom color palettes with HSL and RGB tooltips." }
+      ];
     default:
       return [
         { title: "Fluent UI Integration", description: "Built on Microsoft Fluent UI v9 for consistent design and behavior." },
@@ -1386,6 +1728,7 @@ const getComponentProps = (key: string): ComponentProp[] => {
         { name: "fullWidth", type: "boolean", default: "false", description: "Whether to take full width of container." },
         { name: "className", type: "string", default: "undefined", description: "Additional CSS class name." }
       ];
+
     case 'lockAspectRatio':
       return [
         { name: "checked", type: "boolean", default: "required", description: "Whether the aspect ratio is locked." },
@@ -1511,6 +1854,15 @@ const getComponentProps = (key: string): ComponentProp[] => {
         { name: "value", type: "string", default: "required", description: "Current hex color value as the single source of truth." },
         { name: "onChange", type: "(hexColor: string) => void", default: "required", description: "Callback fired when the color changes." },
         { name: "size", type: "'small' | 'medium' | 'large'", default: "'medium'", description: "Size variant for the component." },
+        { name: "disabled", type: "boolean", default: "false", description: "Whether the component is disabled." }
+      ];
+    case 'labeledColorPicker':
+      return [
+        { name: "value", type: "string", default: "required", description: "Current hex color value." },
+        { name: "onChange", type: "(color: string) => void", default: "required", description: "Callback fired when the color changes." },
+        { name: "label", type: "string", default: "required", description: "The label text to display." },
+        { name: "required", type: "boolean", default: "false", description: "Whether the label should be required (adds asterisk)." },
+        { name: "labelWidth", type: "string | number", default: "undefined", description: "Custom width for the label container." },
         { name: "disabled", type: "boolean", default: "false", description: "Whether the component is disabled." }
       ];
     case 'dimensionInput':
@@ -1666,6 +2018,13 @@ const getComponentProps = (key: string): ComponentProp[] => {
         { name: "onMarginsChange", type: "(margins: any) => void", default: "undefined", description: "Callback fired when margin settings change." },
         { name: "disabled", type: "boolean", default: "false", description: "Whether the section is disabled." }
       ];
+    case 'colorsSection':
+      return [
+        { name: "colors", type: "string[]", default: "STANDARD_COLORS", description: "Array of hex colors to display in the grid." },
+        { name: "colorModel", type: "'rgb' | 'hsl'", default: "'rgb'", description: "Color model for tooltip display." },
+        { name: "showTooltips", type: "boolean", default: "true", description: "Whether to show color value tooltips." },
+        { name: "disabled", type: "boolean", default: "false", description: "Whether the colors section is disabled." }
+      ];
     default:
       return [
         { name: "value", type: "any", default: "required", description: "The current value of the component." },
@@ -1690,6 +2049,8 @@ const InteractiveSliderInputDemo: React.FC = () => {
     />
   );
 };
+
+
 
 // Interactive demo component for ColorSliderInput
 const InteractiveColorSliderInputDemo: React.FC = () => {
@@ -1743,6 +2104,11 @@ const InteractiveNumericInputDemo: React.FC = () => {
   return <NumericInput value={value} onChange={setValue} />;
 };
 
+const InteractiveNewNumericInputDemo: React.FC = () => {
+  const [value, setValue] = React.useState<string>("#FF6B35");
+  return <HexInput value={value} onChange={setValue} />;
+};
+
 const InteractiveColorSelectorDemo: React.FC = () => {
   const [value, setValue] = React.useState("#FF0000");
   return <ColorSelector value={value} onChange={setValue} />;
@@ -1752,6 +2118,8 @@ const InteractiveHexInputDemo: React.FC = () => {
   const [value, setValue] = React.useState("#FF6B35");
   return <HexInput value={value} onChange={setValue} />;
 };
+
+
 
 const InteractiveLockAspectRatioDemo: React.FC = () => {
   const [checked, setChecked] = React.useState(false);
@@ -1792,26 +2160,21 @@ const InteractivePaperSectionDemo: React.FC = () => {
 const InteractiveNotesSectionDemo: React.FC = () => {
   const [size, setSize] = React.useState({
     width: 400,
-    height: 300,
-    widthUnit: 'px',
-    heightUnit: 'px'
+    height: 300
+    // widthUnit and heightUnit will use DEFAULT_UNIT ('cm')
   });
   const [position, setPosition] = React.useState({
     position: 'center',
     x: 0,
-    y: 0,
-    xUnit: 'px',
-    yUnit: 'px'
+    y: 0
+    // xUnit and yUnit will use DEFAULT_UNIT ('cm')
   });
   const [margins, setMargins] = React.useState({
     top: 10,
     right: 10,
     bottom: 10,
-    left: 10,
-    topUnit: 'px',
-    rightUnit: 'px',
-    bottomUnit: 'px',
-    leftUnit: 'px'
+    left: 10
+    // All unit properties will use DEFAULT_UNIT ('cm')
   });
 
   return (
@@ -1829,26 +2192,21 @@ const InteractiveNotesSectionDemo: React.FC = () => {
 const InteractiveSlidesSectionDemo: React.FC = () => {
   const [size, setSize] = React.useState({
     width: 1920,
-    height: 1080,
-    widthUnit: 'px',
-    heightUnit: 'px'
+    height: 1080
+    // widthUnit and heightUnit will use DEFAULT_UNIT ('cm')
   });
   const [position, setPosition] = React.useState({
     position: 'center',
     x: 0,
-    y: 0,
-    xUnit: 'px',
-    yUnit: 'px'
+    y: 0
+    // xUnit and yUnit will use DEFAULT_UNIT ('cm')
   });
   const [margins, setMargins] = React.useState({
     top: 0,
     right: 0,
     bottom: 0,
-    left: 0,
-    topUnit: 'px',
-    rightUnit: 'px',
-    bottomUnit: 'px',
-    leftUnit: 'px'
+    left: 0
+    // All unit properties will use DEFAULT_UNIT ('cm')
   });
 
   return (
@@ -1893,17 +2251,17 @@ const InteractiveColorModelSelectorDemo: React.FC = () => {
 
 const InteractiveAspectRatioSelectorDemo: React.FC = () => {
   const [value, setValue] = React.useState("16:9");
-  return <AspectRatioSelector aspectRatio={value} aspectRatios={["1:1", "4:3", "16:9", "21:9", "Custom"]} onChange={setValue} />;
+  return <AspectRatioSelector value={value} options={["1:1", "4:3", "16:9", "21:9", "Custom"]} onChange={setValue} />;
 };
 
 const InteractivePaperSelectorDemo: React.FC = () => {
   const [value, setValue] = React.useState("A4");
-  return <PaperSelector paperSize={value} paperSizes={["A3", "A4", "A5", "Letter", "Legal", "Custom"]} onChange={setValue} />;
+  return <PaperSelector value={value} onChange={setValue} />;
 };
 
 const InteractivePositionSelectorDemo: React.FC = () => {
-  const [value, setValue] = React.useState("center");
-  return <PositionSelector position={value} positions={["top-left", "top-center", "top-right", "center", "bottom-left", "bottom-center", "bottom-right", "Custom"]} onChange={setValue} />;
+  const [value, setValue] = React.useState("middle-center");
+  return <PositionSelector value={value} options={DEFAULT_POSITIONS} onChange={setValue} />;
 };
 
 const InteractiveOrientationSelectorDemo: React.FC = () => {
@@ -1913,7 +2271,7 @@ const InteractiveOrientationSelectorDemo: React.FC = () => {
 
 const InteractiveUnitSelectorDemo: React.FC = () => {
   const [value, setValue] = React.useState("cm");
-  return <UnitSelector unit={value} units={["px", "pt", "cm", "mm", "in"]} onChange={setValue} />;
+          return <UnitSelector unit={value} onChange={setValue} />;
 };
 
 const InteractiveColorInputDemo: React.FC = () => {
@@ -1921,10 +2279,15 @@ const InteractiveColorInputDemo: React.FC = () => {
   return <ColorInput value={value} onChange={setValue} />;
 };
 
+const InteractiveLabeledColorPickerDemo: React.FC = () => {
+  const [value, setValue] = React.useState("#FF6B35");
+  return <LabeledColorPicker value={value} label="Primary Color" onChange={setValue} />;
+};
+
 const InteractiveDimensionInputDemo: React.FC = () => {
   const [value, setValue] = React.useState(100);
   const [unit, setUnit] = React.useState("cm");
-  return <DimensionInput label="Width" value={value} unit={unit} units={["cm", "mm", "in"]} onChange={(newValue, newUnit) => { setValue(newValue as number); setUnit(newUnit); }} />;
+  return <DimensionInput label="Width" value={value} unit={unit} onChange={(newValue, newUnit) => { setValue(newValue as number); setUnit(newUnit); }} />;
 };
 
 const InteractiveFluentColorPickerDemo: React.FC = () => {
@@ -1952,7 +2315,7 @@ const InteractivePositionFieldsDemo: React.FC = () => {
   return (
     <PositionFields 
       position={position} 
-      positions={["top-left", "top-center", "top-right", "center", "bottom-left", "bottom-center", "bottom-right", "Custom"]} 
+      positions={DEFAULT_POSITIONS} 
       x={x} 
       y={y} 
       xUnit={xUnit} 
@@ -1972,21 +2335,17 @@ const InteractivePositionFieldsDemo: React.FC = () => {
 const InteractiveSizeFieldsDemo: React.FC = () => {
   const [width, setWidth] = React.useState(300);
   const [height, setHeight] = React.useState(200);
-  const [widthUnit, setWidthUnit] = React.useState("px");
-  const [heightUnit, setHeightUnit] = React.useState("px");
+  // widthUnit and heightUnit will use DEFAULT_UNIT ('cm') from SizeFields
   
   return (
     <SizeFields 
       width={width} 
       height={height} 
-      widthUnit={widthUnit} 
-      heightUnit={heightUnit} 
-      units={["px", "pt", "cm"]} 
+      // No widthUnit, heightUnit, or units props - will use component defaults
       onChange={(fields) => {
         setWidth(fields.width);
         setHeight(fields.height);
-        setWidthUnit(fields.widthUnit);
-        setHeightUnit(fields.heightUnit);
+        // Note: fields.widthUnit and fields.heightUnit will now be 'cm' by default
       }} 
     />
   );
@@ -1999,68 +2358,288 @@ const InteractiveColorPickerDemo: React.FC = () => {
 
 const InteractiveMarginsPanelDemo: React.FC = () => {
   const [margins, setMargins] = React.useState({
-    top: 10, right: 20, bottom: 10, left: 20,
-    topUnit: "px", rightUnit: "px", bottomUnit: "px", leftUnit: "px"
+    top: 10, right: 20, bottom: 10, left: 20
+    // All unit properties will use DEFAULT_UNIT ('cm')
   });
   
-  return <MarginsPanel margins={margins} units={["px", "pt", "cm"]} onChange={setMargins} />;
+  return <MarginsPanel margins={margins} onChange={setMargins} />;
 };
 
 const InteractivePaddingPanelDemo: React.FC = () => {
   const [padding, setPadding] = React.useState({
-    top: 5, right: 10, bottom: 5, left: 10,
-    topUnit: "px", rightUnit: "px", bottomUnit: "px", leftUnit: "px"
+    top: 5, right: 10, bottom: 5, left: 10
+    // All unit properties will use DEFAULT_UNIT ('cm')
   });
   
-  return <PaddingPanel padding={padding} units={["px", "pt", "cm"]} onChange={setPadding} />;
+  return <PaddingPanel padding={padding} onChange={setPadding} />;
 };
 
 const InteractivePaperSizePanelDemo: React.FC = () => {
   const [paperSize, setPaperSize] = React.useState({
-    width: 210, height: 297, widthUnit: "mm", heightUnit: "mm", 
+    width: 210, height: 297, 
     orientation: "portrait", paperSize: "a4"
+    // widthUnit and heightUnit will use DEFAULT_UNIT ('cm')
   });
   
-  return <PaperSizePanel paperSize={paperSize} units={["mm", "cm", "in"]} onChange={setPaperSize} />;
+  return <PaperSizePanel paperSize={paperSize} onChange={setPaperSize} />;
 };
 
 const InteractiveSizeAndPositionPanelDemo: React.FC = () => {
   const [width, setWidth] = React.useState(300);
   const [height, setHeight] = React.useState(200);
-  const [widthUnit, setWidthUnit] = React.useState("px");
-  const [heightUnit, setHeightUnit] = React.useState("px");
+  // widthUnit and heightUnit will use DEFAULT_UNIT ('cm') from SizeFields
   const [position, setPosition] = React.useState("Custom");
   const [x, setX] = React.useState(50);
   const [y, setY] = React.useState(100);
-  const [xUnit, setXUnit] = React.useState("px");
-  const [yUnit, setYUnit] = React.useState("px");
+  // xUnit and yUnit will use DEFAULT_UNIT ('cm') from PositionFields
   
   return (
     <SizeAndPositionPanel 
       width={width} 
       height={height} 
-      widthUnit={widthUnit} 
-      heightUnit={heightUnit} 
+      // No widthUnit, heightUnit - will use SizeFields defaults
       position={position} 
-      positions={["top-left", "top-center", "top-right", "center", "bottom-left", "bottom-center", "bottom-right", "Custom"]} 
+      positions={DEFAULT_POSITIONS} 
       x={x} 
       y={y} 
-      xUnit={xUnit} 
-      yUnit={yUnit} 
-      units={["px", "%", "cm"]} 
+      // No xUnit, yUnit - will use PositionFields defaults
+      // No units - will use component defaults
       onSizeChange={(fields) => {
         setWidth(fields.width);
         setHeight(fields.height);
-        setWidthUnit(fields.widthUnit);
-        setHeightUnit(fields.heightUnit);
+        // Note: fields.widthUnit and fields.heightUnit will now be 'cm' by default
       }} 
       onPositionChange={(fields) => {
         setPosition(fields.position);
         setX(fields.x);
         setY(fields.y);
-        setXUnit(fields.xUnit);
-        setYUnit(fields.yUnit);
+        // Note: fields.xUnit and fields.yUnit will now be 'cm' by default
       }} 
+    />
+  );
+};
+
+// Interactive demo components for Placeholder Sections
+const InteractiveTitlePlaceholderSectionDemo: React.FC = () => {
+  const [size, setSize] = React.useState({
+    width: 800,
+    height: 200
+    // widthUnit and heightUnit will use DEFAULT_UNIT ('cm')
+  });
+  const [position, setPosition] = React.useState({
+    position: 'top-center',
+    x: 0,
+    y: 50
+    // xUnit and yUnit will use DEFAULT_UNIT ('cm')
+  });
+  const [padding, setPadding] = React.useState({
+    top: 10,
+    right: 15,
+    bottom: 10,
+    left: 15
+    // All unit properties will use DEFAULT_UNIT ('cm')
+  });
+
+  return (
+    <TitlePlaceholderSection
+      size={size}
+      position={position}
+      padding={padding}
+      onSizeChange={setSize}
+      onPositionChange={setPosition}
+      onPaddingChange={setPadding}
+    />
+  );
+};
+
+const InteractiveSubtitlePlaceholderSectionDemo: React.FC = () => {
+  const [size, setSize] = React.useState({
+    width: 600,
+    height: 150
+    // widthUnit and heightUnit will use DEFAULT_UNIT ('cm')
+  });
+  const [position, setPosition] = React.useState({
+    position: 'top-center',
+    x: 0,
+    y: 120
+    // xUnit and yUnit will use DEFAULT_UNIT ('cm')
+  });
+  const [padding, setPadding] = React.useState({
+    top: 8,
+    right: 12,
+    bottom: 8,
+    left: 12
+    // All unit properties will use DEFAULT_UNIT ('cm')
+  });
+
+  return (
+    <SubtitlePlaceholderSection
+      size={size}
+      position={position}
+      padding={padding}
+      onSizeChange={setSize}
+      onPositionChange={setPosition}
+      onPaddingChange={setPadding}
+    />
+  );
+};
+
+const InteractiveBodyPlaceholderSectionDemo: React.FC = () => {
+  const [size, setSize] = React.useState({
+    width: 700,
+    height: 400
+    // widthUnit and heightUnit will use DEFAULT_UNIT ('cm')
+  });
+  const [position, setPosition] = React.useState({
+    position: 'center',
+    x: 0,
+    y: 0
+    // xUnit and yUnit will use DEFAULT_UNIT ('cm')
+  });
+  const [padding, setPadding] = React.useState({
+    top: 15,
+    right: 20,
+    bottom: 15,
+    left: 20
+    // All unit properties will use DEFAULT_UNIT ('cm')
+  });
+
+  return (
+    <BodyPlaceholderSection
+      size={size}
+      position={position}
+      padding={padding}
+      onSizeChange={setSize}
+      onPositionChange={setPosition}
+      onPaddingChange={setPadding}
+    />
+  );
+};
+
+const InteractiveFootnotePlaceholderSectionDemo: React.FC = () => {
+  const [size, setSize] = React.useState({
+    width: 500,
+    height: 100
+    // widthUnit and heightUnit will use DEFAULT_UNIT ('cm')
+  });
+  const [position, setPosition] = React.useState({
+    position: 'bottom-center',
+    x: 0,
+    y: -50
+    // xUnit and yUnit will use DEFAULT_UNIT ('cm')
+  });
+  const [padding, setPadding] = React.useState({
+    top: 5,
+    right: 10,
+    bottom: 5,
+    left: 10
+    // All unit properties will use DEFAULT_UNIT ('cm')
+  });
+
+  return (
+    <FootnotePlaceholderSection
+      size={size}
+      position={position}
+      padding={padding}
+      onSizeChange={setSize}
+      onPositionChange={setPosition}
+      onPaddingChange={setPadding}
+    />
+  );
+};
+
+const InteractiveSourcePlaceholderSectionDemo: React.FC = () => {
+  const [size, setSize] = React.useState({
+    width: 400,
+    height: 80
+    // widthUnit and heightUnit will use DEFAULT_UNIT ('cm')
+  });
+  const [position, setPosition] = React.useState({
+    position: 'bottom-left',
+    x: 50,
+    y: -30
+    // xUnit and yUnit will use DEFAULT_UNIT ('cm')
+  });
+  const [padding, setPadding] = React.useState({
+    top: 3,
+    right: 8,
+    bottom: 3,
+    left: 8
+    // All unit properties will use DEFAULT_UNIT ('cm')
+  });
+
+  return (
+    <SourcePlaceholderSection
+      size={size}
+      position={position}
+      padding={padding}
+      onSizeChange={setSize}
+      onPositionChange={setPosition}
+      onPaddingChange={setPadding}
+    />
+  );
+};
+
+const InteractiveLogoPlaceholderSectionDemo: React.FC = () => {
+  const [size, setSize] = React.useState({
+    width: 200,
+    height: 100
+    // widthUnit and heightUnit will use DEFAULT_UNIT ('cm')
+  });
+  const [position, setPosition] = React.useState({
+    position: 'top-left',
+    x: 50,
+    y: 50
+    // xUnit and yUnit will use DEFAULT_UNIT ('cm')
+  });
+  const [padding, setPadding] = React.useState({
+    top: 5,
+    right: 5,
+    bottom: 5,
+    left: 5
+    // All unit properties will use DEFAULT_UNIT ('cm')
+  });
+
+  return (
+    <LogoPlaceholderSection
+      size={size}
+      position={position}
+      padding={padding}
+      onSizeChange={setSize}
+      onPositionChange={setPosition}
+      onPaddingChange={setPadding}
+    />
+  );
+};
+
+const InteractivePageNumberPlaceholderSectionDemo: React.FC = () => {
+  const [size, setSize] = React.useState({
+    width: 150,
+    height: 50
+    // widthUnit and heightUnit will use DEFAULT_UNIT ('cm')
+  });
+  const [position, setPosition] = React.useState({
+    position: 'bottom-right',
+    x: -50,
+    y: -30
+    // xUnit and yUnit will use DEFAULT_UNIT ('cm')
+  });
+  const [padding, setPadding] = React.useState({
+    top: 2,
+    right: 5,
+    bottom: 2,
+    left: 5
+    // All unit properties will use DEFAULT_UNIT ('cm')
+  });
+
+  return (
+    <PageNumberPlaceholderSection
+      size={size}
+      position={position}
+      padding={padding}
+      onSizeChange={setSize}
+      onPositionChange={setPosition}
+      onPaddingChange={setPadding}
     />
   );
 };
@@ -2069,6 +2648,8 @@ const renderDemo = (key: string): React.ReactNode => {
   switch (key) {
     case 'numericInput':
       return <InteractiveNumericInputDemo />;
+    case 'newNumericInput':
+      return <InteractiveNewNumericInputDemo />;
     case 'colorSelector':
       return <InteractiveColorSelectorDemo />;
     case 'sliderInput':
@@ -2081,6 +2662,7 @@ const renderDemo = (key: string): React.ReactNode => {
       return <InteractiveRGBHSLColorSlidersInputDemo />;
     case 'hexInput':
       return <InteractiveHexInputDemo />;
+    
     case 'lockAspectRatio':
       return <InteractiveLockAspectRatioDemo />;
     case 'universalSelector':
@@ -2103,6 +2685,8 @@ const renderDemo = (key: string): React.ReactNode => {
       return <InteractiveUnitSelectorDemo />;
     case 'colorInput':
       return <InteractiveColorInputDemo />;
+    case 'labeledColorPicker':
+      return <InteractiveLabeledColorPickerDemo />;
     case 'dimensionInput':
       return <InteractiveDimensionInputDemo />;
     case 'fluentColorPicker':
@@ -2131,6 +2715,22 @@ const renderDemo = (key: string): React.ReactNode => {
       return <InteractiveNotesSectionDemo />;
     case 'slidesSection':
       return <InteractiveSlidesSectionDemo />;
+    case 'titlePlaceholderSection':
+      return <InteractiveTitlePlaceholderSectionDemo />;
+    case 'subtitlePlaceholderSection':
+      return <InteractiveSubtitlePlaceholderSectionDemo />;
+    case 'bodyPlaceholderSection':
+      return <InteractiveBodyPlaceholderSectionDemo />;
+    case 'footnotePlaceholderSection':
+      return <InteractiveFootnotePlaceholderSectionDemo />;
+    case 'sourcePlaceholderSection':
+      return <InteractiveSourcePlaceholderSectionDemo />;
+    case 'logoPlaceholderSection':
+      return <InteractiveLogoPlaceholderSectionDemo />;
+    case 'pageNumberPlaceholderSection':
+      return <InteractivePageNumberPlaceholderSectionDemo />;
+    case 'colorsSection':
+      return <ColorsSection />;
     default:
       return (
         <div style={{ padding: '16px', border: '1px solid #e1e1e1', borderRadius: '4px', backgroundColor: '#f9f9f9' }}>
@@ -2504,7 +3104,7 @@ const App: React.FC = () => {
                       Layout containers with specific functionality areas.
                     </Body2>
                     <div className={styles.techStack}>
-                      <Badge appearance="filled" color="brand">6 Components</Badge>
+                      <Badge appearance="filled" color="brand">7 Components</Badge>
                     </div>
                   </div>
                   <div className={styles.componentCard}>

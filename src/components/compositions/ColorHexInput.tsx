@@ -7,6 +7,8 @@ import * as React from 'react';
 import { makeStyles } from '@fluentui/react-components';
 import { HexInput } from '../primitives/HexInput';
 import { useClickableSwatch } from '../../hooks/useClickableSwatch';
+import { ErrorBoundary } from '../error/ErrorBoundary';
+import { useInputValidation } from '../../hooks/useInputValidation';
 
 const useStyles = makeStyles({
   container: {
@@ -14,27 +16,31 @@ const useStyles = makeStyles({
     alignItems: 'center',
     gap: 'var(--spacingHorizontalS)',
     width: 'auto',
+    minWidth: '0',
   },
   colorSwatch: {
     width: '32px',
     height: '32px',
     borderRadius: 'var(--borderRadiusMedium)',
     flexShrink: 0,
+    border: '0.5px solid var(--colorNeutralStroke1)',
   },
   clickableSwatch: {
     cursor: 'pointer',
-    border: '2px solid transparent',
+    border: '0.5px solid var(--colorNeutralStroke1)',
     '&:hover': {
-      border: '2px solid var(--colorNeutralStroke1)',
+      border: '1px solid var(--colorNeutralStroke1)',
     },
     '&:focus': {
-      border: '2px solid var(--colorNeutralStroke1)',
+      border: '1px solid var(--colorNeutralStroke1)',
       outline: '2px solid var(--colorNeutralStroke1)',
       outlineOffset: '2px',
     },
   },
   hexInputContainer: {
-    flexGrow: 1,
+    flexGrow: 0,
+    flexShrink: 0,
+    width: 'auto', // Let HexInput determine its own width using standard sizing
   },
 });
 
@@ -52,9 +58,53 @@ export interface ColorHexInputProps {
   hexInputWidth?: string | number; // Width of the hex input field
   containerWidth?: string | number; // Overall container width
   containerHeight?: string | number; // Overall container height
+  onError?: (error: Error, errorInfo?: React.ErrorInfo) => void;
 }
 
-export const ColorHexInput: React.FC<ColorHexInputProps> = ({
+// Custom error fallback for ColorHexInput
+const ColorHexInputErrorFallback: React.FC<{ error: Error; resetError: () => void }> = ({ error, resetError }) => {
+  const styles = useStyles();
+  
+  return (
+    <div className={styles.container}>
+      <div style={{
+        padding: 'var(--spacingVerticalM)',
+        color: 'var(--colorPaletteRedForeground1)',
+        textAlign: 'center',
+        border: '1px solid var(--colorPaletteRedBorder1)',
+        borderRadius: 'var(--borderRadiusMedium)',
+        backgroundColor: 'var(--colorPaletteRedBackground1)',
+        width: '100%'
+      }}>
+        <div style={{ marginBottom: 'var(--spacingVerticalS)' }}>
+          Failed to load color hex input
+        </div>
+        <div style={{ 
+          fontSize: 'var(--fontSizeBase200)', 
+          color: 'var(--colorPaletteRedForeground2)',
+          marginBottom: 'var(--spacingVerticalM)' 
+        }}>
+          {error.message}
+        </div>
+        <button 
+          onClick={resetError}
+          style={{
+            padding: 'var(--spacingVerticalS) var(--spacingHorizontalM)',
+            backgroundColor: 'var(--colorPaletteRedBackground2)',
+            border: '1px solid var(--colorPaletteRedBorder2)',
+            borderRadius: 'var(--borderRadiusMedium)',
+            color: 'var(--colorPaletteRedForeground1)',
+            cursor: 'pointer'
+          }}
+        >
+          Try Again
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export const ColorHexInput = React.memo<ColorHexInputProps>(({
   value,
   onChange,
   size = 'medium', // Default to medium
@@ -68,8 +118,10 @@ export const ColorHexInput: React.FC<ColorHexInputProps> = ({
   hexInputWidth,
   containerWidth,
   containerHeight,
+  onError,
 }) => {
   const styles = useStyles();
+  const { validateHexColor } = useInputValidation(onError);
 
   // --- ALL JS WIDTH CALCULATIONS REMOVED ---
   // Sizing is now handled by CSS flexbox and child component's own size.
@@ -81,74 +133,119 @@ export const ColorHexInput: React.FC<ColorHexInputProps> = ({
   });
 
   const isValidHexColor = React.useCallback((color: string): boolean => {
-    if (!color || color === '') return false;
-    const hexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
-    return hexRegex.test(color);
-  }, []);
+    try {
+      if (!color || color === '') return false;
+      const hexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+      return hexRegex.test(color);
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in hex color validation');
+      onError?.(errorObj);
+      return false;
+    }
+  }, [onError]);
 
   const colorSwatchStyle = React.useMemo(() => {
-    const backgroundColor = value && isValidHexColor(value) ? value : 'transparent';
-    const isInvalid = value && !isValidHexColor(value);
-    
-    return {
-      backgroundColor,
-      ...(isInvalid ? { background: 'repeating-linear-gradient(45deg, transparent, transparent 2px, #ff0000 2px, #ff0000 4px)' } : {}),
-    };
-  }, [value, isValidHexColor]);
+    try {
+      const backgroundColor = value && isValidHexColor(value) ? value : 'transparent';
+      const isInvalid = value && !isValidHexColor(value);
+      
+      return {
+        backgroundColor,
+        ...(isInvalid ? { background: 'repeating-linear-gradient(45deg, transparent, transparent 2px, #ff0000 2px, #ff0000 4px)' } : {}),
+      };
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in color swatch style calculation');
+      onError?.(errorObj);
+      return { backgroundColor: 'transparent' };
+    }
+  }, [value, isValidHexColor, onError]);
 
   const { style: containerPropsStyle, ...otherContainerProps } = containerProps || {};
 
-  const mergedContainerStyle = {
-    ...(fullWidth ? { width: '100%' } : {}),
-    ...(containerWidth ? { width: typeof containerWidth === 'number' ? `${containerWidth}px` : containerWidth } : {}),
-    ...(containerHeight ? { height: typeof containerHeight === 'number' ? `${containerHeight}px` : containerHeight } : {}),
-    ...containerPropsStyle,
-  };
+  const mergedContainerStyle = React.useMemo(() => {
+    try {
+      return {
+        ...(fullWidth ? { width: '100%' } : {}),
+        ...(containerWidth ? { width: typeof containerWidth === 'number' ? `${containerWidth}px` : containerWidth } : {}),
+        ...(containerHeight ? { height: typeof containerHeight === 'number' ? `${containerHeight}px` : containerHeight } : {}),
+        ...containerPropsStyle,
+      };
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in container style calculation');
+      onError?.(errorObj);
+      return {};
+    }
+  }, [fullWidth, containerWidth, containerHeight, containerPropsStyle, onError]);
 
   const { className: swatchClassName, ...otherSwatchProps } = swatchProps || {};
 
   const swatchStyle = React.useMemo(() => {
-    const baseStyle = colorSwatchStyle;
-    const sizeStyle = swatchSize ? {
-      width: `${swatchSize}px`,
-      height: `${swatchSize}px`,
-    } : {};
-    
-    return {
-      ...baseStyle,
-      ...sizeStyle,
-      cursor: isClickable ? 'pointer' : 'default',
-    };
-  }, [colorSwatchStyle, swatchSize, isClickable]);
+    try {
+      const baseStyle = colorSwatchStyle;
+      const sizeStyle = swatchSize ? {
+        width: `${swatchSize}px`,
+        height: `${swatchSize}px`,
+      } : {};
+      
+      return {
+        ...baseStyle,
+        ...sizeStyle,
+        cursor: isClickable ? 'pointer' : 'default',
+      };
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in swatch style calculation');
+      onError?.(errorObj);
+      return { backgroundColor: 'transparent' };
+    }
+  }, [colorSwatchStyle, swatchSize, isClickable, onError]);
 
-  const mergedSwatchClassName = `${styles.colorSwatch} ${isClickable ? styles.clickableSwatch : ''} ${swatchClassName || ''}`;
+  const mergedSwatchClassName = React.useMemo(() => {
+    try {
+      return `${styles.colorSwatch} ${isClickable ? styles.clickableSwatch : ''} ${swatchClassName || ''}`;
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in swatch class name calculation');
+      onError?.(errorObj);
+      return styles.colorSwatch;
+    }
+  }, [styles.colorSwatch, styles.clickableSwatch, isClickable, swatchClassName, onError]);
+
+  const handleError = React.useCallback((error: Error, errorInfo?: React.ErrorInfo) => {
+    onError?.(error, errorInfo);
+  }, [onError]);
 
   return (
-    <div
-      className={styles.container}
-      style={mergedContainerStyle}
-      {...otherContainerProps}
+    <ErrorBoundary 
+      fallback={ColorHexInputErrorFallback}
+      onError={handleError}
+      resetOnPropsChange={true}
     >
       <div
-        className={mergedSwatchClassName}
-        style={swatchStyle}
-        data-color-swatch
-        {...otherSwatchProps}
-      />
-      <div className={styles.hexInputContainer}>
-        <HexInput
-          value={value}
-          onChange={onChange}
-          size={size}
-          length={length}
-          disabled={disabled}
-          placeholder={placeholder}
-          fullWidth={fullWidth}
-          width={hexInputWidth}
+        className={styles.container}
+        style={mergedContainerStyle}
+        {...otherContainerProps}
+      >
+        <div
+          className={mergedSwatchClassName}
+          style={swatchStyle}
+          data-color-swatch
+          {...otherSwatchProps}
         />
+        <div className={styles.hexInputContainer}>
+          <HexInput
+            value={value}
+            onChange={onChange}
+            size={size === 'auto' ? 'small' : (size || 'small')}
+            length={length}
+            disabled={disabled}
+            placeholder={placeholder}
+            fullWidth={fullWidth}
+            width={hexInputWidth}
+            onError={onError}
+          />
+        </div>
       </div>
-    </div>
+    </ErrorBoundary>
   );
-};
+});
 
 ColorHexInput.displayName = 'ColorHexInput'; 

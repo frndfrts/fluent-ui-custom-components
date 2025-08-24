@@ -1,112 +1,135 @@
 /**
  * SliderInput.tsx
- * Atomic slider input component following Fluent UI guidelines.
- * Reusable slider component for numeric value selection with label and value display.
+ * Fluent UI v9 Slider with custom label and value display.
+ * Uses proper Fluent UI v9 Slider API with slot-based styling.
  */
 import * as React from 'react';
-import { Slider, makeStyles } from '@fluentui/react-components';
+import { useId, Slider, makeStyles, tokens } from '@fluentui/react-components';
 
 const useStyles = makeStyles({
-  sliderRow: {
-    display: 'flex',
+  container: {
+    display: 'grid',
+    gridTemplateColumns: '30px 1fr 20px', // Three columns: label | slider | value
     alignItems: 'center',
-    gap: 'var(--spacingHorizontalS)',
-    width: '100%', // Default to taking full width of its parent
+    gap: '8px',
+    width: '100%',
   },
   label: {
-    textAlign: 'right',
-    fontSize: 'var(--fontSizeBase200)',
-    fontWeight: 'var(--fontWeightRegular)',
-    color: 'var(--colorNeutralForeground1)',
-    flexShrink: 0, // Prevent label from shrinking
+    fontSize: tokens.fontSizeBase200,
+    fontWeight: tokens.fontWeightRegular,
+    color: tokens.colorNeutralForeground1,
+    textAlign: 'right', // Right-align labels
+    gridColumn: '1', // First column
   },
-  slider: {
-    flexGrow: 1,
-    minWidth: 0, // Prevent the slider from overflowing its container
+  sliderContainer: {
+    position: 'relative',
+    gridColumn: '2', // Middle column
+    width: '100%',
   },
   value: {
-    textAlign: 'right',
-    fontSize: 'var(--fontSizeBase200)',
-    fontWeight: 'var(--fontWeightRegular)',
     fontFamily: 'monospace',
-    color: 'var(--colorNeutralForeground1)',
-    flexShrink: 0, // Prevent value from shrinking
+    fontSize: tokens.fontSizeBase200,
+    fontWeight: tokens.fontWeightRegular,
+    color: tokens.colorNeutralForeground1,
+    textAlign: 'right', // Right-align values
+    gridColumn: '3', // Third column
+  },
+  customSlider: {
+    // Custom styling for the Fluent UI v9 Slider
+    '& [data-slot="rail"]': {
+      backgroundColor: tokens.colorNeutralStroke2,
+      borderRadius: '4px',
+      height: '4px',
+    },
+    '& [data-slot="thumb"]': {
+      backgroundColor: tokens.colorBrandBackground,
+      border: `2px solid ${tokens.colorBrandStroke1}`,
+      borderRadius: '50%',
+      width: '16px',
+      height: '16px',
+      cursor: 'pointer',
+      '&:hover': {
+        backgroundColor: tokens.colorBrandBackgroundHover,
+      },
+    },
   },
 });
 
 export interface SliderInputProps {
   value: number;
-  onChange: (value: number) => void;
   min?: number;
   max?: number;
-  step?: number;
-  label: string;
-  suffix?: string;
-  size?: 'small' | 'medium';
+  step?: number; // Optional - used for onChange precision but not for slider steps
+  onChange: (value: number) => void;
+  onError?: (error: Error) => void;
+  label?: string;
+  size?: 'small' | 'medium' | 'large';
   disabled?: boolean;
-  labelWidth?: number; // Custom label width in pixels
-  valueWidth?: number; // Custom value width in pixels
-  width?: string | number; // Total width of the component
-  minWidth?: string | number; // Minimum width
-  maxWidth?: string | number; // Maximum width
 }
 
-export const SliderInput: React.FC<SliderInputProps> = ({
+export const SliderInput = React.memo<SliderInputProps>(({
   value,
-  onChange,
   min = 0,
   max = 100,
   step = 1,
+  onChange,
+  onError,
   label,
-  suffix = '',
-  size = 'small',
+  size = 'medium',
   disabled = false,
-  labelWidth,
-  valueWidth,
-  width,
-  minWidth,
-  maxWidth,
 }) => {
+  const id = useId();
   const styles = useStyles();
+  
+  const handleChange = React.useCallback((ev: React.ChangeEvent<HTMLInputElement>, data: { value: number }) => {
+    try {
+      let newValue = data.value;
+      
+      // Apply step precision if step is defined
+      if (step && step > 0) {
+        newValue = Math.round(newValue / step) * step;
+      }
+      
+      if (!isNaN(newValue)) {
+        onChange(newValue);
+      }
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in slider change');
+      onError?.(errorObj);
+    }
+  }, [onChange, onError, step]);
 
-  const handleChange = React.useCallback((e: React.FormEvent<HTMLDivElement>, data: { value: number }) => {
-    onChange(data.value);
-  }, [onChange]);
-
-  const containerStyle: React.CSSProperties = {
-    width: width ? (typeof width === 'number' ? `${width}px` : width) : '100%',
-    minWidth: minWidth ? (typeof minWidth === 'number' ? `${minWidth}px` : minWidth) : undefined,
-    maxWidth: maxWidth ? (typeof maxWidth === 'number' ? `${maxWidth}px` : maxWidth) : undefined,
-  };
-
-  const labelStyle: React.CSSProperties = {
-    width: labelWidth ? `${labelWidth}px` : undefined,
-  };
-
-  const valueStyle: React.CSSProperties = {
-    width: valueWidth ? `${valueWidth}px` : undefined,
-    minWidth: valueWidth ? `${valueWidth}px` : '32px', // Fallback to ensure space
-  };
-
+  // Proper Fluent UI v9 Slider with slot-based styling
   return (
-    <div className={styles.sliderRow} style={containerStyle}>
-      <span className={styles.label} style={labelStyle}>
-        {label}
-      </span>
-      <div className={styles.slider}>
+    <div className={styles.container}>
+      {label && <span className={styles.label}>{label}</span>}
+      <div className={styles.sliderContainer}>
         <Slider
+          value={value}
           min={min}
           max={max}
-          value={value}
           onChange={handleChange}
-          size={size}
           disabled={disabled}
-          style={{ width: '100%' }}
+          size="small"
+          className={styles.customSlider}
+          root={{
+            style: {
+              width: '100%',
+            }
+          }}
+          input={{
+            id: id,
+            'aria-label': label || 'Slider input',
+            'aria-valuemin': min,
+            'aria-valuemax': max,
+            'aria-valuenow': value,
+            step: 'any', // This makes it continuous instead of stepped
+          }}
         />
       </div>
-      <span className={styles.value} style={valueStyle}>{value}{suffix}</span>
+      <span className={styles.value}>{value}</span>
     </div>
   );
-};
+});
 
 SliderInput.displayName = 'SliderInput'; 

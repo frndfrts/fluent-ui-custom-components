@@ -9,6 +9,8 @@ import { SizeFields } from './SizeFields';
 import { OrientationSelector } from '../components/OrientationSelector';
 import { FormLayoutProvider } from '../../styles/FormLayoutContext';
 import { usePaperSizeManager } from '../../hooks/usePaperSizeManager';
+import { ErrorBoundary } from '../error/ErrorBoundary';
+import { DEFAULT_UNIT } from '../components/UnitSelector';
 
 const useStyles = makeStyles({
   panel: {
@@ -29,14 +31,21 @@ const useStyles = makeStyles({
     color: 'var(--colorNeutralForeground1)',
     marginBottom: tokens.spacingVerticalXS,
   },
-
+  errorFallback: {
+    padding: tokens.spacingVerticalM,
+    color: tokens.colorPaletteRedForeground1,
+    textAlign: 'center',
+    border: `1px solid ${tokens.colorPaletteRedBorder1}`,
+    borderRadius: tokens.borderRadiusMedium,
+    backgroundColor: tokens.colorPaletteRedBackground1,
+  },
 });
 
 export interface PaperSize {
   width: number;
   height: number;
-  widthUnit: string; // Individual unit for width
-  heightUnit: string; // Individual unit for height
+  widthUnit?: string; // Individual unit for width
+  heightUnit?: string; // Individual unit for height
   orientation: string;
   paperSize: string;
 }
@@ -45,12 +54,49 @@ export interface PaperSizePanelProps {
   paperSize?: PaperSize;
   units?: string[];
   onChange?: (paperSize: PaperSize) => void;
+  onError?: (error: Error, errorInfo?: React.ErrorInfo) => void;
+  disabled?: boolean;
 }
+
+// Custom error fallback for PaperSizePanel
+const PaperSizePanelErrorFallback: React.FC<{ error: Error; resetError: () => void }> = ({ error, resetError }) => {
+  const styles = useStyles();
+  
+  return (
+    <div className={styles.errorFallback}>
+      <div style={{ marginBottom: tokens.spacingVerticalS }}>
+        Failed to load paper size settings
+      </div>
+      <div style={{ 
+        fontSize: tokens.fontSizeBase200, 
+        color: tokens.colorPaletteRedForeground2,
+        marginBottom: tokens.spacingVerticalM 
+      }}>
+        {error.message}
+      </div>
+      <button 
+        onClick={resetError}
+        style={{
+          padding: `${tokens.spacingVerticalS} ${tokens.spacingHorizontalM}`,
+          backgroundColor: tokens.colorPaletteRedBackground2,
+          border: `1px solid ${tokens.colorPaletteRedBorder2}`,
+          borderRadius: tokens.borderRadiusMedium,
+          color: tokens.colorPaletteRedForeground1,
+          cursor: 'pointer'
+        }}
+      >
+        Try Again
+      </button>
+    </div>
+  );
+};
 
 export const PaperSizePanel = React.memo<PaperSizePanelProps>(({
   paperSize: externalPaperSize,
-  units = ['%', 'cm', 'in', 'mm', 'pt', 'px'],
+  units,
   onChange: externalOnChange,
+  onError,
+  disabled = false,
 }) => {
   const styles = useStyles();
 
@@ -63,33 +109,24 @@ export const PaperSizePanel = React.memo<PaperSizePanelProps>(({
     updateOrientation,
   } = usePaperSizeManager(
     externalPaperSize?.paperSize || 'A4',
-    externalPaperSize?.widthUnit || 'cm',
-    externalPaperSize?.heightUnit || 'cm',
+    externalPaperSize?.widthUnit || DEFAULT_UNIT,
+    externalPaperSize?.heightUnit || DEFAULT_UNIT,
     externalPaperSize?.orientation || 'portrait'
   );
 
-  // Standard paper sizes with dimensions in cm
-  const standardPaperSizes = React.useMemo(() => [
-    'A4',
-    'A3', 
-    'A5',
-    'Letter',
-    'Legal',
-    'Tabloid',
-    'A0',
-    'A1',
-    'A2',
-    'A6'
-  ], []);
-
   // Handle external onChange if provided
   const handlePaperSizeChange = React.useCallback((newPaperSize: string) => {
-    updatePaperSize(newPaperSize);
-    if (externalOnChange) {
-      const updatedData = { ...paperSizeData, paperSize: newPaperSize };
-      externalOnChange(updatedData);
+    try {
+      updatePaperSize(newPaperSize);
+      if (externalOnChange) {
+        const updatedData = { ...paperSizeData, paperSize: newPaperSize };
+        externalOnChange(updatedData);
+      }
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in paper size change');
+      onError?.(errorObj);
     }
-  }, [updatePaperSize, externalOnChange, paperSizeData]);
+  }, [updatePaperSize, externalOnChange, paperSizeData, onError]);
 
   const handleDimensionsChange = React.useCallback((fields: {
     width: number;
@@ -97,56 +134,80 @@ export const PaperSizePanel = React.memo<PaperSizePanelProps>(({
     widthUnit: string;
     heightUnit: string;
   }) => {
-    updateDimensions(fields.width, fields.height, fields.widthUnit, fields.heightUnit);
-    if (externalOnChange) {
-      const updatedData = { ...paperSizeData, ...fields };
-      externalOnChange(updatedData);
+    try {
+      updateDimensions(fields.width, fields.height, fields.widthUnit, fields.heightUnit);
+      if (externalOnChange) {
+        const updatedData = { ...paperSizeData, ...fields };
+        externalOnChange(updatedData);
+      }
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in dimensions change');
+      onError?.(errorObj);
     }
-  }, [updateDimensions, externalOnChange, paperSizeData]);
+  }, [updateDimensions, externalOnChange, paperSizeData, onError]);
 
-  const handleOrientationChange = React.useCallback((orientation: string) => {
-    updateOrientation(orientation);
-    if (externalOnChange) {
-      const updatedData = { ...paperSizeData, orientation };
-      externalOnChange(updatedData);
+  const handleOrientationChange = React.useCallback((newOrientation: string) => {
+    try {
+      updateOrientation(newOrientation);
+      if (externalOnChange) {
+        const updatedData = { ...paperSizeData, orientation: newOrientation };
+        externalOnChange(updatedData);
+      }
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in orientation change');
+      onError?.(errorObj);
     }
-  }, [updateOrientation, externalOnChange, paperSizeData]);
+  }, [updateOrientation, externalOnChange, paperSizeData, onError]);
+
+  const handleError = React.useCallback((error: Error, errorInfo?: React.ErrorInfo) => {
+    onError?.(error, errorInfo);
+  }, [onError]);
 
   return (
-    <FormLayoutProvider>
-      <div className={styles.panel}>
-        <Text className={styles.sectionTitle}>Paper Size</Text>
+    <ErrorBoundary 
+      fallback={PaperSizePanelErrorFallback}
+      onError={handleError}
+      resetOnPropsChange={true}
+    >
+      <FormLayoutProvider>
+        <div className={styles.panel}>
+          {/* Paper Type and Size Selection */}
+          <div className={styles.section}>
+            <Text className={styles.sectionTitle}>Paper Type and Size</Text>
+            <PaperSelector
+              value={paperSizeData.paperSize}
+              onChange={handlePaperSizeChange}
+              disabled={disabled}
+              onError={onError}
+            />
+          </div>
 
-        <div className={styles.section}>
-          <PaperSelector
-            label="Paper Type"
-            paperSize={paperSizeData.paperSize}
-            paperSizes={standardPaperSizes}
-            onChange={handlePaperSizeChange}
-          />
-        </div>
+          {/* Dimensions */}
+          <div className={styles.section}>
+            <SizeFields
+              width={paperSizeData.width}
+              height={paperSizeData.height}
+              {...(paperSizeData.widthUnit !== undefined && { widthUnit: paperSizeData.widthUnit })}
+              {...(paperSizeData.heightUnit !== undefined && { heightUnit: paperSizeData.heightUnit })}
+              {...(units !== undefined && { units })}
+              showLockAspectRatio={false}
+              disabled={disabled || !areDimensionsEditable}
+              onChange={handleDimensionsChange}
+              onError={onError}
+            />
+          </div>
 
-        <div className={styles.section}>
-          <SizeFields
-            width={paperSizeData.width}
-            height={paperSizeData.height}
-            widthUnit={paperSizeData.widthUnit}
-            heightUnit={paperSizeData.heightUnit}
-            units={units}
-            showLockAspectRatio={true}
-            disabled={!areDimensionsEditable}
-            onChange={handleDimensionsChange}
-          />
+          {/* Orientation */}
+          <div className={styles.section}>
+            <OrientationSelector
+              orientation={paperSizeData.orientation}
+              onChange={handleOrientationChange}
+              disabled={disabled}
+              onError={onError}
+            />
+          </div>
         </div>
-
-        <div className={styles.section}>
-          <OrientationSelector
-            label="Orientation"
-            orientation={paperSizeData.orientation}
-            onChange={handleOrientationChange}
-          />
-        </div>
-      </div>
-    </FormLayoutProvider>
+      </FormLayoutProvider>
+    </ErrorBoundary>
   );
 }); 

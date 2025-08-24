@@ -107,6 +107,7 @@ export interface FluentColorPickerProps {
   allowEmpty?: boolean;
   showPreview?: boolean;
   showHexInput?: boolean;
+  onError?: (error: Error) => void;
 }
 
 export const FluentColorPicker = React.memo<FluentColorPickerProps>(({
@@ -119,10 +120,11 @@ export const FluentColorPicker = React.memo<FluentColorPickerProps>(({
   allowEmpty = false,
   showPreview = true,
   showHexInput = true,
+  onError,
 }) => {
   const styles = useStyles();
   const commonStyles = useCommonStyles();
-  const sizeConfig = useComponentSize(size);
+  const sizeConfig = useComponentSize(size, onError);
 
   // State for color picker
   const [isOpen, setIsOpen] = React.useState(false);

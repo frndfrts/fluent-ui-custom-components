@@ -4,6 +4,7 @@
  */
 import * as React from 'react';
 import { RadioGroup, Radio, makeStyles } from '@fluentui/react-components';
+import { useFormLayout } from '../../styles/FormLayoutContext';
 
 const useStyles = makeStyles({
   container: {
@@ -12,98 +13,104 @@ const useStyles = makeStyles({
     gap: '4px',
     flexDirection: 'row',
     flexWrap: 'nowrap',
-    // Atomic component must be immune to parent layout
-    width: 'fit-content',
-    minWidth: 'fit-content',
-    // Override any parent grid/flex layout
-    gridColumn: '1 / -1',
-    gridRow: 'auto',
+    justifyContent: 'flex-start',
   },
   label: {
     textAlign: 'right',
-    fontWeight: 'normal',
+    fontWeight: 'var(--fontWeightRegular)',
     color: 'var(--colorNeutralForeground1)',
-    fontSize: 'inherit',
+    fontSize: 'var(--fontSizeBase200)',
     lineHeight: '1.5',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-end',
     flexShrink: 0,
-    // Ensure label maintains its size
     minWidth: 'fit-content',
-  },
-  labelSmall: {
-    width: '120px',
-  },
-  labelMedium: {
-    width: '160px',
-  },
-  labelLarge: {
-    width: '200px',
   },
   radioGroup: {
     display: 'flex',
-    gap: '8px',
+    gap: '4px',
     flexDirection: 'row',
     flexWrap: 'nowrap',
     alignItems: 'center',
-    // Ensure radio group maintains horizontal layout
     minWidth: 'fit-content',
     flexShrink: 0,
+    '& .fui-Radio__label': {
+      fontSize: 'var(--fontSizeBase200)',
+    },
   },
 });
 
+// Standard orientation options with portrait as default
+export const DEFAULT_ORIENTATIONS = ['portrait', 'landscape'];
+export const DEFAULT_ORIENTATION = 'portrait';
+
 export interface OrientationSelectorProps {
   label?: string;
-  orientation: string;
+  orientation?: string;
   onChange: (orientation: string) => void;
   size?: 'small' | 'medium' | 'large';
   disabled?: boolean;
+  onError?: (error: Error) => void;
 }
 
 export const OrientationSelector = React.memo<OrientationSelectorProps>(({ 
   label = 'Orientation',
-  orientation, 
+  orientation = DEFAULT_ORIENTATION, 
   onChange,
   size = 'medium',
-  disabled = false
+  disabled = false,
+  onError
 }) => {
   const styles = useStyles();
+  const layout = useFormLayout();
 
-  const getLabelClassName = React.useCallback(() => {
-    const baseClass = styles.label;
-    if (size === 'small') {
-      return `${baseClass} ${styles.labelSmall}`;
-    } else if (size === 'large') {
-      return `${baseClass} ${styles.labelLarge}`;
-    } else {
-      return `${baseClass} ${styles.labelMedium}`;
+  const getLabelStyle = React.useCallback((): React.CSSProperties => {
+    try {
+      return { width: `${layout.labelWidth}px` };
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in label style calculation');
+      onError?.(errorObj);
+      return { width: '100px' }; // Return fallback width
     }
-  }, [styles.label, styles.labelSmall, styles.labelMedium, styles.labelLarge, size]);
+  }, [layout.labelWidth, onError]);
 
   const handleChange = React.useCallback((ev: React.FormEvent<HTMLDivElement>, data: { value: string }) => {
-    onChange(data.value);
-  }, [onChange]);
+    try {
+      onChange(data.value);
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in orientation change');
+      onError?.(errorObj);
+    }
+  }, [onChange, onError]);
 
-  const labelClassName = React.useMemo(() => getLabelClassName(), [getLabelClassName]);
+  const labelStyle = React.useMemo(() => getLabelStyle(), [getLabelStyle]);
+  const containerStyle = React.useMemo(() => {
+    try {
+      return {
+        width: `${layout.labelWidth + layout.combinedControlWidth}px`
+      };
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in container style calculation');
+      onError?.(errorObj);
+      return { width: '200px' }; // Return fallback width
+    }
+  }, [layout.labelWidth, layout.combinedControlWidth, onError]);
 
   return (
-    <div style={{ display: 'block', width: 'fit-content' }}>
-      <div className={styles.container}>
-        <div className={labelClassName}>
+    <div className={styles.container} style={containerStyle}>
+        <div className={styles.label} style={labelStyle}>
           {label}:&nbsp;
         </div>
         <RadioGroup 
           value={orientation} 
           onChange={handleChange}
           className={styles.radioGroup}
-          layout="horizontal"
           disabled={disabled}
         >
           <Radio value="portrait" label="Portrait" />
           <Radio value="landscape" label="Landscape" />
         </RadioGroup>
       </div>
-    </div>
   );
 }); 

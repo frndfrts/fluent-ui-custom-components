@@ -2,7 +2,7 @@
  * useUnitConversion.ts
  * Custom hook for converting between units while maintaining cm as internal storage.
  */
-import { useMemo } from 'react';
+import React from 'react';
 
 export type Unit = 'cm' | 'mm' | 'in' | 'px' | 'pt' | '%';
 
@@ -57,63 +57,55 @@ export interface UnitConversionState {
   getReverseConversionFactor: (sourceUnit: Unit) => number;
 }
 
-export const useUnitConversion = (): UnitConversionState => {
-  // Convert cm value to display value in target unit
-  const cmToDisplay = useMemo(() => {
-    return (cmValue: number, targetUnit: Unit): number => {
-      if (targetUnit === '%') {
-        // For percentage, we need a reference value (e.g., parent container)
-        // For now, return the cm value as-is, but this could be enhanced
-        return cmValue;
+export const useUnitConversion = (onError?: (error: Error) => void) => {
+  const cmToDisplay = React.useCallback((cmValue: number, targetUnit: Unit): number => {
+    try {
+      switch (targetUnit) {
+        case 'px':
+          return Math.round(cmValue * 37.7952755906); // 1 cm = 37.7952755906 px
+        case 'pt':
+          return Math.round(cmValue * 28.3464566929); // 1 cm = 28.3464566929 pt
+        case 'mm':
+          return Math.round(cmValue * 10); // 1 cm = 10 mm
+        case 'in':
+          return Math.round(cmValue * 0.3937007874 * 100) / 100; // 1 cm = 0.3937007874 in
+        case '%':
+          return Math.round(cmValue * 100) / 100; // Keep as is for percentage
+        default:
+          return cmValue; // Default to cm
       }
-      
-      const conversionFactor = UNIT_CONVERSIONS[targetUnit];
-      return cmValue * conversionFactor;
-    };
-  }, []);
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in cm to display conversion');
+      onError?.(errorObj);
+      return cmValue; // Return original value on error
+    }
+  }, [onError]);
 
-  // Convert display value in source unit to cm
-  const displayToCm = useMemo(() => {
-    return (displayValue: number, sourceUnit: Unit): number => {
-      if (sourceUnit === '%') {
-        // For percentage, we need a reference value
-        // For now, return the display value as-is, but this could be enhanced
-        return displayValue;
+  const displayToCm = React.useCallback((displayValue: number, sourceUnit: Unit): number => {
+    try {
+      switch (sourceUnit) {
+        case 'px':
+          return displayValue / 37.7952755906; // 1 px = 0.0264583333 cm
+        case 'pt':
+          return displayValue / 28.3464566929; // 1 pt = 0.0352777778 cm
+        case 'mm':
+          return displayValue / 10; // 1 mm = 0.1 cm
+        case 'in':
+          return displayValue * 2.54; // 1 in = 2.54 cm
+        case '%':
+          return displayValue; // Keep as is for percentage
+        default:
+          return displayValue; // Default to cm
       }
-      
-      const conversionFactor = REVERSE_CONVERSIONS[sourceUnit];
-      return displayValue * conversionFactor;
-    };
-  }, []);
-
-  // Format display value with appropriate decimal places
-  const formatDisplayValue = useMemo(() => {
-    return (cmValue: number, targetUnit: Unit): string => {
-      const displayValue = cmToDisplay(cmValue, targetUnit);
-      const decimalPlaces = getDecimalPlaces(targetUnit);
-      return displayValue.toFixed(decimalPlaces);
-    };
-  }, [cmToDisplay]);
-
-  // Get conversion factor from cm to target unit
-  const getConversionFactor = useMemo(() => {
-    return (targetUnit: Unit): number => {
-      return UNIT_CONVERSIONS[targetUnit];
-    };
-  }, []);
-
-  // Get reverse conversion factor from source unit to cm
-  const getReverseConversionFactor = useMemo(() => {
-    return (sourceUnit: Unit): number => {
-      return REVERSE_CONVERSIONS[sourceUnit];
-    };
-  }, []);
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in display to cm conversion');
+      onError?.(errorObj);
+      return displayValue; // Return original value on error
+    }
+  }, [onError]);
 
   return {
     cmToDisplay,
     displayToCm,
-    formatDisplayValue,
-    getConversionFactor,
-    getReverseConversionFactor,
   };
 }; 

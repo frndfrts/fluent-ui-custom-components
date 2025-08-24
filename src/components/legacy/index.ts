@@ -5,4 +5,6 @@
 
 export { LegacyColorPicker } from './LegacyColorPicker';
 export { HorizontalColorPicker } from './HorizontalColorPicker';
-export { FluentColorPicker } from './FluentColorPicker'; 
+export { FluentColorPicker } from './FluentColorPicker';
+export { LegacyHexInput } from './LegacyHexInput';
+export type { LegacyHexInputProps } from './LegacyHexInput'; 

@@ -23,7 +23,7 @@ export interface FormRowProps {
   rightControl?: React.ReactNode;
 }
 
-export const FormRow: React.FC<FormRowProps> = ({ label, control, leftControl, rightControl }) => {
+export const FormRow = React.memo<FormRowProps>(({ label, control, leftControl, rightControl }) => {
   const styles = useStyles();
   const layout = useFormLayout();
   const template = layout.gridTemplateColumns; // [label] [numeric] [gap] [unit]
@@ -46,6 +46,6 @@ export const FormRow: React.FC<FormRowProps> = ({ label, control, leftControl, r
       <div>{rightControl}</div>
     </div>
   );
-};
+});
 
 
