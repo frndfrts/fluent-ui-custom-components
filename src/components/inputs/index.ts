@@ -17,7 +17,7 @@ export { HexInput, NumericInput, SliderInput, UnitSelector, ColorSliderInput } f
 export { AspectRatioSelector, ColorModelSelector, OrientationSelector, PaperSelector, PositionSelector, UniversalSelector } from '../components';
 
 // Re-export compositions for backward compatibility
-export { ColorHexInput, ColorInput, ColorPicker, ColorSelector, DimensionInput, MultipleSlidersInput, RGBHSLColorSlidersInput } from '../compositions';
+export { ColorHexInput, ColorInput, ColorSelector, DimensionInput, MultipleSlidersInput, RGBHSLColorSlidersInput } from '../compositions';
 
 // Re-export ResponsiveColorPicker from panels
 export { ResponsiveColorPicker } from '../panels/ResponsiveColorPicker';

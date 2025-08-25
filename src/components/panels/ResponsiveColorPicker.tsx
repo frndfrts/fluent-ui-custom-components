@@ -50,11 +50,15 @@ const useStyles = makeStyles({
   colorPickerContainer: {
     display: 'flex',
     alignItems: 'center',
+    gap: 'var(--spacingHorizontalS)',
     flexGrow: 1,
     minWidth: '0', // Allow container to shrink
   },
   popoverSurface: {
     padding: '20px',
+    maxWidth: '100vw',
+    maxHeight: '100vh',
+    overflow: 'hidden',
   },
   popoverSurfaceVertical: {
     minWidth: '240px',
@@ -77,6 +81,9 @@ const useStyles = makeStyles({
     justifyContent: 'center',
     position: 'relative',
     height: '336px', // Increased by 16px to account for padding when RecentColors is shown
+    width: '100%',
+    maxWidth: '100%',
+    overflow: 'hidden',
   },
   leftSection: {
     display: 'flex',
@@ -84,6 +91,8 @@ const useStyles = makeStyles({
     gap: 'var(--spacingVerticalM)',
     width: '240px',
     height: '100%', // Fill the container height
+    flexShrink: 0,
+    overflow: 'hidden',
   },
   rightSection: {
     display: 'flex',
@@ -91,6 +100,8 @@ const useStyles = makeStyles({
     gap: 'var(--spacingVerticalM)',
     width: '240px',
     height: '100%', // Fill the container height
+    flexShrink: 0,
+    overflow: 'hidden',
   },
   section: {
     display: 'flex',
@@ -136,6 +147,7 @@ const useStyles = makeStyles({
     cursor: 'pointer',
     transition: 'transform 0.15s ease-in-out',
   },
+
 });
 
 export interface ResponsiveColorPickerProps {
@@ -331,19 +343,23 @@ export const ResponsiveColorPicker = React.memo<ResponsiveColorPickerProps>(({
                 position: 'below',
                 align: 'start',
                 offset: { mainAxis: 8, crossAxis: 0 },
+                coverTarget: false,
+                fallbackPositions: ['below', 'above', 'before', 'after'],
               }}
             >
               <PopoverTrigger>
-                <ColorHexInput
-                  value={value}
-                  onChange={onChange}
-                  length={6}
-                  size={size}
-                  disabled={disabled}
-                  placeholder={placeholder}
-                  swatchClickable={true}
-                  onSwatchClick={() => !disabled && setIsOpen(true)}
-                />
+                <div style={{ display: 'inline-block', width: 'fit-content' }}>
+                  <ColorHexInput
+                    value={value}
+                    onChange={onChange}
+                    length={6}
+                    size={size}
+                    disabled={disabled}
+                    placeholder={placeholder}
+                    swatchClickable={true}
+                    onSwatchClick={() => !disabled && setIsOpen(true)}
+                  />
+                </div>
               </PopoverTrigger>
               <PopoverSurface className={popoverSurfaceClass}>
                 <div 

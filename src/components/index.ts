@@ -74,7 +74,6 @@ export { PositionFields } from './panels/PositionFields';
 
 // Color and UI panels
 export { ResponsiveColorPicker } from './panels/ResponsiveColorPicker';
-export { ResponsiveColorPicker as ColorPicker } from './panels/ResponsiveColorPicker';
 
 // ============================================================================
 // SECTIONS (Level 5) - High-level functional areas

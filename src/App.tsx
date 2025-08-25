@@ -355,13 +355,12 @@ const categories = [
     items: [
       { name: 'ColorHexInput', key: 'colorHexInput' },
       { name: 'ColorInput', key: 'colorInput' },
-      { name: 'ColorPicker', key: 'colorPicker' },
+      { name: 'ResponsiveColorPicker', key: 'responsiveColorPicker' },
       { name: 'ColorSelector', key: 'colorSelector' },
       { name: 'DimensionInput', key: 'dimensionInput' },
       { name: 'LabeledColorPicker', key: 'labeledColorPicker' },
       { name: 'Large Swatch ColorHexInput', key: 'largeSwatchColorHexInput' },
       { name: 'MultipleSlidersInput', key: 'multipleSlidersInput' },
-      { name: 'ResponsiveColorPicker', key: 'responsiveColorPicker' },
       { name: 'RGBHSLColorSlidersInput', key: 'rgbhslColorSlidersInput' },
     ]
   },
@@ -820,19 +819,6 @@ const getComponentExamples = (key: string): ComponentExample[] => {
           settings: { width: 400, height: 300, widthUnit: "cm", heightUnit: "cm", units: "['px', 'pt', 'cm']", showLockAspectRatio: true }
         }
       ];
-    case 'colorPicker':
-      return [
-        {
-          description: "Comprehensive color picker component",
-          demo: <ResponsiveColorPicker value="#FF6B35" onChange={() => {}} />,
-          settings: { value: "#FF6B35" }
-        },
-        {
-          description: "Color picker with placeholder",
-          demo: <ResponsiveColorPicker value="#00FF00" placeholder="Select color" onChange={() => {}} />,
-          settings: { value: "#00FF00", placeholder: "Select color" }
-        }
-      ];
     case 'marginsPanel':
       return [
         {
@@ -1137,8 +1123,6 @@ const getComponentName = (key: string): string => {
       return 'Position Fields';
     case 'sizeFields':
       return 'Size Fields';
-    case 'colorPicker':
-      return 'Color Picker';
     case 'marginsPanel':
       return 'Margins Panel';
     case 'paddingPanel':
@@ -1229,8 +1213,6 @@ const getComponentDescription = (key: string): string => {
       return "A panel component for position selection and X/Y coordinate inputs. Combines position presets with custom coordinate inputs using DimensionInput components. Perfect for precise positioning applications.";
     case 'sizeFields':
       return "A panel component for width and height inputs with optional aspect ratio locking. Features individual unit controls for width and height, with integrated aspect ratio preservation functionality.";
-    case 'colorPicker':
-      return "A comprehensive color picker component that integrates color selection, custom color input, and recent colors. Features a popover interface with multiple color selection methods and validation.";
     case 'marginsPanel':
       return "A panel component for setting margin values on all sides. Features individual controls for top, right, bottom, and left margins with separate unit selection for each side.";
     case 'paddingPanel':
@@ -1493,15 +1475,6 @@ const getComponentFeatures = (key: string): { title: string; description: string
         { title: "DimensionInput Integration", description: "Uses DimensionInput components for consistent styling and behavior." },
         { title: "Unit Flexibility", description: "Individual unit selection for width and height." },
         { title: "Professional Layout", description: "Organized layout with proper spacing and visual hierarchy." }
-      ];
-    case 'colorPicker':
-      return [
-        { title: "Color Selection", description: "Grid of standard colors for quick selection." },
-        { title: "Custom Color Input", description: "Comprehensive color input with RGB/HSL sliders and hex input." },
-        { title: "Recent Colors", description: "Grid of recently used colors for quick access." },
-        { title: "Popover Interface", description: "Professional popover interface with proper positioning." },
-        { title: "Action Buttons", description: "Apply and Cancel buttons for color selection workflow." },
-        { title: "Validation", description: "Real-time color validation with visual feedback." }
       ];
     case 'marginsPanel':
       return [
@@ -1934,17 +1907,6 @@ const getComponentProps = (key: string): ComponentProp[] => {
         { name: "disabled", type: "boolean", default: "false", description: "Whether the component is disabled." },
         { name: "onChange", type: "(fields: SizeFieldsData) => void", default: "required", description: "Callback fired when any field changes." }
       ];
-    case 'colorPicker':
-      return [
-        { name: "value", type: "string", default: "required", description: "Current hex color value." },
-        { name: "onChange", type: "(color: string) => void", default: "required", description: "Callback fired when the color changes." },
-        { name: "size", type: "'small' | 'medium' | 'large'", default: "'medium'", description: "Size variant for the component." },
-        { name: "disabled", type: "boolean", default: "false", description: "Whether the component is disabled." },
-        { name: "className", type: "string", default: "undefined", description: "Additional CSS class name." },
-        { name: "placeholder", type: "string", default: "undefined", description: "Placeholder text for the trigger button." },
-        { name: "allowEmpty", type: "boolean", default: "false", description: "Whether to allow empty color values." },
-        { name: "validateOnChange", type: "boolean", default: "false", description: "Whether to validate color on change." }
-      ];
     case 'marginsPanel':
       return [
         { name: "margins", type: "Margins", default: "required", description: "Object containing margin values and units for all sides." },
@@ -2351,10 +2313,7 @@ const InteractiveSizeFieldsDemo: React.FC = () => {
   );
 };
 
-const InteractiveColorPickerDemo: React.FC = () => {
-  const [value, setValue] = React.useState("#FF6B35");
-  return <ResponsiveColorPicker value={value} onChange={setValue} />;
-};
+
 
 const InteractiveMarginsPanelDemo: React.FC = () => {
   const [margins, setMargins] = React.useState({
@@ -2699,8 +2658,6 @@ const renderDemo = (key: string): React.ReactNode => {
       return <InteractivePositionFieldsDemo />;
     case 'sizeFields':
       return <InteractiveSizeFieldsDemo />;
-    case 'colorPicker':
-      return <InteractiveColorPickerDemo />;
     case 'marginsPanel':
       return <InteractiveMarginsPanelDemo />;
     case 'paddingPanel':
