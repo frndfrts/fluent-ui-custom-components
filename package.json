@@ -1,6 +1,6 @@
 {
   "name": "@frndfrts/fluent-ui-custom-components",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Custom Fluent UI component library with 5-level architecture",
   "type": "module",
   "main": "dist/index.js",
