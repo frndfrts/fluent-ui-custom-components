@@ -14,19 +14,33 @@ const meta: Meta<typeof PositionSelector> = {
   },
   argTypes: {
     value: {
-      control: 'select',
+      control: { type: 'select' },
       options: ['top', 'center', 'bottom', 'left', 'right'],
       description: 'Current selected position',
+    },
+    options: {
+      control: { type: 'object' },
+      description: 'Available position options',
     },
     onChange: {
       action: 'position changed',
       description: 'Callback when position selection changes',
     },
-    className: {
-      control: 'text',
-      description: 'Additional CSS class name',
+    onError: {
+      action: 'error',
+      description: 'Callback when errors occur',
+    },
+    size: {
+      control: { type: 'select' },
+      options: ['small', 'medium', 'large'],
+      description: 'Size variant of the selector',
+    },
+    disabled: {
+      control: { type: 'boolean' },
+      description: 'Whether the selector is disabled',
     },
   },
+  tags: ['autodocs'],
 };
 
 export default meta;

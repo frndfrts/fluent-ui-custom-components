@@ -13,46 +13,38 @@ const meta: Meta<typeof ColorSelector> = {
     },
   },
   argTypes: {
-    colors: {
-      control: { type: 'object' },
-      description: 'Array of available colors',
-    },
-    selectedColor: {
+    value: {
       control: { type: 'color' },
-      description: 'Currently selected color',
+      description: 'Currently selected hex color value',
     },
-    onColorSelect: {
-      action: 'colorSelected',
+    onChange: {
+      action: 'colorChanged',
       description: 'Callback when a color is selected',
-    },
-    onError: {
-      action: 'error',
-      description: 'Callback when errors occur',
-    },
-    size: {
-      control: { type: 'select' },
-      options: ['small', 'medium', 'large'],
-      description: 'Size variant of the selector',
-    },
-    columns: {
-      control: { type: 'number', min: 1, max: 10 },
-      description: 'Number of columns in the color grid',
     },
     disabled: {
       control: { type: 'boolean' },
       description: 'Whether the selector is disabled',
     },
-    showLabels: {
-      control: { type: 'boolean' },
-      description: 'Whether to show color labels',
+    colors: {
+      control: { type: 'object' },
+      description: 'Custom color array (defaults to standard colors)',
     },
-    showHexValues: {
-      control: { type: 'boolean' },
-      description: 'Whether to show hex color values',
+    columns: {
+      control: { type: 'number', min: 1, max: 10 },
+      description: 'Number of columns in the color grid',
     },
-    label: {
-      control: { type: 'text' },
-      description: 'Visible label for the selector',
+    showTooltips: {
+      control: { type: 'boolean' },
+      description: 'Whether to show color tooltips',
+    },
+    colorModel: {
+      control: { type: 'select' },
+      options: ['rgb', 'hsl'],
+      description: 'Color model for tooltip display',
+    },
+    onError: {
+      action: 'error',
+      description: 'Callback when errors occur',
     },
   },
   tags: ['autodocs'],
@@ -72,9 +64,8 @@ const defaultColors = [
 // Basic usage
 export const Default: Story = {
   args: {
-    colors: defaultColors,
-    selectedColor: '#FF0000',
-    onColorSelect: (color: string) => console.log('Color selected:', color),
+    value: '#FF0000',
+    onChange: (color: string) => console.log('Color selected:', color),
   },
 };
 

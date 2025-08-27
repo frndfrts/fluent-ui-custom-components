@@ -13,8 +13,12 @@ const meta: Meta<typeof OrientationSelector> = {
     },
   },
   argTypes: {
-    value: {
-      control: 'select',
+    label: {
+      control: { type: 'text' },
+      description: 'Label text for the orientation selector',
+    },
+    orientation: {
+      control: { type: 'select' },
       options: ['portrait', 'landscape'],
       description: 'Current selected orientation',
     },
@@ -22,11 +26,21 @@ const meta: Meta<typeof OrientationSelector> = {
       action: 'orientation changed',
       description: 'Callback when orientation selection changes',
     },
-    className: {
-      control: 'text',
-      description: 'Additional CSS class name',
+    size: {
+      control: { type: 'select' },
+      options: ['small', 'medium', 'large'],
+      description: 'Size variant of the selector',
+    },
+    disabled: {
+      control: { type: 'boolean' },
+      description: 'Whether the selector is disabled',
+    },
+    onError: {
+      action: 'error',
+      description: 'Callback when errors occur',
     },
   },
+  tags: ['autodocs'],
 };
 
 export default meta;
@@ -34,19 +48,19 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    value: 'portrait',
+    orientation: 'portrait',
   },
 };
 
 export const Portrait: Story = {
   args: {
-    value: 'portrait',
+    orientation: 'portrait',
   },
 };
 
 export const Landscape: Story = {
   args: {
-    value: 'landscape',
+    orientation: 'landscape',
   },
 };
 

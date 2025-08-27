@@ -13,26 +13,26 @@ const meta: Meta<typeof DimensionInput> = {
     },
   },
   argTypes: {
+    label: {
+      control: { type: 'text' },
+      description: 'Visible label for the input',
+    },
     value: {
       control: { type: 'number' },
-      description: 'Current dimension value',
+      description: 'Current value in cm (internal storage)',
     },
     unit: {
       control: { type: 'select' },
-      options: ['cm', 'mm', 'in', 'pt', 'px'],
-      description: 'Current unit of measurement',
+      options: ['px', 'em', 'rem', '%', 'pt', 'in', 'cm', 'mm'],
+      description: 'Display unit (defaults to cm)',
     },
     units: {
       control: { type: 'object' },
-      description: 'Available units to choose from',
+      description: 'Available units for selection',
     },
     onChange: {
       action: 'changed',
-      description: 'Callback when value changes',
-    },
-    onUnitChange: {
-      action: 'unitChanged',
-      description: 'Callback when unit changes',
+      description: 'Callback when value or unit changes',
     },
     onError: {
       action: 'error',
@@ -43,45 +43,13 @@ const meta: Meta<typeof DimensionInput> = {
       options: ['small', 'medium', 'large'],
       description: 'Size variant of the input',
     },
-    width: {
-      control: { type: 'number' },
-      description: 'Custom width in pixels',
-    },
-    min: {
-      control: { type: 'number' },
-      description: 'Minimum allowed value',
-    },
-    max: {
-      control: { type: 'number' },
-      description: 'Maximum allowed value',
-    },
-    step: {
-      control: { type: 'number' },
-      description: 'Step increment for up/down buttons',
-    },
-    decimalPlaces: {
-      control: { type: 'number' },
-      description: 'Number of decimal places to display',
-    },
-    nonNegative: {
-      control: { type: 'boolean' },
-      description: 'Whether to prevent negative values',
-    },
     disabled: {
       control: { type: 'boolean' },
       description: 'Whether the input is disabled',
     },
-    placeholder: {
-      control: { type: 'text' },
-      description: 'Placeholder text when value is empty',
-    },
-    label: {
-      control: { type: 'text' },
-      description: 'Visible label for the input',
-    },
-    showUnitSelector: {
+    hideLabel: {
       control: { type: 'boolean' },
-      description: 'Whether to show unit selector',
+      description: 'Whether to hide the label',
     },
   },
   tags: ['autodocs'],
@@ -93,11 +61,11 @@ type Story = StoryObj<typeof meta>;
 // Basic usage
 export const Default: Story = {
   args: {
+    label: 'Width',
     value: 100,
     unit: 'px',
     units: ['px', 'em', 'rem', '%', 'pt', 'in', 'cm', 'mm'],
-    onChange: (value: number) => console.log('Value changed:', value),
-    onUnitChange: (unit: string) => console.log('Unit changed:', unit),
+    onChange: (value: number | '', unit: string) => console.log('Changed:', value, unit),
   },
 };
 

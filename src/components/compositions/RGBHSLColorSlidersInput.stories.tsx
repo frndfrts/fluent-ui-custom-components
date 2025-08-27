@@ -13,17 +13,22 @@ const meta: Meta<typeof RGBHSLColorSlidersInput> = {
     },
   },
   argTypes: {
-    value: {
-      control: 'text',
-      description: 'Current hex color value',
+    mode: {
+      control: { type: 'select' },
+      options: ['rgb', 'hsl'],
+      description: 'Color mode (RGB or HSL)',
     },
-    onChange: {
-      action: 'color changed',
-      description: 'Callback when color value changes',
+    rgbValues: {
+      control: { type: 'object' },
+      description: 'RGB color values object',
     },
-    className: {
-      control: 'text',
-      description: 'Additional CSS class name',
+    hslValues: {
+      control: { type: 'object' },
+      description: 'HSL color values object',
+    },
+    width: {
+      control: { type: 'text' },
+      description: 'Width of the component',
     },
   },
   tags: ['autodocs'],
@@ -34,36 +39,29 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    value: '#FF6B35',
+    mode: 'rgb',
+    rgbValues: { r: 255, g: 107, b: 53 },
   },
 };
 
-export const Red: Story = {
+export const RGBMode: Story = {
   args: {
-    value: '#FF0000',
+    mode: 'rgb',
+    rgbValues: { r: 255, g: 0, b: 0 },
   },
 };
 
-export const Green: Story = {
+export const HSLMode: Story = {
   args: {
-    value: '#00FF00',
+    mode: 'hsl',
+    hslValues: { h: 120, s: 100, l: 50 },
   },
 };
 
-export const Blue: Story = {
+export const CustomWidth: Story = {
   args: {
-    value: '#0000FF',
-  },
-};
-
-export const White: Story = {
-  args: {
-    value: '#FFFFFF',
-  },
-};
-
-export const Black: Story = {
-  args: {
-    value: '#000000',
+    mode: 'rgb',
+    rgbValues: { r: 0, g: 0, b: 255 },
+    width: '300px',
   },
 };

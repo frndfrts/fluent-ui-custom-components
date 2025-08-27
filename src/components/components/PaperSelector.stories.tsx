@@ -13,23 +13,14 @@ const meta: Meta<typeof PaperSelector> = {
     },
   },
   argTypes: {
-    selectedSize: {
+    value: {
       control: { type: 'select' },
       options: ['A4', 'Letter', 'Legal', 'A3', 'A5', 'Custom'],
       description: 'Currently selected paper size',
     },
-    orientation: {
-      control: { type: 'select' },
-      options: ['portrait', 'landscape'],
-      description: 'Paper orientation',
-    },
-    onSizeChange: {
+    onChange: {
       action: 'sizeChanged',
       description: 'Callback when paper size changes',
-    },
-    onOrientationChange: {
-      action: 'orientationChanged',
-      description: 'Callback when orientation changes',
     },
     onError: {
       action: 'error',
@@ -44,21 +35,13 @@ const meta: Meta<typeof PaperSelector> = {
       control: { type: 'boolean' },
       description: 'Whether the selector is disabled',
     },
-    showDimensions: {
+    showLabel: {
       control: { type: 'boolean' },
-      description: 'Whether to show paper dimensions',
+      description: 'Whether to show the label',
     },
-    showOrientation: {
-      control: { type: 'boolean' },
-      description: 'Whether to show orientation controls',
-    },
-    customSizes: {
-      control: { type: 'object' },
-      description: 'Custom paper size definitions',
-    },
-    label: {
+    labelText: {
       control: { type: 'text' },
-      description: 'Visible label for the selector',
+      description: 'Text to display as label',
     },
   },
   tags: ['autodocs'],
@@ -70,10 +53,8 @@ type Story = StoryObj<typeof meta>;
 // Basic usage
 export const Default: Story = {
   args: {
-    selectedSize: 'A4',
-    orientation: 'portrait',
-    onSizeChange: (size: string) => console.log('Paper size changed:', size),
-    onOrientationChange: (orientation: string) => console.log('Orientation changed:', orientation),
+    value: 'A4',
+    onChange: (size: string) => console.log('Paper size changed:', size),
   },
 };
 

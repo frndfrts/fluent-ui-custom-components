@@ -13,17 +13,13 @@ const meta: Meta<typeof ColorInput> = {
     },
   },
   argTypes: {
-    color: {
+    value: {
       control: { type: 'color' },
-      description: 'Current color value',
+      description: 'Current hex color value',
     },
-    onColorChange: {
+    onChange: {
       action: 'colorChanged',
       description: 'Callback when color changes',
-    },
-    onError: {
-      action: 'error',
-      description: 'Callback when errors occur',
     },
     size: {
       control: { type: 'select' },
@@ -34,33 +30,9 @@ const meta: Meta<typeof ColorInput> = {
       control: { type: 'boolean' },
       description: 'Whether the input is disabled',
     },
-    showHexInput: {
-      control: { type: 'boolean' },
-      description: 'Whether to show hex input field',
-    },
-    showColorPicker: {
-      control: { type: 'boolean' },
-      description: 'Whether to show color picker tools',
-    },
-    showSwatch: {
-      control: { type: 'boolean' },
-      description: 'Whether to show color swatch',
-    },
-    label: {
-      control: { type: 'text' },
-      description: 'Label for the color input',
-    },
-    placeholder: {
-      control: { type: 'text' },
-      description: 'Placeholder text for hex input',
-    },
-    width: {
-      control: { type: 'number' },
-      description: 'Custom width in pixels',
-    },
-    required: {
-      control: { type: 'boolean' },
-      description: 'Whether color is required',
+    onError: {
+      action: 'error',
+      description: 'Callback when errors occur',
     },
   },
   tags: ['autodocs'],
@@ -72,8 +44,8 @@ type Story = StoryObj<typeof meta>;
 // Basic usage
 export const Default: Story = {
   args: {
-    color: '#FF6B35',
-    onColorChange: (color: string) => console.log('Color changed:', color),
+    value: '#FF6B35',
+    onChange: (color: string) => console.log('Color changed:', color),
   },
 };
 

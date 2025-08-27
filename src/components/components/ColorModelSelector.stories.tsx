@@ -13,22 +13,18 @@ const meta: Meta<typeof ColorModelSelector> = {
     },
   },
   argTypes: {
-    selectedModel: {
+    label: {
+      control: { type: 'text' },
+      description: 'Label text for the color model selector',
+    },
+    colorModel: {
       control: { type: 'select' },
-      options: ['rgb', 'hsl', 'hex', 'cmyk', 'hsv'],
+      options: ['rgb', 'hsl'],
       description: 'Currently selected color model',
     },
-    availableModels: {
-      control: { type: 'object' },
-      description: 'Available color models to choose from',
-    },
-    onModelChange: {
+    onChange: {
       action: 'modelChanged',
       description: 'Callback when color model changes',
-    },
-    onError: {
-      action: 'error',
-      description: 'Callback when errors occur',
     },
     size: {
       control: { type: 'select' },
@@ -39,21 +35,9 @@ const meta: Meta<typeof ColorModelSelector> = {
       control: { type: 'boolean' },
       description: 'Whether the selector is disabled',
     },
-    showLabels: {
-      control: { type: 'boolean' },
-      description: 'Whether to show model labels',
-    },
-    showDescriptions: {
-      control: { type: 'boolean' },
-      description: 'Whether to show model descriptions',
-    },
-    label: {
-      control: { type: 'text' },
-      description: 'Visible label for the selector',
-    },
-    width: {
-      control: { type: 'number' },
-      description: 'Custom width in pixels',
+    onError: {
+      action: 'error',
+      description: 'Callback when errors occur',
     },
   },
   tags: ['autodocs'],
@@ -65,9 +49,8 @@ type Story = StoryObj<typeof meta>;
 // Basic usage
 export const Default: Story = {
   args: {
-    selectedModel: 'rgb',
-    availableModels: ['rgb', 'hsl', 'hex'],
-    onModelChange: (model: string) => console.log('Color model changed:', model),
+    colorModel: 'rgb',
+    onChange: (model: string) => console.log('Color model changed:', model),
   },
 };
 
@@ -91,24 +74,7 @@ export const Large: Story = {
 export const HSLModel: Story = {
   args: {
     ...Default.args,
-    selectedModel: 'hsl',
-  },
-};
-
-// HEX model
-export const HEXModel: Story = {
-  args: {
-    ...Default.args,
-    selectedModel: 'hex',
-  },
-};
-
-// CMYK model
-export const CMYKModel: Story = {
-  args: {
-    ...Default.args,
-    selectedModel: 'cmyk',
-    availableModels: ['rgb', 'hsl', 'hex', 'cmyk'],
+    colorModel: 'hsl',
   },
 };
 
