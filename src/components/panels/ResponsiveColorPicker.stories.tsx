@@ -1,14 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { ColorInput } from './ColorInput';
+import { ResponsiveColorPicker } from './ResponsiveColorPicker';
 
-const meta: Meta<typeof ColorInput> = {
-  title: '03-Compositions/ColorInput',
-  component: ColorInput,
+const meta: Meta<typeof ResponsiveColorPicker> = {
+  title: '02-Panels/ResponsiveColorPicker',
+  component: ResponsiveColorPicker,
   parameters: {
     layout: 'centered',
     docs: {
       description: {
-        component: 'A composition component that combines color selection with input controls for comprehensive color management.',
+        component: 'A responsive color picker panel that combines color swatch, hex input, and color selection tools.',
       },
     },
   },
@@ -28,11 +28,11 @@ const meta: Meta<typeof ColorInput> = {
     size: {
       control: { type: 'select' },
       options: ['small', 'medium', 'large'],
-      description: 'Size variant of the input',
+      description: 'Size variant of the picker',
     },
     disabled: {
       control: { type: 'boolean' },
-      description: 'Whether the input is disabled',
+      description: 'Whether the picker is disabled',
     },
     showHexInput: {
       control: { type: 'boolean' },
@@ -42,25 +42,13 @@ const meta: Meta<typeof ColorInput> = {
       control: { type: 'boolean' },
       description: 'Whether to show color picker tools',
     },
-    showSwatch: {
-      control: { type: 'boolean' },
-      description: 'Whether to show color swatch',
-    },
     label: {
       control: { type: 'text' },
-      description: 'Label for the color input',
+      description: 'Label for the color picker',
     },
     placeholder: {
       control: { type: 'text' },
       description: 'Placeholder text for hex input',
-    },
-    width: {
-      control: { type: 'number' },
-      description: 'Custom width in pixels',
-    },
-    required: {
-      control: { type: 'boolean' },
-      description: 'Whether color is required',
     },
   },
   tags: ['autodocs'],
@@ -109,6 +97,14 @@ export const CustomColor: Story = {
   },
 };
 
+// Disabled state
+export const Disabled: Story = {
+  args: {
+    ...Default.args,
+    disabled: true,
+  },
+};
+
 // Without hex input
 export const NoHexInput: Story = {
   args: {
@@ -117,19 +113,11 @@ export const NoHexInput: Story = {
   },
 };
 
-// Without color picker
+// Without color picker tools
 export const NoColorPicker: Story = {
   args: {
     ...Default.args,
     showColorPicker: false,
-  },
-};
-
-// Without swatch
-export const NoSwatch: Story = {
-  args: {
-    ...Default.args,
-    showSwatch: false,
   },
 };
 
@@ -141,41 +129,12 @@ export const WithPlaceholder: Story = {
   },
 };
 
-// Custom width
-export const CustomWidth: Story = {
-  args: {
-    ...Default.args,
-    width: 300,
-  },
-};
-
-// Required
-export const Required: Story = {
-  args: {
-    ...Default.args,
-    required: true,
-  },
-};
-
-// Disabled state
-export const Disabled: Story = {
-  args: {
-    ...Default.args,
-    disabled: true,
-  },
-};
-
 // Complex example
 export const Complex: Story = {
   args: {
     ...Default.args,
-    size: 'large',
-    width: 400,
     label: 'Theme Primary Color',
+    size: 'large',
     placeholder: 'Choose your primary color...',
-    required: true,
-    showHexInput: true,
-    showColorPicker: true,
-    showSwatch: true,
   },
 };

@@ -1,20 +1,34 @@
 /**
  * useComponentSize.ts
- * Custom hook for consistent component sizing across the application.
+ * Hook for managing component size state and validation.
  */
-import React from 'react';
-
-export type ComponentSize = 'small' | 'medium' | 'large';
-
-export interface SizeConfig {
-  width: string;
-  labelWidth: string;
-  inputWidth: string;
-  gap: string;
-}
+import { useState, useCallback } from 'react';
+import type { ComponentSize } from '../types/common';
 
 export const useComponentSize = (size: ComponentSize = 'medium', onError?: (error: Error) => void) => {
-  const getSizeValue = React.useCallback((sizeKey: ComponentSize): number => {
+  const [currentSize, setCurrentSize] = useState<ComponentSize>(size);
+
+  const updateSize = useCallback((newSize: ComponentSize) => {
+    try {
+      if (!['small', 'medium', 'large'].includes(newSize)) {
+        throw new Error(`Invalid size: ${newSize}. Must be 'small', 'medium', or 'large'`);
+      }
+      setCurrentSize(newSize);
+    } catch (error) {
+      if (onError && error instanceof Error) {
+        onError(error);
+      } else {
+        console.error('Error updating component size:', error);
+      }
+    }
+  }, [onError]);
+
+  const resetSize = useCallback(() => {
+    setCurrentSize(size);
+  }, [size]);
+
+  // Provide the interface that existing components expect
+  const getSizeValue = useCallback((sizeKey: ComponentSize): number => {
     try {
       switch (sizeKey) {
         case 'small':
@@ -34,13 +48,15 @@ export const useComponentSize = (size: ComponentSize = 'medium', onError?: (erro
   }, [onError]);
 
   return {
-    size,
-    updateSize: (newSize: ComponentSize) => {
-      // This is now just a no-op since we don't maintain internal state
-      // Components should manage their own size state
-    },
+    size: currentSize,
+    updateSize,
+    resetSize,
+    isSmall: currentSize === 'small',
+    isMedium: currentSize === 'medium',
+    isLarge: currentSize === 'large',
+    // Legacy interface for backward compatibility
+    width: currentSize === 'small' ? '200px' : currentSize === 'medium' ? '300px' : '400px',
+    gap: currentSize === 'small' ? '8px' : currentSize === 'medium' ? '12px' : '16px',
     getSizeValue,
-    width: size === 'small' ? '200px' : size === 'medium' ? '300px' : '400px',
-    gap: size === 'small' ? '8px' : size === 'medium' ? '12px' : '16px',
   };
 }; 

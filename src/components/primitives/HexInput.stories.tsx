@@ -2,28 +2,33 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { HexInput } from './HexInput';
 
 const meta: Meta<typeof HexInput> = {
-  title: 'Primitives/HexInput',
+  title: '05-Primitives/HexInput',
   component: HexInput,
   parameters: {
     layout: 'centered',
     docs: {
       description: {
-        component: 'A hex color input component with validation, color swatch preview, and accessibility features.',
+        component: 'A hex color input component with real-time validation, formatting, and accessibility features.',
       },
     },
   },
   argTypes: {
     value: {
       control: { type: 'text' },
-      description: 'The current hex color value',
+      description: 'Current hex color value',
     },
     onChange: {
       action: 'changed',
-      description: 'Callback when the hex value changes',
+      description: 'Callback when value changes',
     },
     onError: {
       action: 'error',
-      description: 'Callback when validation errors occur',
+      description: 'Callback when errors occur',
+    },
+    length: {
+      control: { type: 'select' },
+      options: [3, 6, 8],
+      description: 'Length of hex code (3, 6, or 8 digits)',
     },
     size: {
       control: { type: 'select' },
@@ -32,12 +37,7 @@ const meta: Meta<typeof HexInput> = {
     },
     width: {
       control: { type: 'number' },
-      description: 'Width of the input in pixels',
-    },
-    length: {
-      control: { type: 'select' },
-      options: [3, 6, 8],
-      description: 'Length of hex value (3, 6, or 8 characters)',
+      description: 'Custom width in pixels',
     },
     disabled: {
       control: { type: 'boolean' },
@@ -45,19 +45,16 @@ const meta: Meta<typeof HexInput> = {
     },
     placeholder: {
       control: { type: 'text' },
-      description: 'Placeholder text when value is empty',
+      description: 'Placeholder text for empty state',
+    },
+
+    label: {
+      control: { type: 'text' },
+      description: 'Visible label for the input',
     },
     ariaLabel: {
       control: { type: 'text' },
       description: 'ARIA label for screen readers',
-    },
-    ariaDescribedBy: {
-      control: { type: 'text' },
-      description: 'ID of element that describes the input',
-    },
-    ariaLabelledBy: {
-      control: { type: 'text' },
-      description: 'ID of element that labels the input',
     },
   },
   tags: ['autodocs'],
@@ -66,63 +63,46 @@ const meta: Meta<typeof HexInput> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// Basic usage
+// Basic usage - 6 characters
 export const Default: Story = {
   args: {
-    value: '#FF0000',
-    onChange: (value: string) => console.log('Hex changed:', value),
-    onError: (error: Error) => console.error('Error:', error),
+    value: '#FF6B35',
+    length: 6,
+    onChange: (value: string) => console.log('Hex value changed:', value),
   },
 };
 
-// With different sizes
+// Small size
 export const Small: Story = {
   args: {
     ...Default.args,
     size: 'small',
-    value: '#00FF00',
   },
 };
 
+// Large size
 export const Large: Story = {
   args: {
     ...Default.args,
     size: 'large',
-    value: '#0000FF',
   },
 };
 
-// With different hex lengths
-export const ThreeChar: Story = {
+// 3 characters
+export const ThreeCharacters: Story = {
   args: {
     ...Default.args,
-    length: 3,
     value: '#F00',
+    length: 3,
   },
 };
 
-export const SixChar: Story = {
+// 8 characters (with alpha)
+export const EightCharacters: Story = {
   args: {
     ...Default.args,
-    length: 6,
-    value: '#FF0000',
-  },
-};
-
-export const EightChar: Story = {
-  args: {
-    ...Default.args,
+    value: '#FF6B35FF',
     length: 8,
-    value: '#FF0000FF',
-  },
-};
-
-// With custom width
-export const CustomWidth: Story = {
-  args: {
-    ...Default.args,
-    width: 200,
-    value: '#FF8800',
   },
 };
 
@@ -131,53 +111,45 @@ export const WithPlaceholder: Story = {
   args: {
     ...Default.args,
     value: '',
-    placeholder: '#RRGGBB',
+    placeholder: 'Enter hex color...',
   },
 };
 
-// With accessibility features
-export const Accessible: Story = {
+// With label
+export const WithLabel: Story = {
   args: {
     ...Default.args,
-    ariaLabel: 'Hex color code',
-    ariaDescribedBy: 'hex-desc',
-    value: '#8800FF',
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'This example shows the HexInput with comprehensive accessibility features.',
-      },
-    },
+    label: 'Color Value',
   },
 };
+
+// Custom width
+export const CustomWidth: Story = {
+  args: {
+    ...Default.args,
+    width: 200,
+  },
+};
+
+
 
 // Disabled state
 export const Disabled: Story = {
   args: {
     ...Default.args,
     disabled: true,
-    value: '#FF0000',
   },
 };
 
-// Invalid hex example
-export const InvalidHex: Story = {
+// With ARIA label
+export const WithAriaLabel: Story = {
   args: {
     ...Default.args,
-    value: '#INVALID',
-    onError: (error: Error) => console.error('Invalid hex:', error),
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'This example demonstrates error handling for invalid hex values.',
-      },
-    },
+    ariaLabel: 'Enter hex color value',
   },
 };
 
-// Various color examples
+// Different colors
 export const Red: Story = {
   args: {
     ...Default.args,
@@ -199,37 +171,17 @@ export const Blue: Story = {
   },
 };
 
-export const Purple: Story = {
-  args: {
-    ...Default.args,
-    value: '#800080',
-  },
-};
-
-export const Orange: Story = {
-  args: {
-    ...Default.args,
-    value: '#FFA500',
-  },
-};
-
-// Complex example with all features
+// Complex example
 export const Complex: Story = {
   args: {
     ...Default.args,
     size: 'large',
-    width: 250,
-    length: 6,
-    ariaLabel: 'Primary brand color',
-    ariaDescribedBy: 'brand-desc',
-    placeholder: '#RRGGBB',
-    value: '#1E90FF',
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'A comprehensive example showing all the features of HexInput working together.',
-      },
-    },
+    width: 300,
+    length: 8,
+    label: 'Primary Color with Alpha',
+    placeholder: 'Enter 8-character hex color...',
+
+    ariaLabel: 'Enter primary color with alpha channel',
+    value: '#FF6B35CC',
   },
 };

@@ -2,6 +2,25 @@
 
 A comprehensive, enterprise-grade React component library built on Microsoft Fluent UI v9, providing advanced form controls, layout systems, and specialized components for professional applications.
 
+## 🏢 **Organization Library**
+
+This is a **private organization library** published to GitHub Packages. For setup and usage instructions within your organization, see:
+
+- **[ORGANIZATION_SETUP.md](./ORGANIZATION_SETUP.md)** - Complete setup guide for admins and team members
+- **[USAGE_INSTRUCTIONS.md](./USAGE_INSTRUCTIONS.md)** - Detailed usage instructions for developers
+
+## 🚀 **Quick Start (Organization Members)**
+
+```bash
+# Install the package
+npm install @your-org/fluent-ui-custom-components
+
+# Import components
+import { ColorsSection } from '@your-org/fluent-ui-custom-components';
+```
+
+**Note**: Replace `your-org` with your actual GitHub organization name.
+
 ## 🏗️ **Project Overview**
 
 This library implements a sophisticated 5-level component architecture designed for maximum reusability, maintainability, and consistency. Built with TypeScript, React 18, and Fluent UI v9, it provides a complete solution for building professional applications with pixel-perfect layouts and advanced functionality.

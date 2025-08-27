@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { NumericInput } from './NumericInput';
 
 const meta: Meta<typeof NumericInput> = {
-  title: 'Primitives/NumericInput',
+  title: '05-Primitives/NumericInput',
   component: NumericInput,
   parameters: {
     layout: 'centered',

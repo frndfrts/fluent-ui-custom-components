@@ -1,30 +1,34 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { UnitSelector } from '../components/UnitSelector';
+import { UnitSelector } from './UnitSelector';
 
 const meta: Meta<typeof UnitSelector> = {
-  title: 'Primitives/UnitSelector',
+  title: '04-Components/UnitSelector',
   component: UnitSelector,
   parameters: {
     layout: 'centered',
     docs: {
       description: {
-        component: 'A unit selector component with customizable units, sorting, and accessibility features.',
+        component: 'A dropdown component for selecting units of measurement with accessibility features.',
       },
     },
   },
   argTypes: {
-
+    unit: {
+      control: { type: 'select' },
+      options: ['cm', 'mm', 'in', 'pt', 'px'],
+      description: 'Currently selected unit',
+    },
+    units: {
+      control: { type: 'object' },
+      description: 'Available units to choose from',
+    },
     onChange: {
       action: 'changed',
-      description: 'Callback when the unit selection changes',
+      description: 'Callback when unit selection changes',
     },
     onError: {
       action: 'error',
       description: 'Callback when errors occur',
-    },
-    units: {
-      control: { type: 'object' },
-      description: 'Array of available units',
     },
     size: {
       control: { type: 'select' },
@@ -33,7 +37,7 @@ const meta: Meta<typeof UnitSelector> = {
     },
     width: {
       control: { type: 'number' },
-      description: 'Width of the selector in pixels',
+      description: 'Custom width in pixels',
     },
     disabled: {
       control: { type: 'boolean' },
@@ -47,18 +51,6 @@ const meta: Meta<typeof UnitSelector> = {
       control: { type: 'text' },
       description: 'Visible label for the selector',
     },
-    ariaLabel: {
-      control: { type: 'text' },
-      description: 'ARIA label for screen readers',
-    },
-    ariaDescribedBy: {
-      control: { type: 'text' },
-      description: 'ID of element that describes the selector',
-    },
-    ariaLabelledBy: {
-      control: { type: 'text' },
-      description: 'ID of element that labels the selector',
-    },
   },
   tags: ['autodocs'],
 };
@@ -66,75 +58,36 @@ const meta: Meta<typeof UnitSelector> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// Basic usage with common units
+// Basic usage
 export const Default: Story = {
   args: {
-    value: 'px',
-    units: ['px', 'em', 'rem', '%', 'pt', 'in', 'cm', 'mm'],
-    onChange: (event: React.FormEvent<HTMLDivElement>, data: { value: string }) => console.log('Unit changed:', data.value),
-    onError: (error: Error) => console.error('Error:', error),
+    unit: 'cm',
+    units: ['cm', 'mm', 'in', 'pt', 'px'],
+    onChange: (unit: string) => console.log('Unit changed:', unit),
   },
 };
 
-// With different sizes
+// Small size
 export const Small: Story = {
   args: {
     ...Default.args,
     size: 'small',
-    value: 'em',
   },
 };
 
+// Large size
 export const Large: Story = {
   args: {
     ...Default.args,
     size: 'large',
-    value: 'rem',
   },
 };
 
-// With custom width
+// Custom width
 export const CustomWidth: Story = {
   args: {
     ...Default.args,
-    width: 150,
-    value: '%',
-  },
-};
-
-// With alphabetical sorting
-export const Sorted: Story = {
-  args: {
-    ...Default.args,
-    sortAlphabetically: true,
-    value: 'cm',
-  },
-};
-
-// With label
-export const WithLabel: Story = {
-  args: {
-    ...Default.args,
-    label: 'Unit',
-    value: 'pt',
-  },
-};
-
-// With accessibility features
-export const Accessible: Story = {
-  args: {
-    ...Default.args,
-    label: 'Measurement Unit',
-    ariaLabel: 'Select measurement unit',
-    ariaDescribedBy: 'unit-desc',
-    value: 'in',
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'This example shows the UnitSelector with comprehensive accessibility features.',
-      },
-    },
+    width: 200,
   },
 };
 
@@ -143,64 +96,30 @@ export const Disabled: Story = {
   args: {
     ...Default.args,
     disabled: true,
-    value: 'px',
   },
 };
 
-// Length units
-export const LengthUnits: Story = {
+// With label
+export const WithLabel: Story = {
   args: {
     ...Default.args,
-    units: ['px', 'em', 'rem', 'pt', 'in', 'cm', 'mm'],
-    value: 'em',
+    label: 'Measurement Unit',
   },
 };
 
-// Percentage units
-export const PercentageUnits: Story = {
+// Custom units
+export const CustomUnits: Story = {
   args: {
     ...Default.args,
-    units: ['%', 'px', 'em', 'rem'],
-    value: '%',
+    units: ['em', 'rem', 'vw', 'vh', '%'],
+    unit: 'em',
   },
 };
 
-// Time units
-export const TimeUnits: Story = {
+// Sorted alphabetically
+export const SortedAlphabetically: Story = {
   args: {
     ...Default.args,
-    units: ['ms', 's', 'm', 'h'],
-    value: 'ms',
-  },
-};
-
-// Angle units
-export const AngleUnits: Story = {
-  args: {
-    ...Default.args,
-    units: ['deg', 'rad', 'grad', 'turn'],
-    value: 'deg',
-  },
-};
-
-// Complex example with all features
-export const Complex: Story = {
-  args: {
-    ...Default.args,
-    label: 'Dimension Unit',
-    ariaLabel: 'Select dimension unit for layout',
-    ariaDescribedBy: 'dimension-desc',
-    size: 'large',
-    width: 200,
     sortAlphabetically: true,
-    units: ['px', 'em', 'rem', '%', 'vw', 'vh', 'pt', 'in', 'cm', 'mm'],
-    value: 'vw',
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'A comprehensive example showing all the features of UnitSelector working together.',
-      },
-    },
   },
 };

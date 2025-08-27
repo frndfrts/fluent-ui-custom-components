@@ -3,10 +3,13 @@
  * Template component demonstrating error handling patterns and best practices.
  * Use this as a reference when implementing error handling in new components.
  */
-import * as React from 'react';
+import React, { useState } from 'react';
+import { makeStyles, tokens, Card, CardHeader } from '@fluentui/react-components';
 import { Input } from '@fluentui/react-input';
-import { useCommonStyles } from '../../styles/commonStyles';
+import { Button } from '@fluentui/react-button';
 import { useComponentSize } from '../../hooks/useComponentSize';
+import type { ComponentSize } from '../../types/common';
+import { useCommonStyles } from '../../styles/commonStyles';
 import { useNumericValidation } from '../../hooks/useInputValidation';
 import { ValidationError } from '../error/ErrorDisplay';
 import { logValidationError } from '../../utils/errorLogger';

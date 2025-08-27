@@ -2,46 +2,86 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { DimensionInput } from './DimensionInput';
 
 const meta: Meta<typeof DimensionInput> = {
-  title: 'Compositions/DimensionInput',
+  title: '03-Compositions/DimensionInput',
   component: DimensionInput,
   parameters: {
     layout: 'centered',
     docs: {
       description: {
-        component: 'A composite component that combines numeric input with unit selection for dimension values.',
+        component: 'A composition component that combines numeric input with unit selection for dimension values.',
       },
     },
   },
   argTypes: {
     value: {
+      control: { type: 'number' },
+      description: 'Current dimension value',
+    },
+    unit: {
+      control: { type: 'select' },
+      options: ['cm', 'mm', 'in', 'pt', 'px'],
+      description: 'Current unit of measurement',
+    },
+    units: {
       control: { type: 'object' },
-      description: 'The dimension value object with numeric value and unit',
+      description: 'Available units to choose from',
     },
     onChange: {
       action: 'changed',
-      description: 'Callback when the dimension value changes',
+      description: 'Callback when value changes',
+    },
+    onUnitChange: {
+      action: 'unitChanged',
+      description: 'Callback when unit changes',
     },
     onError: {
       action: 'error',
-      description: 'Callback when validation errors occur',
+      description: 'Callback when errors occur',
     },
     size: {
       control: { type: 'select' },
       options: ['small', 'medium', 'large'],
       description: 'Size variant of the input',
     },
-
-    label: {
-      control: { type: 'text' },
-      description: 'Label for the dimension input',
+    width: {
+      control: { type: 'number' },
+      description: 'Custom width in pixels',
     },
-    units: {
-      control: { type: 'object' },
-      description: 'Array of available units',
+    min: {
+      control: { type: 'number' },
+      description: 'Minimum allowed value',
+    },
+    max: {
+      control: { type: 'number' },
+      description: 'Maximum allowed value',
+    },
+    step: {
+      control: { type: 'number' },
+      description: 'Step increment for up/down buttons',
+    },
+    decimalPlaces: {
+      control: { type: 'number' },
+      description: 'Number of decimal places to display',
+    },
+    nonNegative: {
+      control: { type: 'boolean' },
+      description: 'Whether to prevent negative values',
     },
     disabled: {
       control: { type: 'boolean' },
       description: 'Whether the input is disabled',
+    },
+    placeholder: {
+      control: { type: 'text' },
+      description: 'Placeholder text when value is empty',
+    },
+    label: {
+      control: { type: 'text' },
+      description: 'Visible label for the input',
+    },
+    showUnitSelector: {
+      control: { type: 'boolean' },
+      description: 'Whether to show unit selector',
     },
   },
   tags: ['autodocs'],
@@ -53,109 +93,66 @@ type Story = StoryObj<typeof meta>;
 // Basic usage
 export const Default: Story = {
   args: {
-    value: { value: 100, unit: 'px' },
+    value: 100,
+    unit: 'px',
     units: ['px', 'em', 'rem', '%', 'pt', 'in', 'cm', 'mm'],
-    onChange: (dimension: { value: number; unit: string }) => console.log('Dimension changed:', dimension),
-    onError: (error: Error) => console.error('Error:', error),
+    onChange: (value: number) => console.log('Value changed:', value),
+    onUnitChange: (unit: string) => console.log('Unit changed:', unit),
   },
 };
 
-// With different sizes
+// Small size
 export const Small: Story = {
   args: {
     ...Default.args,
     size: 'small',
-    value: { value: 50, unit: 'em' },
   },
 };
 
+// Large size
 export const Large: Story = {
   args: {
     ...Default.args,
     size: 'large',
-    value: { value: 200, unit: 'rem' },
   },
 };
 
-// With custom width
-export const CustomWidth: Story = {
+// Centimeters
+export const Centimeters: Story = {
   args: {
     ...Default.args,
-    width: 300,
-    value: { value: 150, unit: '%' },
+    value: 21.0,
+    unit: 'cm',
+    units: ['cm', 'mm', 'in'],
   },
 };
 
-// With label
-export const WithLabel: Story = {
+// Inches
+export const Inches: Story = {
   args: {
     ...Default.args,
-    label: 'Width',
-    value: { value: 75, unit: 'pt' },
+    value: 8.5,
+    unit: 'in',
+    units: ['in', 'cm', 'mm'],
   },
 };
 
 // With constraints
-export const WithMinMax: Story = {
+export const WithConstraints: Story = {
   args: {
     ...Default.args,
-    value: { value: 500, unit: 'px' },
+    min: 0,
+    max: 1000,
+    step: 10,
+    nonNegative: true,
   },
 };
 
-export const NonNegative: Story = {
+// Custom width
+export const CustomWidth: Story = {
   args: {
     ...Default.args,
-    value: { value: 25, unit: 'em' },
-  },
-};
-
-// With decimal places
-export const Decimal: Story = {
-  args: {
-    ...Default.args,
-    value: { value: 3.14, unit: 'in' },
-  },
-};
-
-// With sorted units
-export const SortedUnits: Story = {
-  args: {
-    ...Default.args,
-    value: { value: 100, unit: 'cm' },
-  },
-};
-
-// With specific unit sets
-export const LengthUnits: Story = {
-  args: {
-    ...Default.args,
-    units: ['px', 'em', 'rem', 'pt', 'in', 'cm', 'mm'],
-    value: { value: 100, unit: 'em' },
-  },
-};
-
-export const PercentageUnits: Story = {
-  args: {
-    ...Default.args,
-    units: ['%', 'px', 'em', 'rem'],
-    value: { value: 50, unit: '%' },
-  },
-};
-
-export const PrintUnits: Story = {
-  args: {
-    ...Default.args,
-    units: ['pt', 'in', 'cm', 'mm'],
-    value: { value: 72, unit: 'pt' },
-  },
-};
-
-// With placeholder
-export const WithPlaceholder: Story = {
-  args: {
-    ...Default.args,
-    value: { value: '', unit: 'px' },
+    width: 300,
   },
 };
 
@@ -164,41 +161,50 @@ export const Disabled: Story = {
   args: {
     ...Default.args,
     disabled: true,
-    value: { value: 100, unit: 'px' },
   },
 };
 
-// Error state example
-export const WithError: Story = {
+// With label
+export const WithLabel: Story = {
   args: {
     ...Default.args,
-    value: { value: -10, unit: 'px' },
-    onError: (error: Error) => console.error('Validation error:', error),
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'This example demonstrates error handling when a value violates constraints.',
-      },
-    },
+    label: 'Width',
   },
 };
 
-// Complex example with all features
+// Without unit selector
+export const NoUnitSelector: Story = {
+  args: {
+    ...Default.args,
+    showUnitSelector: false,
+  },
+};
+
+// Percentage units
+export const PercentageUnits: Story = {
+  args: {
+    ...Default.args,
+    value: 50,
+    unit: '%',
+    units: ['%', 'px', 'em', 'rem'],
+  },
+};
+
+// Complex example
 export const Complex: Story = {
   args: {
     ...Default.args,
-    label: 'Page Margin',
+    value: 15.5,
+    unit: 'cm',
+    units: ['cm', 'mm', 'in', 'pt'],
     size: 'large',
-
-    units: ['pt', 'in', 'cm', 'mm'],
-    value: { value: 72.0, unit: 'pt' },
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'A comprehensive example showing all the features of DimensionInput working together.',
-      },
-    },
+    width: 250,
+    min: 0.1,
+    max: 100,
+    step: 0.5,
+    decimalPlaces: 1,
+    nonNegative: true,
+    label: 'Page Margin',
+    placeholder: 'Enter margin value...',
   },
 };

@@ -3,10 +3,14 @@
  * Template component demonstrating the new reusable patterns and best practices.
  * Use this as a reference when creating new components.
  */
-import * as React from 'react';
+import React, { useState } from 'react';
+import { makeStyles, tokens, Card, CardHeader } from '@fluentui/react-components';
 import { Input } from '@fluentui/react-input';
+import { Button } from '@fluentui/react-button';
+import { useComponentSize } from '../../hooks/useComponentSize';
+import type { ComponentSize } from '../../types/common';
+import { ErrorBoundary } from '../error/ErrorBoundary';
 import { useCommonStyles } from '../../styles/commonStyles';
-import { useComponentSize, ComponentSize } from '../../hooks/useComponentSize';
 import { useDecimalPlaces } from '../../hooks/useDecimalPlaces';
 import { BaseComponentProps, InputComponentProps } from '../../types/common';
 import { validateNumericInput, clampValue } from '../../utils/validation';

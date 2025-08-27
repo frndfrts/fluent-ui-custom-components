@@ -19,6 +19,25 @@ const config: StorybookConfig = {
     checkOptions: {},
     reactDocgen: false,
   },
+  webpackFinal: async (config) => {
+    // Ensure TypeScript and JSX are properly handled
+    if (config.module && config.module.rules) {
+      config.module.rules.push({
+        test: /\.(ts|tsx)$/,
+        use: [
+          {
+            loader: 'ts-loader',
+            options: {
+              transpileOnly: true,
+              configFile: 'tsconfig.json',
+            },
+          },
+        ],
+      });
+    }
+    
+    return config;
+  },
 };
 
 export default config;

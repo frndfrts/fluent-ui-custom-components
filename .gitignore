@@ -8,6 +8,11 @@ yarn-error.log*
 build/
 dist/
 
+# Library build artifacts
+dist/
+*.d.ts.map
+*.js.map
+
 # Environment variables
 .env
 .env.local
@@ -59,6 +64,9 @@ jspm_packages/
 # Output of 'npm pack'
 *.tgz
 
+# GitHub Packages
+.npmrc
+
 # Yarn Integrity file
 .yarn-integrity
 
@@ -79,8 +87,13 @@ jspm_packages/
 .serverless
 
 # FuseBox cache
-.fusebox/
+.fusebox
 
 # DynamoDB Local files
-.dynamodb/ 
-node_modules
+.dynamodb
+
+# Rollup build cache
+.rollup.cache
+
+# TypeScript build cache
+*.tsbuildinfo

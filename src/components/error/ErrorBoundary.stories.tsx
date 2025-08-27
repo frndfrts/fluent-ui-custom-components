@@ -34,7 +34,7 @@ const DelayedError = ({ delay = 1000 }: { delay?: number }) => {
 };
 
 const meta: Meta<typeof ErrorBoundary> = {
-  title: 'Error/ErrorBoundary',
+  title: '08-Error/ErrorBoundary',
   component: ErrorBoundary,
   parameters: {
     layout: 'centered',
