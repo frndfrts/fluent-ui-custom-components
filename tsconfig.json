@@ -37,6 +37,10 @@
     "dist",
     "build",
     "examples",
-    "tests"
+    "tests",
+    "src/**/*.stories.tsx",
+    "src/**/*.stories.ts",
+    "src/**/*.stories.js",
+    "src/**/*.stories.jsx"
   ]
 }

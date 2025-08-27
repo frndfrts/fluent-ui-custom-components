@@ -41,12 +41,13 @@
     "build": "rollup -c",
     "build:types": "tsc --emitDeclarationOnly --outDir dist/types",
     "build:all": "npm run build:types && npm run build",
+    "build:ci": "rollup -c rollup.config.ci.js",
     "test": "jest",
     "test:coverage": "jest --coverage --watchAll=false",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "clean": "rimraf dist",
-    "prepublishOnly": "npm run build:all",
+    "prepublishOnly": "npm run build:types && npm run build:ci",
     "test:publish": "node scripts/test-publish.js"
   },
 
