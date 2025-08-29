@@ -9,6 +9,7 @@ import { PositionFields } from './PositionFields';
 import { DEFAULT_POSITIONS, DEFAULT_POSITION } from '../components/PositionSelector';
 
 import { ErrorBoundary } from '../error/ErrorBoundary';
+import { computeCoordinates } from '../../utils/positioning';
 
 const useStyles = makeStyles({
   panel: {
@@ -40,7 +41,7 @@ const useStyles = makeStyles({
 });
 
 export interface SizeAndPositionPanelProps {
-  // Size properties
+  // Inner element size
   width?: number;
   height?: number;
   widthUnit?: string;
@@ -53,6 +54,20 @@ export interface SizeAndPositionPanelProps {
   y?: number;
   xUnit?: string;
   yUnit?: string;
+
+  // Outer/Active area (in cm). If not provided, no preset recomputation is applied.
+  // Option A: explicit active area
+  activeX?: number; // usually 0
+  activeY?: number; // usually 0
+  activeWidth?: number;
+  activeHeight?: number;
+  // Option B: outer with padding (active area derived)
+  outerWidth?: number;
+  outerHeight?: number;
+  outerPaddingTop?: number;
+  outerPaddingRight?: number;
+  outerPaddingBottom?: number;
+  outerPaddingLeft?: number;
 
   // Common properties
   units?: string[];
@@ -124,6 +139,18 @@ export const SizeAndPositionPanel = React.memo<SizeAndPositionPanelProps>(({
   y = 0,
   xUnit,
   yUnit,
+  // Active area/outer
+  activeX,
+  activeY,
+  activeWidth,
+  activeHeight,
+  outerWidth,
+  outerHeight,
+  outerPaddingTop = 0,
+  outerPaddingRight = 0,
+  outerPaddingBottom = 0,
+  outerPaddingLeft = 0,
+  // Common
   units,
   showLockAspectRatio = true,
   lockAspectRatio,
@@ -133,6 +160,70 @@ export const SizeAndPositionPanel = React.memo<SizeAndPositionPanelProps>(({
   onPositionChange,
   onError,
 }) => {
+  // Convert units to cm helpers
+  const { displayToCm } = useUnitConversion();
+
+  // Derive active area (in cm)
+  const getActiveArea = React.useCallback(() => {
+    try {
+      if (typeof activeWidth === 'number' && typeof activeHeight === 'number') {
+        return {
+          activeX: typeof activeX === 'number' ? activeX : 0,
+          activeY: typeof activeY === 'number' ? activeY : 0,
+          activeWidth,
+          activeHeight,
+        };
+      }
+      if (typeof outerWidth === 'number' && typeof outerHeight === 'number') {
+        const ax = outerPaddingLeft || 0;
+        const ay = outerPaddingTop || 0;
+        const aw = Math.max(0, outerWidth - (outerPaddingLeft || 0) - (outerPaddingRight || 0));
+        const ah = Math.max(0, outerHeight - (outerPaddingTop || 0) - (outerPaddingBottom || 0));
+        return { activeX: ax, activeY: ay, activeWidth: aw, activeHeight: ah };
+      }
+      return { activeX: 0, activeY: 0, activeWidth: 0, activeHeight: 0 };
+    } catch {
+      return { activeX: 0, activeY: 0, activeWidth: 0, activeHeight: 0 };
+    }
+  }, [activeX, activeY, activeWidth, activeHeight, outerWidth, outerHeight, outerPaddingTop, outerPaddingRight, outerPaddingBottom, outerPaddingLeft]);
+
+  // Recompute x/y for presets when dependent inputs change
+  React.useEffect(() => {
+    try {
+      if (position === 'Custom') return; // user-defined, do not override
+
+      // Inner size already in cm at this panel level
+      const innerWidthCm = typeof width === 'number' ? width : 0;
+      const innerHeightCm = typeof height === 'number' ? height : 0;
+
+      const { activeWidth, activeHeight } = getActiveArea();
+      const activeWidthCm = activeWidth || 0;
+      const activeHeightCm = activeHeight || 0;
+
+      if (activeWidthCm <= 0 || activeHeightCm <= 0) return; // cannot compute
+
+      const { xCm, yCm } = computeCoordinates({
+        position: position as any,
+        innerWidthCm,
+        innerHeightCm,
+        activeWidthCm,
+        activeHeightCm,
+        clampToActiveArea: true,
+      });
+
+      // Emit updated position with cm-based values; PositionFields handles display conversion
+      onPositionChange({
+        position,
+        x: xCm,
+        y: yCm,
+        xUnit: xUnit || 'cm',
+        yUnit: yUnit || 'cm',
+      });
+    } catch (error) {
+      // swallow; rely on error boundary
+    }
+  }, [position, width, height, getActiveArea, xUnit, yUnit]);
+
   const styles = useStyles();
 
   const handleError = React.useCallback((error: Error, errorInfo?: React.ErrorInfo) => {
