@@ -160,8 +160,6 @@ export const SizeAndPositionPanel = React.memo<SizeAndPositionPanelProps>(({
   onPositionChange,
   onError,
 }) => {
-  // Convert units to cm helpers
-  const { displayToCm } = useUnitConversion();
 
   // Derive active area (in cm)
   const getActiveArea = React.useCallback(() => {
