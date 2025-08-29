@@ -31,12 +31,12 @@ const meta: Meta<typeof SizeAndPositionPanel> = {
     },
     position: {
       control: { type: 'select' },
-      options: ['Custom', 'Top Left', 'Top Center', 'Top Right', 'Middle Left', 'Middle Center', 'Middle Right', 'Bottom Left', 'Bottom Center', 'Bottom Right'],
+      options: ['Custom', 'top-left', 'top-center', 'top-right', 'middle-left', 'middle-center', 'middle-right', 'bottom-left', 'bottom-center', 'bottom-right'],
       description: 'Current position selection',
     },
     positions: {
       control: { type: 'object' },
-      description: 'Available position options',
+      description: 'Available position options (defaults to full 3x3 + Custom at the lowest level)',
     },
     x: {
       control: { type: 'number' },
@@ -95,23 +95,53 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    width: 200,
-    height: 150,
-    widthUnit: 'px',
-    heightUnit: 'px',
-    position: 'Custom',
-    positions: ['Custom', 'Top Left', 'Top Center', 'Top Right', 'Middle Left', 'Middle Center', 'Middle Right', 'Bottom Left', 'Bottom Center', 'Bottom Right'],
-    x: 100,
-    y: 200,
-    xUnit: 'px',
-    yUnit: 'px',
-    units: ['px', 'em', 'rem', '%', 'pt', 'in', 'cm', 'mm'],
+    width: 10,
+    height: 7.5,
+    widthUnit: 'cm',
+    heightUnit: 'cm',
+    position: 'top-left',
+    positions: ['Custom', 'top-left', 'top-center', 'top-right', 'middle-left', 'middle-center', 'middle-right', 'bottom-left', 'bottom-center', 'bottom-right'],
+    x: 0,
+    y: 0,
+    xUnit: 'cm',
+    yUnit: 'cm',
+    units: ['cm', 'mm', 'in', 'pt', 'px'],
     showLockAspectRatio: true,
     lockAspectRatio: false,
     onLockAspectRatioChange: (locked: boolean) => console.log('Aspect ratio lock changed:', locked),
     onSizeChange: (fields: any) => console.log('Size changed:', fields),
     onPositionChange: (fields: any) => console.log('Position changed:', fields),
+    // Active area example (e.g., 21x29.7 cm paper with 2cm margins)
+    activeX: 2,
+    activeY: 2,
+    activeWidth: 21 - 2 - 2,
+    activeHeight: 29.7 - 2 - 2,
   },
+
+  export const PresetsRecomputeOnSizeChange: Story = {
+    args: {
+      ...Default.args,
+      position: 'middle-center',
+      width: 8,
+      height: 4,
+      activeX: 1,
+      activeY: 1,
+      activeWidth: 20,
+      activeHeight: 27,
+      onSizeChange: (fields: any) => console.log('Size changed:', fields),
+      onPositionChange: (fields: any) => console.log('Position changed:', fields),
+    },
+  };
+
+  export const CustomAllowsManualCoordinates: Story = {
+    args: {
+      ...Default.args,
+      position: 'Custom',
+      x: 3,
+      y: 5,
+    },
+  };
+
 };
 
 export const Square: Story = {

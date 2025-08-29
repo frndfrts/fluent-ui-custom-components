@@ -149,6 +149,23 @@ import { ColorInput } from './components/compositions/ColorInput';
 ## Future Considerations
 
 1. **Documentation**: Add Storybook stories for each component level
+
+## Positioning System and Defaults
+
+- Default position at the lowest level: top-left
+- Default positions list at the lowest level: full 3x3 grid plus Custom
+- X/Y coordinate fields are only editable when position is Custom; for presets, fields are disabled but reflect computed values
+- Preset coordinates are computed in SizeAndPositionPanel using inner size and outer active area and are clamped to prevent overflow
+- Active area origin (0,0) is the top-left of the usable region inside outer padding/margins
+
+### Providing the active area to SizeAndPositionPanel
+
+You can pass either:
+- Explicit active area (recommended for papers with margins): `activeX`, `activeY`, `activeWidth`, `activeHeight` (cm)
+- Or outer dimensions with padding: `outerWidth`, `outerHeight`, `outerPaddingTop`, `outerPaddingRight`, `outerPaddingBottom`, `outerPaddingLeft` (cm)
+
+When `position !== 'Custom'`, x/y are recomputed automatically on size/position/outer changes.
+
 2. **Testing**: Implement comprehensive tests for each level
 3. **Performance**: Monitor bundle size impact of the new structure
 4. **Migration**: Plan gradual migration away from legacy components
@@ -158,4 +175,4 @@ import { ColorInput } from './components/compositions/ColorInput';
 For questions about the component hierarchy or migration, refer to:
 - Component documentation in individual files
 - TypeScript definitions for prop interfaces
-- Example usage in the main App.tsx file 
+- Example usage in the main App.tsx file

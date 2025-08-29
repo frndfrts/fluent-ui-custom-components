@@ -15,8 +15,8 @@ const meta: Meta<typeof PositionSelector> = {
   argTypes: {
     value: {
       control: { type: 'select' },
-      options: ['top', 'center', 'bottom', 'left', 'right'],
-      description: 'Current selected position',
+      options: ['top-left', 'top-center', 'top-right', 'middle-left', 'middle-center', 'middle-right', 'bottom-left', 'bottom-center', 'bottom-right', 'Custom'],
+      description: 'Current selected position (defaults to top-left at lowest level)',
     },
     options: {
       control: { type: 'object' },
@@ -48,7 +48,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    value: 'center',
+    value: 'top-left',
   },
 };
 

@@ -15,12 +15,12 @@ const meta: Meta<typeof PositionFields> = {
   argTypes: {
     position: {
       control: { type: 'select' },
-      options: ['Custom', 'Top Left', 'Top Center', 'Top Right', 'Middle Left', 'Middle Center', 'Middle Right', 'Bottom Left', 'Bottom Center', 'Bottom Right'],
+      options: ['Custom', 'top-left', 'top-center', 'top-right', 'middle-left', 'middle-center', 'middle-right', 'bottom-left', 'bottom-center', 'bottom-right'],
       description: 'Current position selection',
     },
     positions: {
       control: { type: 'object' },
-      description: 'Available position options',
+      description: 'Available position options (defaults to full 3x3 + Custom at the lowest level)',
     },
     x: {
       control: { type: 'number' },
@@ -64,12 +64,12 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     position: 'Custom',
-    positions: ['Custom', 'Top Left', 'Top Center', 'Top Right', 'Middle Left', 'Middle Center', 'Middle Right', 'Bottom Left', 'Bottom Center', 'Bottom Right'],
-    x: 100,
-    y: 200,
-    xUnit: 'px',
-    yUnit: 'px',
-    units: ['px', 'em', 'rem', '%', 'pt', 'in', 'cm', 'mm'],
+    positions: ['Custom', 'top-left', 'top-center', 'top-right', 'middle-left', 'middle-center', 'middle-right', 'bottom-left', 'bottom-center', 'bottom-right'],
+    x: 10,
+    y: 15,
+    xUnit: 'cm',
+    yUnit: 'cm',
+    units: ['cm', 'mm', 'in', 'pt', 'px'],
     onChange: (fields: any) => console.log('Position changed:', fields),
   },
 };

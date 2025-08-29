@@ -73,7 +73,7 @@ export const Default: Story = {
       heightUnit: 'px',
     },
     position: {
-      position: 'Middle Center',
+      position: 'middle-center',
       x: 100,
       y: 100,
       xUnit: 'px',
@@ -89,7 +89,7 @@ export const Default: Story = {
       bottomUnit: 'px',
       leftUnit: 'px',
     },
-    positions: ['Top Left', 'Top Center', 'Top Right', 'Middle Left', 'Middle Center', 'Middle Right', 'Bottom Left', 'Bottom Center', 'Bottom Right'],
+    positions: ['top-left', 'top-center', 'top-right', 'middle-left', 'middle-center', 'middle-right', 'bottom-left', 'bottom-center', 'bottom-right'],
     units: ['px', 'em', 'rem', '%', 'pt', 'in', 'cm', 'mm'],
     showLockAspectRatio: true,
     onSizeChange: (size: any) => console.log('Size changed:', size),

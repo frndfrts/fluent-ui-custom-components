@@ -73,7 +73,7 @@ export const Default: Story = {
       heightUnit: 'px',
     },
     position: {
-      position: 'Bottom Left',
+      position: 'bottom-left',
       x: 20,
       y: 50,
       xUnit: 'px',
