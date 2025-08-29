@@ -111,33 +111,42 @@ export const PaperSizePanel = React.memo<PaperSizePanelProps>(({
     externalPaperSize?.paperSize || 'A4',
     externalPaperSize?.widthUnit || DEFAULT_UNIT,
     externalPaperSize?.heightUnit || DEFAULT_UNIT,
-    externalPaperSize?.orientation || 'portrait'
+    externalPaperSize?.orientation || 'portrait',
+    undefined,
+    externalPaperSize?.width,
+    externalPaperSize?.height
   );
 
   // Handle external onChange if provided
   const handlePaperSizeChange = React.useCallback((newPaperSize: string) => {
     try {
-      updatePaperSize(newPaperSize);
-      if (externalOnChange) {
-        // FIX B: Calculate complete state with correct dimensions for the new paper size
-        const standardDimensions = newPaperSize === 'Custom'
-          ? { width: paperSizeData.width, height: paperSizeData.height }
-          : (() => {
-            const dims = STANDARD_PAPER_DIMENSIONS[newPaperSize] || STANDARD_PAPER_DIMENSIONS['A4'];
-            let { width, height } = dims;
-            if (paperSizeData.orientation === 'landscape') {
-              [width, height] = [height, width];
-            }
-            return { width, height };
-          })();
+      // 1) Calculate next state synchronously (avoid stale emissions)
+      const { widthUnit, heightUnit, orientation } = paperSizeData;
+      const standardDimensions = newPaperSize === 'Custom'
+        ? { width: paperSizeData.width, height: paperSizeData.height }
+        : (() => {
+          const dims = STANDARD_PAPER_DIMENSIONS[newPaperSize] || STANDARD_PAPER_DIMENSIONS['A4'];
+          let { width, height } = dims;
+          if (orientation === 'landscape') {
+            [width, height] = [height, width];
+          }
+          return { width, height };
+        })();
 
-        const updatedData = {
-          ...paperSizeData,
-          paperSize: newPaperSize,
-          ...standardDimensions
-        };
-        externalOnChange(updatedData);
-      }
+      const nextData = {
+        width: standardDimensions.width,
+        height: standardDimensions.height,
+        widthUnit,
+        heightUnit,
+        orientation,
+        paperSize: newPaperSize,
+      };
+
+      // 2) Emit new state first so parent stays source of truth
+      externalOnChange?.(nextData);
+
+      // 3) Update internal state to match
+      updatePaperSize(newPaperSize);
     } catch (error) {
       const errorObj = error instanceof Error ? error : new Error('Unknown error in paper size change');
       onError?.(errorObj);
@@ -164,27 +173,33 @@ export const PaperSizePanel = React.memo<PaperSizePanelProps>(({
 
   const handleOrientationChange = React.useCallback((newOrientation: string) => {
     try {
-      updateOrientation(newOrientation);
-      if (externalOnChange) {
-        // FIX B: Calculate complete state with correct dimensions for the new orientation
-        const standardDimensions = paperSizeData.paperSize === 'Custom'
-          ? { width: paperSizeData.width, height: paperSizeData.height }
-          : (() => {
-            const dims = STANDARD_PAPER_DIMENSIONS[paperSizeData.paperSize] || STANDARD_PAPER_DIMENSIONS['A4'];
-            let { width, height } = dims;
-            if (newOrientation === 'landscape') {
-              [width, height] = [height, width];
-            }
-            return { width, height };
-          })();
+      // 1) Calculate next state synchronously (avoid stale emissions)
+      const { widthUnit, heightUnit, paperSize } = paperSizeData;
+      const standardDimensions = paperSize === 'Custom'
+        ? { width: paperSizeData.width, height: paperSizeData.height }
+        : (() => {
+          const dims = STANDARD_PAPER_DIMENSIONS[paperSize] || STANDARD_PAPER_DIMENSIONS['A4'];
+          let { width, height } = dims;
+          if (newOrientation === 'landscape') {
+            [width, height] = [height, width];
+          }
+          return { width, height };
+        })();
 
-        const updatedData = {
-          ...paperSizeData,
-          orientation: newOrientation,
-          ...standardDimensions
-        };
-        externalOnChange(updatedData);
-      }
+      const nextData = {
+        width: standardDimensions.width,
+        height: standardDimensions.height,
+        widthUnit,
+        heightUnit,
+        orientation: newOrientation,
+        paperSize,
+      };
+
+      // 2) Emit new state first so parent stays source of truth
+      externalOnChange?.(nextData);
+
+      // 3) Update internal state to match
+      updateOrientation(newOrientation);
     } catch (error) {
       const errorObj = error instanceof Error ? error : new Error('Unknown error in orientation change');
       onError?.(errorObj);

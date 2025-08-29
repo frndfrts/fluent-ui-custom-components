@@ -33,24 +33,48 @@ const getInitialPaperSizeData = (
   initialPaperSize: string,
   initialWidthUnit: string,
   initialHeightUnit: string,
-  initialOrientation: string
+  initialOrientation: string,
+  initialWidth?: number,
+  initialHeight?: number
 ): PaperSizeData => {
+  // If custom size and explicit width/height provided, trust external values
+  if (initialPaperSize === 'Custom' && typeof initialWidth === 'number' && typeof initialHeight === 'number') {
+    return {
+      width: initialWidth,
+      height: initialHeight,
+      widthUnit: initialWidthUnit,
+      heightUnit: initialHeightUnit,
+      orientation: initialOrientation,
+      paperSize: initialPaperSize,
+    };
+  }
+
   const dimensions = STANDARD_PAPER_DIMENSIONS[initialPaperSize];
   if (!dimensions) {
     // Fallback to A4 if the initial paper size is not found
     const fallbackDimensions = STANDARD_PAPER_DIMENSIONS['A4'];
+    let { width, height } = fallbackDimensions;
+    if (initialOrientation === 'landscape') {
+      [width, height] = [height, width];
+    }
     return {
-      width: fallbackDimensions.width,
-      height: fallbackDimensions.height,
+      width,
+      height,
       widthUnit: initialWidthUnit,
       heightUnit: initialHeightUnit,
       orientation: initialOrientation,
       paperSize: 'A4', // Use A4 as fallback
     };
   }
+
+  let { width, height } = dimensions;
+  if (initialOrientation === 'landscape') {
+    [width, height] = [height, width];
+  }
+
   return {
-    width: dimensions.width,
-    height: dimensions.height,
+    width,
+    height,
     widthUnit: initialWidthUnit,
     heightUnit: initialHeightUnit,
     orientation: initialOrientation,
@@ -101,11 +125,20 @@ export const usePaperSizeManager = (
   initialWidthUnit: string = 'cm',
   initialHeightUnit: string = 'cm',
   initialOrientation: string = 'portrait',
-  onError?: (error: Error) => void
+  onError?: (error: Error) => void,
+  initialWidth?: number,
+  initialHeight?: number
 ) => {
   const [paperSizeData, setPaperSizeData] = React.useState<PaperSizeData>(() => {
     try {
-      return getInitialPaperSizeData(initialPaperSize, initialWidthUnit, initialHeightUnit, initialOrientation);
+      return getInitialPaperSizeData(
+        initialPaperSize,
+        initialWidthUnit,
+        initialHeightUnit,
+        initialOrientation,
+        initialWidth,
+        initialHeight
+      );
     } catch (error) {
       const errorObj = error instanceof Error ? error : new Error('Unknown error in initial paper size data');
       onError?.(errorObj);
@@ -126,14 +159,21 @@ export const usePaperSizeManager = (
   // FIX A: Synchronize internal state with external props changes
   React.useEffect(() => {
     try {
-      const newData = getInitialPaperSizeData(initialPaperSize, initialWidthUnit, initialHeightUnit, initialOrientation);
+      const newData = getInitialPaperSizeData(
+        initialPaperSize,
+        initialWidthUnit,
+        initialHeightUnit,
+        initialOrientation,
+        initialWidth,
+        initialHeight
+      );
       setPaperSizeData(newData);
       setAreDimensionsEditable(initialPaperSize === 'Custom');
     } catch (error) {
       const errorObj = error instanceof Error ? error : new Error('Unknown error syncing with external props');
       onError?.(errorObj);
     }
-  }, [initialPaperSize, initialWidthUnit, initialHeightUnit, initialOrientation, onError]);
+  }, [initialPaperSize, initialWidthUnit, initialHeightUnit, initialOrientation, initialWidth, initialHeight, onError]);
 
   const updatePaperSize = React.useCallback((newPaperSize: string) => {
     try {
