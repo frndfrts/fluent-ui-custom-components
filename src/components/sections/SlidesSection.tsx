@@ -61,11 +61,11 @@ export interface SlidesSectionProps {
 // Custom error fallback for SlidesSection
 const SlidesSectionErrorFallback: React.FC<{ error: Error; resetError: () => void }> = ({ error, resetError }) => {
   const styles = useStyles();
-  
+
   return (
     <Card className={styles.card}>
-      <CardHeader 
-        header="Slides" 
+      <CardHeader
+        header="Slides"
         style={{
           fontSize: tokens.fontSizeBase400,
           fontWeight: tokens.fontWeightSemibold,
@@ -84,14 +84,14 @@ const SlidesSectionErrorFallback: React.FC<{ error: Error; resetError: () => voi
           <div style={{ marginBottom: tokens.spacingVerticalS }}>
             Failed to load slides settings
           </div>
-          <div style={{ 
-            fontSize: tokens.fontSizeBase200, 
+          <div style={{
+            fontSize: tokens.fontSizeBase200,
             color: tokens.colorPaletteRedForeground2,
-            marginBottom: tokens.spacingVerticalM 
+            marginBottom: tokens.spacingVerticalM
           }}>
             {error.message}
           </div>
-          <button 
+          <button
             onClick={resetError}
             style={{
               padding: `${tokens.spacingVerticalS} ${tokens.spacingHorizontalM}`,
@@ -123,7 +123,7 @@ export const SlidesSection = React.memo<SlidesSectionProps>(({
   disabled = false,
 }) => {
   const styles = useStyles();
-  
+
   // Local state for aspect ratio lock
   const [lockAspectRatio, setLockAspectRatio] = React.useState(false);
 
@@ -169,15 +169,15 @@ export const SlidesSection = React.memo<SlidesSectionProps>(({
   }, [onError]);
 
   return (
-    <ErrorBoundary 
+    <ErrorBoundary
       fallback={SlidesSectionErrorFallback}
       onError={handleError}
       resetOnPropsChange={true}
     >
       <FormLayoutProvider>
         <Card className={styles.card}>
-          <CardHeader 
-            header="Slides" 
+          <CardHeader
+            header="Slides"
             style={{
               fontSize: tokens.fontSizeBase400,
               fontWeight: tokens.fontWeightSemibold,
@@ -193,8 +193,8 @@ export const SlidesSection = React.memo<SlidesSectionProps>(({
               height={size?.height || 1080}
               widthUnit={size?.widthUnit}
               heightUnit={size?.heightUnit}
-              position={position?.position || 'center'}
-              positions={['top-left', 'top-center', 'top-right', 'center', 'bottom-left', 'bottom-center', 'bottom-right', 'Custom']}
+              position={position?.position || 'middle-center'}
+              positions={undefined}
               x={position?.x || 0}
               y={position?.y || 0}
               xUnit={position?.xUnit}
@@ -208,7 +208,7 @@ export const SlidesSection = React.memo<SlidesSectionProps>(({
               onError={onError}
               disabled={disabled}
             />
-            
+
             <MarginsPanel
               margins={margins}
               units={units}

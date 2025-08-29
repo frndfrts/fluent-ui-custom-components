@@ -6,6 +6,7 @@ import * as React from 'react';
 import { makeStyles, tokens } from '@fluentui/react-components';
 import { SizeFields } from './SizeFields';
 import { PositionFields } from './PositionFields';
+import { DEFAULT_POSITIONS } from '../components/PositionSelector';
 
 import { ErrorBoundary } from '../error/ErrorBoundary';
 
@@ -44,7 +45,7 @@ export interface SizeAndPositionPanelProps {
   height?: number;
   widthUnit?: string;
   heightUnit?: string;
-  
+
   // Position properties
   position?: string;
   positions?: string[];
@@ -52,14 +53,14 @@ export interface SizeAndPositionPanelProps {
   y?: number;
   xUnit?: string;
   yUnit?: string;
-  
+
   // Common properties
   units?: string[];
   showLockAspectRatio?: boolean;
   lockAspectRatio?: boolean;
   onLockAspectRatioChange?: (locked: boolean) => void;
   disabled?: boolean;
-  
+
   // Change handlers
   onSizeChange: (fields: {
     width: number;
@@ -74,7 +75,7 @@ export interface SizeAndPositionPanelProps {
     xUnit: string;
     yUnit: string;
   }) => void;
-  
+
   // Error handling
   onError?: (error: Error, errorInfo?: React.ErrorInfo) => void;
 }
@@ -82,20 +83,20 @@ export interface SizeAndPositionPanelProps {
 // Custom error fallback for SizeAndPositionPanel
 const SizeAndPositionPanelErrorFallback: React.FC<{ error: Error; resetError: () => void }> = ({ error, resetError }) => {
   const styles = useStyles();
-  
+
   return (
     <div className={styles.errorFallback}>
       <div style={{ marginBottom: tokens.spacingVerticalS }}>
         Failed to load size and position settings
       </div>
-      <div style={{ 
-        fontSize: tokens.fontSizeBase200, 
+      <div style={{
+        fontSize: tokens.fontSizeBase200,
         color: tokens.colorPaletteRedForeground2,
-        marginBottom: tokens.spacingVerticalM 
+        marginBottom: tokens.spacingVerticalM
       }}>
         {error.message}
       </div>
-      <button 
+      <button
         onClick={resetError}
         style={{
           padding: `${tokens.spacingVerticalS} ${tokens.spacingHorizontalM}`,
@@ -117,8 +118,8 @@ export const SizeAndPositionPanel = React.memo<SizeAndPositionPanelProps>(({
   height = 10,
   widthUnit,
   heightUnit,
-  position = 'Custom',
-  positions = ['top-left', 'top-center', 'top-right', 'center', 'bottom-left', 'bottom-center', 'bottom-right', 'Custom'],
+  position = 'middle-center',
+  positions = DEFAULT_POSITIONS,
   x = 0,
   y = 0,
   xUnit,
@@ -139,7 +140,7 @@ export const SizeAndPositionPanel = React.memo<SizeAndPositionPanelProps>(({
   }, [onError]);
 
   return (
-    <ErrorBoundary 
+    <ErrorBoundary
       fallback={SizeAndPositionPanelErrorFallback}
       onError={handleError}
       resetOnPropsChange={true}
@@ -161,7 +162,7 @@ export const SizeAndPositionPanel = React.memo<SizeAndPositionPanelProps>(({
             onError={onError}
           />
         </div>
-        
+
         {/* Position Section */}
         <div className={styles.section}>
           <PositionFields
