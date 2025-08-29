@@ -123,11 +123,23 @@ export const usePaperSizeManager = (
     }
   });
 
+  // FIX A: Synchronize internal state with external props changes
+  React.useEffect(() => {
+    try {
+      const newData = getInitialPaperSizeData(initialPaperSize, initialWidthUnit, initialHeightUnit, initialOrientation);
+      setPaperSizeData(newData);
+      setAreDimensionsEditable(initialPaperSize === 'Custom');
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error syncing with external props');
+      onError?.(errorObj);
+    }
+  }, [initialPaperSize, initialWidthUnit, initialHeightUnit, initialOrientation, onError]);
+
   const updatePaperSize = React.useCallback((newPaperSize: string) => {
     try {
       setPaperSizeData(prevData => {
         const newData = { ...prevData, paperSize: newPaperSize };
-        
+
         if (newPaperSize === 'Custom') {
           setAreDimensionsEditable(true);
         } else {
@@ -136,7 +148,7 @@ export const usePaperSizeManager = (
           const standardData = getStandardPaperSizeData(newPaperSize, prevData.widthUnit, prevData.heightUnit, prevData.orientation);
           return { ...newData, ...standardData };
         }
-        
+
         return newData;
       });
     } catch (error) {
@@ -164,13 +176,13 @@ export const usePaperSizeManager = (
     try {
       setPaperSizeData(prevData => {
         const newData = { ...prevData, orientation };
-        
+
         // If not custom, recalculate dimensions for the new orientation
         if (prevData.paperSize !== 'Custom') {
           const standardData = getStandardPaperSizeData(prevData.paperSize, prevData.widthUnit, prevData.heightUnit, orientation);
           return { ...newData, ...standardData };
         }
-        
+
         return newData;
       });
     } catch (error) {

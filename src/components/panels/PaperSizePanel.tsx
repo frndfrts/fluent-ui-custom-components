@@ -4,7 +4,7 @@
  */
 import * as React from 'react';
 import { makeStyles, tokens, Text } from '@fluentui/react-components';
-import { PaperSelector } from '../components/PaperSelector';
+import { PaperSelector, STANDARD_PAPER_DIMENSIONS } from '../components/PaperSelector';
 import { SizeFields } from './SizeFields';
 import { OrientationSelector } from '../components/OrientationSelector';
 import { FormLayoutProvider } from '../../styles/FormLayoutContext';
@@ -61,20 +61,20 @@ export interface PaperSizePanelProps {
 // Custom error fallback for PaperSizePanel
 const PaperSizePanelErrorFallback: React.FC<{ error: Error; resetError: () => void }> = ({ error, resetError }) => {
   const styles = useStyles();
-  
+
   return (
     <div className={styles.errorFallback}>
       <div style={{ marginBottom: tokens.spacingVerticalS }}>
         Failed to load paper size settings
       </div>
-      <div style={{ 
-        fontSize: tokens.fontSizeBase200, 
+      <div style={{
+        fontSize: tokens.fontSizeBase200,
         color: tokens.colorPaletteRedForeground2,
-        marginBottom: tokens.spacingVerticalM 
+        marginBottom: tokens.spacingVerticalM
       }}>
         {error.message}
       </div>
-      <button 
+      <button
         onClick={resetError}
         style={{
           padding: `${tokens.spacingVerticalS} ${tokens.spacingHorizontalM}`,
@@ -119,7 +119,23 @@ export const PaperSizePanel = React.memo<PaperSizePanelProps>(({
     try {
       updatePaperSize(newPaperSize);
       if (externalOnChange) {
-        const updatedData = { ...paperSizeData, paperSize: newPaperSize };
+        // FIX B: Calculate complete state with correct dimensions for the new paper size
+        const standardDimensions = newPaperSize === 'Custom'
+          ? { width: paperSizeData.width, height: paperSizeData.height }
+          : (() => {
+            const dims = STANDARD_PAPER_DIMENSIONS[newPaperSize] || STANDARD_PAPER_DIMENSIONS['A4'];
+            let { width, height } = dims;
+            if (paperSizeData.orientation === 'landscape') {
+              [width, height] = [height, width];
+            }
+            return { width, height };
+          })();
+
+        const updatedData = {
+          ...paperSizeData,
+          paperSize: newPaperSize,
+          ...standardDimensions
+        };
         externalOnChange(updatedData);
       }
     } catch (error) {
@@ -150,7 +166,23 @@ export const PaperSizePanel = React.memo<PaperSizePanelProps>(({
     try {
       updateOrientation(newOrientation);
       if (externalOnChange) {
-        const updatedData = { ...paperSizeData, orientation: newOrientation };
+        // FIX B: Calculate complete state with correct dimensions for the new orientation
+        const standardDimensions = paperSizeData.paperSize === 'Custom'
+          ? { width: paperSizeData.width, height: paperSizeData.height }
+          : (() => {
+            const dims = STANDARD_PAPER_DIMENSIONS[paperSizeData.paperSize] || STANDARD_PAPER_DIMENSIONS['A4'];
+            let { width, height } = dims;
+            if (newOrientation === 'landscape') {
+              [width, height] = [height, width];
+            }
+            return { width, height };
+          })();
+
+        const updatedData = {
+          ...paperSizeData,
+          orientation: newOrientation,
+          ...standardDimensions
+        };
         externalOnChange(updatedData);
       }
     } catch (error) {
@@ -164,7 +196,7 @@ export const PaperSizePanel = React.memo<PaperSizePanelProps>(({
   }, [onError]);
 
   return (
-    <ErrorBoundary 
+    <ErrorBoundary
       fallback={PaperSizePanelErrorFallback}
       onError={handleError}
       resetOnPropsChange={true}
