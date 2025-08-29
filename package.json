@@ -1,6 +1,6 @@
 {
   "name": "@frndfrts/fluent-ui-custom-components",
-  "version": "1.0.2",
+  "version": "1.0.5",
   "description": "Custom Fluent UI component library with 5-level architecture",
   "type": "module",
   "main": "dist/index.js",
@@ -50,7 +50,6 @@
     "prepublishOnly": "npm run build:types && npm run build:ci",
     "test:publish": "node scripts/test-publish.js"
   },
-
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.0",
     "@rollup/plugin-node-resolve": "^15.0.0",
