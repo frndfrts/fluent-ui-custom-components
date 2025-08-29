@@ -61,11 +61,11 @@ export interface SourcePlaceholderSectionProps {
 // Custom error fallback for SourcePlaceholderSection
 const SourcePlaceholderSectionErrorFallback: React.FC<{ error: Error; resetError: () => void }> = ({ error, resetError }) => {
   const styles = useStyles();
-  
+
   return (
     <Card className={styles.card}>
-      <CardHeader 
-        header="Source Placeholder" 
+      <CardHeader
+        header="Source Placeholder"
         style={{
           fontSize: tokens.fontSizeBase400,
           fontWeight: tokens.fontWeightSemibold,
@@ -84,14 +84,14 @@ const SourcePlaceholderSectionErrorFallback: React.FC<{ error: Error; resetError
           <div style={{ marginBottom: tokens.spacingVerticalS }}>
             Failed to load source placeholder settings
           </div>
-          <div style={{ 
-            fontSize: tokens.fontSizeBase200, 
+          <div style={{
+            fontSize: tokens.fontSizeBase200,
             color: tokens.colorPaletteRedForeground2,
-            marginBottom: tokens.spacingVerticalM 
+            marginBottom: tokens.spacingVerticalM
           }}>
             {error.message}
           </div>
-          <button 
+          <button
             onClick={resetError}
             style={{
               padding: `${tokens.spacingVerticalS} ${tokens.spacingHorizontalM}`,
@@ -123,7 +123,7 @@ export const SourcePlaceholderSection = React.memo<SourcePlaceholderSectionProps
   disabled = false,
 }) => {
   const styles = useStyles();
-  
+
   // Local state for aspect ratio lock
   const [lockAspectRatio, setLockAspectRatio] = React.useState(false);
 
@@ -169,15 +169,15 @@ export const SourcePlaceholderSection = React.memo<SourcePlaceholderSectionProps
   }, [onError]);
 
   return (
-    <ErrorBoundary 
+    <ErrorBoundary
       fallback={SourcePlaceholderSectionErrorFallback}
       onError={handleError}
       resetOnPropsChange={true}
     >
       <FormLayoutProvider>
         <Card className={styles.card}>
-          <CardHeader 
-            header="Source Placeholder" 
+          <CardHeader
+            header="Source Placeholder"
             style={{
               fontSize: tokens.fontSizeBase400,
               fontWeight: tokens.fontWeightSemibold,
@@ -193,8 +193,8 @@ export const SourcePlaceholderSection = React.memo<SourcePlaceholderSectionProps
               height={size?.height || 10}
               widthUnit={size?.widthUnit}
               heightUnit={size?.heightUnit}
-              position={position?.position || 'Custom'}
-              positions={['top-left', 'top-center', 'top-right', 'center', 'bottom-left', 'bottom-center', 'bottom-right', 'Custom']}
+              position={position?.position}
+              positions={undefined}
               x={position?.x || 0}
               y={position?.y || 0}
               xUnit={position?.xUnit}
@@ -208,7 +208,7 @@ export const SourcePlaceholderSection = React.memo<SourcePlaceholderSectionProps
               onError={onError}
               disabled={disabled}
             />
-            
+
             <PaddingPanel
               padding={padding}
               units={units}

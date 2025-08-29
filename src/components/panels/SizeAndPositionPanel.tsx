@@ -6,7 +6,7 @@ import * as React from 'react';
 import { makeStyles, tokens } from '@fluentui/react-components';
 import { SizeFields } from './SizeFields';
 import { PositionFields } from './PositionFields';
-import { DEFAULT_POSITIONS } from '../components/PositionSelector';
+import { DEFAULT_POSITIONS, DEFAULT_POSITION } from '../components/PositionSelector';
 
 import { ErrorBoundary } from '../error/ErrorBoundary';
 
@@ -118,7 +118,7 @@ export const SizeAndPositionPanel = React.memo<SizeAndPositionPanelProps>(({
   height = 10,
   widthUnit,
   heightUnit,
-  position = 'middle-center',
+  position = DEFAULT_POSITION,
   positions = DEFAULT_POSITIONS,
   x = 0,
   y = 0,

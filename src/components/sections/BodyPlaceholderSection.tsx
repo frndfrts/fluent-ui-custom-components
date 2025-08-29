@@ -61,11 +61,11 @@ export interface BodyPlaceholderSectionProps {
 // Custom error fallback for BodyPlaceholderSection
 const BodyPlaceholderSectionErrorFallback: React.FC<{ error: Error; resetError: () => void }> = ({ error, resetError }) => {
   const styles = useStyles();
-  
+
   return (
     <Card className={styles.card}>
-      <CardHeader 
-        header="Body Placeholder" 
+      <CardHeader
+        header="Body Placeholder"
         style={{
           fontSize: tokens.fontSizeBase400,
           fontWeight: tokens.fontWeightSemibold,
@@ -84,14 +84,14 @@ const BodyPlaceholderSectionErrorFallback: React.FC<{ error: Error; resetError: 
           <div style={{ marginBottom: tokens.spacingVerticalS }}>
             Failed to load body placeholder settings
           </div>
-          <div style={{ 
-            fontSize: tokens.fontSizeBase200, 
+          <div style={{
+            fontSize: tokens.fontSizeBase200,
             color: tokens.colorPaletteRedForeground2,
-            marginBottom: tokens.spacingVerticalM 
+            marginBottom: tokens.spacingVerticalM
           }}>
             {error.message}
           </div>
-          <button 
+          <button
             onClick={resetError}
             style={{
               padding: `${tokens.spacingVerticalS} ${tokens.spacingHorizontalM}`,
@@ -123,7 +123,7 @@ export const BodyPlaceholderSection = React.memo<BodyPlaceholderSectionProps>(({
   disabled = false,
 }) => {
   const styles = useStyles();
-  
+
   // Local state for aspect ratio lock
   const [lockAspectRatio, setLockAspectRatio] = React.useState(false);
 
@@ -169,15 +169,15 @@ export const BodyPlaceholderSection = React.memo<BodyPlaceholderSectionProps>(({
   }, [onError]);
 
   return (
-    <ErrorBoundary 
+    <ErrorBoundary
       fallback={BodyPlaceholderSectionErrorFallback}
       onError={handleError}
       resetOnPropsChange={true}
     >
       <FormLayoutProvider>
         <Card className={styles.card}>
-          <CardHeader 
-            header="Body Placeholder" 
+          <CardHeader
+            header="Body Placeholder"
             style={{
               fontSize: tokens.fontSizeBase400,
               fontWeight: tokens.fontWeightSemibold,
@@ -193,8 +193,8 @@ export const BodyPlaceholderSection = React.memo<BodyPlaceholderSectionProps>(({
               height={size?.height || 10}
               widthUnit={size?.widthUnit}
               heightUnit={size?.heightUnit}
-              position={position?.position || 'Custom'}
-              positions={['top-left', 'top-center', 'top-right', 'center', 'bottom-left', 'bottom-center', 'bottom-right', 'Custom']}
+              position={position?.position}
+              positions={undefined}
               x={position?.x || 0}
               y={position?.y || 0}
               xUnit={position?.xUnit}
@@ -208,7 +208,7 @@ export const BodyPlaceholderSection = React.memo<BodyPlaceholderSectionProps>(({
               onError={onError}
               disabled={disabled}
             />
-            
+
             <PaddingPanel
               padding={padding}
               units={units}

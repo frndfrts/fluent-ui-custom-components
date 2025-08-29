@@ -31,11 +31,11 @@ const useStyles = makeStyles({
 // Standard position options with Custom as default (complete 3x3 grid + center + custom)
 export const DEFAULT_POSITIONS = [
   'top-left', 'top-center', 'top-right',
-  'middle-left', 'middle-center', 'middle-right', 
+  'middle-left', 'middle-center', 'middle-right',
   'bottom-left', 'bottom-center', 'bottom-right',
   'Custom'
 ];
-export const DEFAULT_POSITION = 'Custom';
+export const DEFAULT_POSITION = 'top-left';
 
 export interface PositionSelectorProps {
   value?: string;
@@ -46,9 +46,9 @@ export interface PositionSelectorProps {
   disabled?: boolean;
 }
 
-export const PositionSelector = React.memo<PositionSelectorProps>(({ 
-  value = DEFAULT_POSITION, 
-  options = DEFAULT_POSITIONS, 
+export const PositionSelector = React.memo<PositionSelectorProps>(({
+  value = DEFAULT_POSITION,
+  options = DEFAULT_POSITIONS,
   onChange,
   onError,
   size = 'medium',
@@ -88,7 +88,7 @@ export const PositionSelector = React.memo<PositionSelectorProps>(({
       return 200; // Return fallback width
     }
   }, [getSelectorWidth, onError]);
-  
+
   const labelStyle = React.useMemo(() => {
     try {
       return getLabelStyle();
@@ -102,7 +102,7 @@ export const PositionSelector = React.memo<PositionSelectorProps>(({
   // Function to capitalize position labels for display
   const capitalizePosition = React.useCallback((position: string): string => {
     if (position === 'Custom') return 'Custom';
-    return position.split('-').map(word => 
+    return position.split('-').map(word =>
       word.charAt(0).toUpperCase() + word.slice(1)
     ).join(' ');
   }, []);

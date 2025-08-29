@@ -5,7 +5,7 @@
  */
 import * as React from 'react';
 import { makeStyles, tokens, Text } from '@fluentui/react-components';
-import { PositionSelector, DEFAULT_POSITIONS } from '../components/PositionSelector';
+import { PositionSelector, DEFAULT_POSITIONS, DEFAULT_POSITION } from '../components/PositionSelector';
 import { DimensionInput } from '../compositions/DimensionInput';
 import { DEFAULT_UNIT } from '../components/UnitSelector';
 
@@ -63,20 +63,20 @@ export interface PositionFieldsProps {
 // Custom error fallback for PositionFields
 const PositionFieldsErrorFallback: React.FC<{ error: Error; resetError: () => void }> = ({ error, resetError }) => {
   const styles = useStyles();
-  
+
   return (
     <div className={styles.errorFallback}>
       <div style={{ marginBottom: tokens.spacingVerticalS }}>
         Failed to load position settings
       </div>
-      <div style={{ 
-        fontSize: tokens.fontSizeBase200, 
+      <div style={{
+        fontSize: tokens.fontSizeBase200,
         color: tokens.colorPaletteRedForeground2,
-        marginBottom: tokens.spacingVerticalM 
+        marginBottom: tokens.spacingVerticalM
       }}>
         {error.message}
       </div>
-      <button 
+      <button
         onClick={resetError}
         style={{
           padding: `${tokens.spacingVerticalS} ${tokens.spacingHorizontalM}`,
@@ -94,7 +94,7 @@ const PositionFieldsErrorFallback: React.FC<{ error: Error; resetError: () => vo
 };
 
 export const PositionFields = React.memo<PositionFieldsProps>(({
-  position = 'Custom',
+  position = DEFAULT_POSITION,
   positions = DEFAULT_POSITIONS,
   x = 0,
   y = 0,
@@ -109,14 +109,14 @@ export const PositionFields = React.memo<PositionFieldsProps>(({
 
   const handlePositionChange = React.useCallback((newPosition: string) => {
     try {
-      const currentX = x || 0;
-      const currentY = y || 0;
       const currentXUnit = xUnit || DEFAULT_UNIT;
       const currentYUnit = yUnit || DEFAULT_UNIT;
+
+      // If not Custom, keep current x/y but they will be displayed read-only
       onChange({
         position: newPosition,
-        x: currentX,
-        y: currentY,
+        x: x || 0,
+        y: y || 0,
         xUnit: currentXUnit,
         yUnit: currentYUnit,
       });
@@ -167,7 +167,7 @@ export const PositionFields = React.memo<PositionFieldsProps>(({
   }, [onError]);
 
   return (
-    <ErrorBoundary 
+    <ErrorBoundary
       fallback={PositionFieldsErrorFallback}
       onError={handleError}
       resetOnPropsChange={true}
@@ -182,24 +182,24 @@ export const PositionFields = React.memo<PositionFieldsProps>(({
               onChange={handlePositionChange}
               disabled={disabled}
             />
-            
+
             <DimensionInput
               label="Horizontal"
               value={x}
               {...(xUnit !== undefined && { unit: xUnit })}
               {...(units !== undefined && { units })}
               onChange={handleXChange}
-              disabled={disabled}
+              disabled={disabled || position !== 'Custom'}
               onError={onError}
             />
-            
+
             <DimensionInput
               label="Vertical"
               value={y}
               {...(yUnit !== undefined && { unit: yUnit })}
               {...(units !== undefined && { units })}
               onChange={handleYChange}
-              disabled={disabled}
+              disabled={disabled || position !== 'Custom'}
               onError={onError}
             />
           </div>
