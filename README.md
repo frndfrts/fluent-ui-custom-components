@@ -13,13 +13,38 @@ This is a **private organization library** published to GitHub Packages. For set
 
 ```bash
 # Install the package
-npm install @your-org/fluent-ui-custom-components
+npm install @frndfrts/fluent-ui-custom-components@1.1.0
 
 # Import components
-import { ColorsSection } from '@your-org/fluent-ui-custom-components';
+import { ColorsSection, DimensionInput } from '@frndfrts/fluent-ui-custom-components';
 ```
 
-**Note**: Replace `your-org` with your actual GitHub organization name.
+**Note**: Replace `frndfrts` with your actual GitHub organization name.
+
+## 🆕 **What's New in v1.1.0**
+
+### ✨ **Storybook 9 Upgrade**
+- **Upgraded from v8.6.14 to v9.1.3**
+- **Modern framework-based configuration**
+- **Built-in addons**: Actions, Controls, Viewport, Backgrounds
+- **Enhanced performance**: 566ms manager startup, 19s preview
+- **Webpack 5 optimization**: Bundle splitting and caching
+
+### 🔄 **Comprehensive Unit Conversion System**
+- **5 Unit Systems**: Length, Temperature, Volume, Weight, Energy
+- **Full Precision**: Internal storage in standard units (cm, °C, ml, g, J)
+- **Smart Conversion**: Automatic unit conversion with proper precision
+- **Context-Aware**: Support for relative units (%, vw, vh, em, rem)
+
+### 🆕 **New Components**
+- **TabbedNavbar**: Navigation component with focus management
+- **PreviewSection**: Section-level preview component
+- **PreviewPanel**: Panel-level preview component
+
+### 🎯 **Interactive Storybook Stories**
+- **State Management**: Proper React.useState for all stories
+- **Real-time Updates**: Live component interaction
+- **Enhanced Documentation**: Better examples and usage
 
 ## 🏗️ **Project Overview**
 
@@ -37,6 +62,7 @@ This library implements a sophisticated 5-level component architecture designed 
 - [Panels (Level 4)](#panels-level-4)
 - [Sections (Level 5)](#sections-level-5)
 - [Hooks & Utilities](#hooks--utilities)
+- [Unit Conversion System](#unit-conversion-system)
 - [Type System](#type-system)
 - [Styling & Layout](#styling--layout)
 - [Error Handling](#error-handling)
@@ -76,6 +102,7 @@ The library follows a **5-level hierarchical architecture** that ensures proper 
 - **Error Boundaries**: Robust error handling at every level
 - **Accessibility First**: ARIA support and keyboard navigation throughout
 - **Type Safety**: Full TypeScript coverage with strict typing
+- **Unit Conversion**: Built-in unit conversion system with full precision
 
 ## 🛠️ **Technology Stack**
 
@@ -83,7 +110,7 @@ The library follows a **5-level hierarchical architecture** that ensures proper 
 - **React**: 18.2.0 (Latest stable)
 - **TypeScript**: 4.9.0 (Strict mode enabled)
 - **Fluent UI**: 9.68.3 (Latest v9 release)
-- **Build Tools**: React Scripts 5.0.1
+- **Build Tools**: Rollup 4.0.0
 
 ### **Key Libraries**
 - **@fluentui/react-components**: Core UI components
@@ -92,7 +119,7 @@ The library follows a **5-level hierarchical architecture** that ensures proper 
 - **Web Vitals**: Performance monitoring
 
 ### **Development Tools**
-- **Storybook**: 8.6.14 (Component documentation)
+- **Storybook**: 9.1.3 (Component documentation)
 - **Jest**: 27.5.1 (Testing framework)
 - **ESLint**: Code quality enforcement
 - **Prettier**: Code formatting
@@ -107,7 +134,7 @@ The library follows a **5-level hierarchical architecture** that ensures proper 
 ### **Installation**
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/fluent-ui-custom-components.git
+git clone https://github.com/frndfrts/fluent-ui-custom-components.git
 cd fluent-ui-custom-components
 
 # Install dependencies
@@ -167,6 +194,7 @@ Advanced numeric input with stepper controls, validation, and accessibility.
 - Full ARIA support and keyboard navigation
 - Multiple size variants (small, medium, large)
 - Custom width support and error handling
+- **Unit-aware step values** based on selected unit
 
 **Props:**
 ```typescript
@@ -183,6 +211,7 @@ interface NumericInputProps {
   placeholder?: string;
   label?: string;
   ariaLabel?: string;
+  unit?: string; // New: Unit-aware step values
 }
 ```
 
@@ -197,6 +226,7 @@ interface NumericInputProps {
   decimalPlaces={2}
   size="medium"
   label="Quantity"
+  unit="cm" // Step will be unit-appropriate
 />
 ```
 
@@ -256,18 +286,21 @@ Truly universal selector supporting both string arrays and label-value objects.
 - Built-in sorting capabilities
 - Custom option support
 - Consistent with other selectors
+- **Interactive state management** in stories
 
 ## 🎯 **Components (Level 2)**
 
 ### **UnitSelector**
-Dropdown for selecting units of measurement with cm as default.
+Dropdown for selecting units of measurement with comprehensive unit system support.
 
 **Features:**
-- Default units: ['cm', 'mm', 'in', 'pt', 'px']
-- Default unit: 'cm'
-- Configurable unit list
-- Alphabetical sorting option
-- Full accessibility support
+- **5 Unit Systems**: Length, Temperature, Volume, Weight, Energy
+- **Default units**: ['cm', 'mm', 'in', 'pt', 'px', '%', 'vw', 'vh', 'em', 'rem']
+- **Default unit**: 'cm'
+- **Configurable unit list**
+- **Alphabetical sorting option**
+- **Full accessibility support**
+- **Unit system awareness**
 
 **Props:**
 ```typescript
@@ -278,6 +311,9 @@ interface UnitSelectorProps {
   size?: 'small' | 'medium' | 'large';
   disabled?: boolean;
   sortAlphabetically?: boolean;
+  unitSystem?: UnitSystem | string; // New: Unit system support
+  showUnitNames?: boolean; // New: Show unit names
+  filterUnits?: string[]; // New: Filter specific units
 }
 ```
 
@@ -327,13 +363,16 @@ Selector for standard paper sizes.
 ## 🔗 **Compositions (Level 3)**
 
 ### **DimensionInput**
-Combines NumericInput and UnitSelector for dimension input.
+Combines NumericInput and UnitSelector for dimension input with **full unit conversion**.
 
 **Features:**
-- Integrated numeric input and unit selection
-- Automatic unit conversion
-- Consistent form layout
-- Error handling and validation
+- **Integrated numeric input and unit selection**
+- **Automatic unit conversion** with full precision
+- **5 Unit Systems**: Length, Temperature, Volume, Weight, Energy
+- **Context-aware conversion** for relative units
+- **Consistent form layout**
+- **Error handling and validation**
+- **Unit-aware step values**
 
 **Props:**
 ```typescript
@@ -346,7 +385,34 @@ interface DimensionInputProps {
   size?: 'small' | 'medium' | 'large';
   disabled?: boolean;
   hideLabel?: boolean;
+  unitSystem?: UnitSystem | string; // New: Unit system support
+  showUnitNames?: boolean; // New: Show unit names
+  filterUnits?: string[]; // New: Filter specific units
+  context?: UnitConversionContext; // New: Context for relative units
 }
+```
+
+**Usage:**
+```tsx
+<DimensionInput
+  label="Width"
+  value={10}
+  unit="cm"
+  unitSystem="length"
+  context={{
+    referenceWidth: 20,
+    referenceHeight: 15,
+    containerWidth: 30,
+    containerHeight: 20,
+    fontSize: 0.4,
+    rootFontSize: 0.35,
+  }}
+  onChange={(value, unit) => {
+    // Automatic conversion happens internally
+    console.log(`Display: ${value} ${unit}`);
+    console.log(`Internal: ${internalValue} cm`);
+  }}
+/>
 ```
 
 ### **ColorInput**
@@ -394,6 +460,48 @@ Advanced color picker with multiple input methods.
 - Validation and error handling
 - Accessibility support
 
+### **TabbedNavbar** 🆕
+Navigation component with focus management and tab selection.
+
+**Features:**
+- **Tab-based navigation** with proper focus management
+- **Blue underline indicator** that moves to selected tab
+- **Keyboard navigation** support
+- **Accessibility features** with ARIA labels
+- **Customizable tabs** and content
+- **Responsive design**
+
+**Props:**
+```typescript
+interface TabbedNavbarProps {
+  tabs: TabItem[];
+  selectedTab?: string;
+  onTabSelect?: (tabId: string) => void;
+  className?: string;
+  disabled?: boolean;
+}
+
+interface TabItem {
+  id: string;
+  label: string;
+  content: React.ReactNode;
+  disabled?: boolean;
+}
+```
+
+**Usage:**
+```tsx
+<TabbedNavbar
+  tabs={[
+    { id: 'paper', label: 'Paper', content: <PaperSection /> },
+    { id: 'notes', label: 'Notes', content: <NotesSection /> },
+    { id: 'slides', label: 'Slides', content: <SlidesSection /> },
+  ]}
+  selectedTab="paper"
+  onTabSelect={setSelectedTab}
+/>
+```
+
 ## 🎛️ **Panels (Level 4)**
 
 ### **SizeFields**
@@ -405,6 +513,7 @@ Panel for width and height input with aspect ratio lock.
 - Full precision calculations
 - Stepper button support
 - Error handling and validation
+- **Unit conversion support**
 
 **Props:**
 ```typescript
@@ -419,6 +528,7 @@ interface SizeFieldsProps {
   onLockAspectRatioChange?: (locked: boolean) => void;
   onChange: (fields: SizeFieldsData) => void;
   disabled?: boolean;
+  unitSystem?: UnitSystem | string; // New: Unit system support
 }
 ```
 
@@ -508,6 +618,40 @@ interface ResponsiveColorPickerProps {
   onChange={setColor}
   label="Primary Color"
   size="medium"
+/>
+```
+
+### **PreviewPanel** 🆕
+Panel-level preview component for content display.
+
+**Features:**
+- **Content preview** with customizable dimensions
+- **Responsive design** with proper scaling
+- **Background customization** options
+- **Border and shadow** styling
+- **Content centering** and positioning
+
+**Props:**
+```typescript
+interface PreviewPanelProps {
+  content?: React.ReactNode;
+  width?: number;
+  height?: number;
+  backgroundColor?: string;
+  borderColor?: string;
+  shadow?: boolean;
+  className?: string;
+}
+```
+
+**Usage:**
+```tsx
+<PreviewPanel
+  content={<YourContent />}
+  width={800}
+  height={600}
+  backgroundColor="#ffffff"
+  shadow={true}
 />
 ```
 
@@ -638,9 +782,42 @@ interface ColorsSectionProps {
 />
 ```
 
+### **PreviewSection** 🆕
+Section-level preview component with navigation integration.
+
+**Features:**
+- **Full-width preview** with customizable dimensions
+- **Navigation integration** with TabbedNavbar
+- **Content centering** and responsive scaling
+- **Background and border** customization
+- **Error boundary** protection
+
+**Props:**
+```typescript
+interface PreviewSectionProps {
+  content?: React.ReactNode;
+  width?: number;
+  height?: number;
+  backgroundColor?: string;
+  borderColor?: string;
+  className?: string;
+  onError?: (error: Error, errorInfo?: React.ErrorInfo) => void;
+}
+```
+
+**Usage:**
+```tsx
+<PreviewSection
+  content={<YourContent />}
+  width={1200}
+  height={800}
+  backgroundColor="#f5f5f5"
+/>
+```
+
 ## 🪝 **Hooks & Utilities**
 
-### **useUnitConversion**
+### **useUnitConversion** (Legacy)
 Comprehensive unit conversion system.
 
 **Features:**
@@ -659,6 +836,29 @@ const displayValue = cmToDisplay(10, 'in'); // 3.94 inches
 
 // Convert display unit to cm
 const cmValue = displayToCm(3.94, 'in'); // 10 cm
+```
+
+### **UnitConversionService** 🆕
+Modern unit conversion service with 5 unit systems.
+
+**Features:**
+- **5 Unit Systems**: Length, Temperature, Volume, Weight, Energy
+- **Full Precision**: Internal storage in standard units
+- **Context-Aware**: Support for relative units
+- **Extensible**: Easy to add new unit systems
+- **Type Safe**: Full TypeScript support
+
+**Usage:**
+```typescript
+import { unitConversionService } from '@frndfrts/fluent-ui-custom-components';
+
+// Convert length
+const displayValue = unitConversionService.fromInternalUnit(10, 'in', 'length');
+const internalValue = unitConversionService.toInternalUnit(3.94, 'in', 'length');
+
+// Convert temperature
+const fahrenheit = unitConversionService.fromInternalUnit(25, '°F', 'temperature');
+const celsius = unitConversionService.toInternalUnit(77, '°F', 'temperature');
 ```
 
 ### **usePaperSizeManager**
@@ -706,17 +906,152 @@ Comprehensive form validation.
 - **useInterval**: Interval management
 - **useTimeout**: Timeout management
 
+## 🔄 **Unit Conversion System** 🆕
+
+### **Overview**
+The library now includes a comprehensive unit conversion system that supports 5 different unit types with full precision and context-aware conversion.
+
+### **Supported Unit Systems**
+
+#### **1. Length System**
+- **Internal Unit**: `cm` (centimeters)
+- **Units**: `cm`, `mm`, `in`, `px`, `pt`, `%`, `vw`, `vh`, `em`, `rem`
+- **Precision**: Full floating-point precision
+- **Context**: Required for relative units (`%`, `vw`, `vh`, `em`, `rem`)
+
+#### **2. Temperature System**
+- **Internal Unit**: `°C` (celsius)
+- **Units**: `°C`, `°F`, `K` (kelvin)
+- **Precision**: 1 decimal place
+- **Conversions**: Automatic temperature scale conversion
+
+#### **3. Volume System**
+- **Internal Unit**: `ml` (milliliters)
+- **Units**: `ml`, `l`, `oz`, `gal`, `pt`
+- **Precision**: 2 decimal places
+- **Conversions**: Metric and imperial volume units
+
+#### **4. Weight System**
+- **Internal Unit**: `g` (grams)
+- **Units**: `g`, `kg`, `oz`, `lb`
+- **Precision**: 2 decimal places
+- **Conversions**: Metric and imperial weight units
+
+#### **5. Energy System**
+- **Internal Unit**: `J` (joules)
+- **Units**: `J`, `cal`, `kcal`, `Wh`
+- **Precision**: 2 decimal places
+- **Conversions**: Various energy measurement units
+
+### **Usage Examples**
+
+#### **Basic Unit Conversion**
+```typescript
+import { unitConversionService } from '@frndfrts/fluent-ui-custom-components';
+
+// Length conversion
+const inches = unitConversionService.fromInternalUnit(10, 'in', 'length'); // 3.94
+const cm = unitConversionService.toInternalUnit(3.94, 'in', 'length'); // 10
+
+// Temperature conversion
+const fahrenheit = unitConversionService.fromInternalUnit(25, '°F', 'temperature'); // 77
+const celsius = unitConversionService.toInternalUnit(77, '°F', 'temperature'); // 25
+```
+
+#### **Context-Aware Conversion**
+```typescript
+// For relative units, provide context
+const context = {
+  referenceWidth: 20,
+  referenceHeight: 15,
+  containerWidth: 30,
+  containerHeight: 20,
+  fontSize: 0.4,
+  rootFontSize: 0.35,
+};
+
+const percentage = unitConversionService.fromInternalUnit(10, '%', 'length', context);
+```
+
+#### **Component Integration**
+```tsx
+<DimensionInput
+  label="Width"
+  value={10}
+  unit="cm"
+  unitSystem="length"
+  context={context}
+  onChange={(value, unit) => {
+    // Automatic conversion happens internally
+    console.log(`Display: ${value} ${unit}`);
+    console.log(`Internal: ${internalValue} cm`);
+  }}
+/>
+```
+
+### **Architecture**
+
+#### **UnitConversionService**
+Centralized service for all unit conversions:
+- **Singleton Pattern**: Single instance for the entire application
+- **System Registry**: Manages all unit systems
+- **Context Support**: Handles relative unit conversions
+- **Error Handling**: Robust error management
+
+#### **UnitSystems Registry**
+Extensible registry for unit system definitions:
+- **Type Safety**: Full TypeScript interfaces
+- **Extensibility**: Easy to add new unit systems
+- **Metadata**: Rich unit information (precision, step values)
+- **Validation**: Built-in unit validation
+
+#### **UnitConversionContext**
+React context for providing reference dimensions:
+- **Provider Pattern**: Wraps components that need context
+- **Reference Values**: Container dimensions, font sizes
+- **Automatic Propagation**: Context flows through component tree
+
 ## 🏷️ **Type System**
 
 ### **Core Types**
 ```typescript
 export type ComponentSize = 'small' | 'medium' | 'large';
-export type Unit = 'cm' | 'mm' | 'in' | 'px' | 'pt' | '%';
+export type Unit = 'cm' | 'mm' | 'in' | 'px' | 'pt' | '%' | 'vw' | 'vh' | 'em' | 'rem' | '°C' | '°F' | 'K' | 'ml' | 'l' | 'oz' | 'gal' | 'pt' | 'g' | 'kg' | 'lb' | 'J' | 'cal' | 'kcal' | 'Wh';
 
 export interface BaseComponentProps {
   size?: ComponentSize;
   disabled?: boolean;
   className?: string;
+}
+```
+
+### **Unit System Types** 🆕
+```typescript
+export interface UnitSystem {
+  id: string;
+  name: string;
+  internalUnit: string;
+  units: UnitDefinition[];
+  conversions: Record<string, number | ((value: number) => number)>;
+}
+
+export interface UnitDefinition {
+  symbol: string;
+  name: string;
+  category: 'absolute' | 'relative' | 'temperature';
+  requiresContext?: boolean;
+  contextType?: string;
+  precision: number;
+  step: number;
+}
+
+export interface UnitConversionContext {
+  referenceWidth?: number;
+  referenceHeight?: number;
+  containerWidth?: number;
+  containerHeight?: number;
+  fontSize?: number;
+  rootFontSize?: number;
 }
 ```
 
@@ -896,6 +1231,7 @@ All components follow consistent prop patterns:
 - **Validation Props**: `min`, `max`, `validationOptions`
 - **Accessibility Props**: `ariaLabel`, `ariaDescribedBy`
 - **Error Props**: `onError`, `errorBoundary`
+- **Unit Props**: `unit`, `unitSystem`, `context` 🆕
 
 ### **Event Handling**
 Consistent event handling patterns:
@@ -904,6 +1240,7 @@ Consistent event handling patterns:
 - **Error Events**: `onError(error, errorInfo)`
 - **Validation Events**: `onValidation(validationResult)`
 - **Focus Events**: `onFocus`, `onBlur`
+- **Unit Events**: `onUnitChange(value, unit)` 🆕
 
 ### **Styling System**
 Flexible styling system:
@@ -917,7 +1254,7 @@ Flexible styling system:
 
 ### **Basic Usage**
 ```tsx
-import { NumericInput, UnitSelector } from 'fluent-ui-custom-components';
+import { NumericInput, UnitSelector } from '@frndfrts/fluent-ui-custom-components';
 
 function BasicExample() {
   const [value, setValue] = useState(100);
@@ -932,65 +1269,87 @@ function BasicExample() {
         max={1000}
         step={10}
         label="Width"
+        unit={unit}
       />
       <UnitSelector
         unit={unit}
         onChange={setUnit}
         units={['cm', 'mm', 'in']}
+        unitSystem="length"
       />
     </div>
   );
 }
 ```
 
-### **Advanced Usage**
+### **Advanced Usage with Unit Conversion**
 ```tsx
-import { SizeFields, PositionFields } from 'fluent-ui-custom-components';
+import { DimensionInput, SizeFields } from '@frndfrts/fluent-ui-custom-components';
 
 function AdvancedExample() {
   const [size, setSize] = useState({ width: 100, height: 50 });
   const [position, setPosition] = useState({ x: 0, y: 0 });
 
+  const context = {
+    referenceWidth: 20,
+    referenceHeight: 15,
+    containerWidth: 30,
+    containerHeight: 20,
+    fontSize: 0.4,
+    rootFontSize: 0.35,
+  };
+
   return (
     <div>
+      <DimensionInput
+        label="Width"
+        value={size.width}
+        unit="cm"
+        unitSystem="length"
+        context={context}
+        onChange={(value, unit) => {
+          setSize(prev => ({ ...prev, width: value }));
+          console.log(`Display: ${value} ${unit}`);
+        }}
+      />
       <SizeFields
         width={size.width}
         height={size.height}
+        unitSystem="length"
         onChange={setSize}
         showLockAspectRatio={true}
         onLockAspectRatioChange={(locked) => console.log('Locked:', locked)}
-      />
-      <PositionFields
-        x={position.x}
-        y={position.y}
-        onChange={setPosition}
-        positions={['top-left', 'center', 'bottom-right']}
       />
     </div>
   );
 }
 ```
 
-### **Complete Section**
+### **Complete Section with Navigation**
 ```tsx
-import { TitlePlaceholderSection } from 'fluent-ui-custom-components';
+import { TabbedNavbar, PreviewSection } from '@frndfrts/fluent-ui-custom-components';
 
-function SectionExample() {
-  const [size, setSize] = useState({ width: 200, height: 100 });
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [padding, setPadding] = useState({ top: 10, right: 15, bottom: 10, left: 15 });
+function CompleteExample() {
+  const [selectedTab, setSelectedTab] = useState('paper');
 
   return (
-    <TitlePlaceholderSection
-      size={size}
-      onSizeChange={setSize}
-      position={position}
-      onPositionChange={setPosition}
-      padding={padding}
-      onPaddingChange={setPadding}
-      units={['cm', 'mm', 'in']}
-      showLockAspectRatio={true}
-    />
+    <div>
+      <TabbedNavbar
+        tabs={[
+          { id: 'paper', label: 'Paper', content: <PaperSection /> },
+          { id: 'notes', label: 'Notes', content: <NotesSection /> },
+          { id: 'slides', label: 'Slides', content: <SlidesSection /> },
+        ]}
+        selectedTab={selectedTab}
+        onTabSelect={setSelectedTab}
+      />
+      <PreviewSection
+        content={<YourContent />}
+        width={1200}
+        height={800}
+        backgroundColor="#f5f5f5"
+      />
+    </div>
   );
 }
 ```
@@ -1002,9 +1361,10 @@ function SectionExample() {
 2. Create a feature branch
 3. Install dependencies: `npm install`
 4. Start development server: `npm start`
-5. Make your changes
-6. Run tests: `npm test`
-7. Submit a pull request
+5. Start Storybook: `npm run storybook`
+6. Make your changes
+7. Run tests: `npm test`
+8. Submit a pull request
 
 ### **Code Standards**
 - **TypeScript**: Strict mode enabled
@@ -1019,6 +1379,7 @@ function SectionExample() {
 - **Error Handling**: Implement ErrorBoundary
 - **Accessibility**: ARIA support required
 - **Testing**: Unit tests for all components
+- **Unit Conversion**: Integrate with unit system 🆕
 
 ### **Pull Request Process**
 1. **Description**: Clear description of changes
@@ -1040,16 +1401,17 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 **Support**
 
-- **Issues**: [GitHub Issues](https://github.com/your-org/fluent-ui-custom-components/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/your-org/fluent-ui-custom-components/discussions)
+- **Issues**: [GitHub Issues](https://github.com/frndfrts/fluent-ui-custom-components/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/frndfrts/fluent-ui-custom-components/discussions)
 - **Documentation**: [Storybook](http://localhost:6006) (when running locally)
-- **Email**: support@your-org.com
+- **Email**: support@frndfrts.com
 
 ---
 
 **Built with ❤️ by the Fluent UI Custom Components Team**
 
 *Last updated: December 2024*
-*Version: 0.1.0*
+*Version: 1.1.0*
 *React: 18.2.0*
 *Fluent UI: 9.68.3*
+*Storybook: 9.1.3*

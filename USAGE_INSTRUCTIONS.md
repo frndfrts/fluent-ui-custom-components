@@ -2,6 +2,31 @@
 
 This document provides comprehensive instructions on how to use the Fluent UI Custom Components library in your projects, including basic, intermediate, and advanced examples.
 
+## 🆕 What's New in v1.1.0
+
+### ✨ **Storybook 9 Upgrade**
+- **Upgraded from v8.6.14 to v9.1.3**
+- **Modern framework-based configuration**
+- **Built-in addons**: Actions, Controls, Viewport, Backgrounds
+- **Enhanced performance**: 566ms manager startup, 19s preview
+- **Webpack 5 optimization**: Bundle splitting and caching
+
+### 🔄 **Comprehensive Unit Conversion System**
+- **5 Unit Systems**: Length, Temperature, Volume, Weight, Energy
+- **Full Precision**: Internal storage in standard units (cm, °C, ml, g, J)
+- **Smart Conversion**: Automatic unit conversion with proper precision
+- **Context-Aware**: Support for relative units (%, vw, vh, em, rem)
+
+### 🆕 **New Components**
+- **TabbedNavbar**: Navigation component with focus management
+- **PreviewSection**: Section-level preview component
+- **PreviewPanel**: Panel-level preview component
+
+### 🎯 **Interactive Storybook Stories**
+- **State Management**: Proper React.useState for all stories
+- **Real-time Updates**: Live component interaction
+- **Enhanced Documentation**: Better examples and usage
+
 ## Prerequisites
 
 - **Node.js** (version 16 or higher)
@@ -43,7 +68,7 @@ export GITHUB_TOKEN=your_github_personal_access_token
 ### Step 3: Install the Package
 
 ```bash
-npm install @frndfrts/fluent-ui-custom-components
+npm install @frndfrts/fluent-ui-custom-components@1.1.0
 ```
 
 ## 🚀 Basic Usage Examples
@@ -59,42 +84,35 @@ function MyApp() {
 
   const tabs = [
     {
-      value: 'file',
-      label: 'File',
-      type: 'menu',
-      menuItems: [
-        { key: 'new', label: 'New', onClick: () => console.log('New clicked') },
-        { key: 'open', label: 'Open', onClick: () => console.log('Open clicked') },
-        { key: 'save', label: 'Save', onClick: () => console.log('Save clicked') },
-      ],
+      id: 'paper',
+      label: 'Paper',
+      content: <div>Paper configuration content</div>,
     },
     {
-      value: 'edit',
-      label: 'Edit',
-      type: 'menu',
-      menuItems: [
-        { key: 'undo', label: 'Undo', onClick: () => console.log('Undo clicked') },
-        { key: 'redo', label: 'Redo', onClick: () => console.log('Redo clicked') },
-      ],
+      id: 'notes',
+      label: 'Notes',
+      content: <div>Notes configuration content</div>,
     },
-    { value: 'paper', label: 'Paper', type: 'simple' },
-    { value: 'notes', label: 'Notes', type: 'simple' },
-    { value: 'slides', label: 'Slides', type: 'simple' },
+    {
+      id: 'slides',
+      label: 'Slides',
+      content: <div>Slides configuration content</div>,
+    },
   ];
 
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
       <TabbedNavbar
+        tabs={tabs}
         selectedTab={selectedTab}
         onTabSelect={setSelectedTab}
-        tabs={tabs}
       />
-      <PreviewSection previewTitle="Document Preview">
-        <div style={{ padding: '20px', textAlign: 'center' }}>
-          <h3>Content for {selectedTab}</h3>
-          <p>This is the content area for the selected tab.</p>
-        </div>
-      </PreviewSection>
+      <PreviewSection
+        content={<div>Preview content for {selectedTab}</div>}
+        width={1200}
+        height={800}
+        backgroundColor="#f5f5f5"
+      />
     </div>
   );
 }
@@ -123,43 +141,11 @@ function MyApp() {
 }
 ```
 
-### Example 2: Dimension Input with Units
+### Example 3: Dimension Input with Unit Conversion
 
 ```tsx
 import React, { useState } from 'react';
 import { DimensionInput } from '@frndfrts/fluent-ui-custom-components';
-
-function MyApp() {
-  const [width, setWidth] = useState(100);
-  const [unit, setUnit] = useState('px');
-
-  const handleChange = (value: number | '', newUnit: string) => {
-    setWidth(value as number);
-    setUnit(newUnit);
-  };
-
-  return (
-    <div>
-      <h2>Width Input</h2>
-      <DimensionInput
-        label="Width"
-        value={width}
-        unit={unit}
-        units={['px', 'em', 'rem', '%', 'pt', 'in', 'cm', 'mm']}
-        onChange={handleChange}
-        size="medium"
-      />
-      <p>Width: {width} {unit}</p>
-    </div>
-  );
-}
-```
-
-### Example 2a: Enhanced Dimension Input with Context-Aware Units
-
-```tsx
-import React, { useState } from 'react';
-import { DimensionInput, UnitConversionProvider } from '@frndfrts/fluent-ui-custom-components';
 
 function MyApp() {
   const [width, setWidth] = useState(10); // cm
@@ -171,33 +157,67 @@ function MyApp() {
   };
 
   return (
-    <UnitConversionProvider
-      referenceWidth={20}    // 20cm reference width
-      referenceHeight={15}  // 15cm reference height
-      containerWidth={30}   // 30cm container width
-      containerHeight={20}  // 20cm container height
-      fontSize={0.4}        // 0.4cm font size
-      rootFontSize={0.35}  // 0.35cm root font size
-    >
-      <div>
-        <h2>Enhanced Width Input</h2>
-        <DimensionInput
-          label="Width"
-          value={width}
-          unit={unit}
-          units={['px', 'em', 'rem', '%', 'vw', 'vh', 'pt', 'in', 'cm', 'mm']}
-          onChange={handleChange}
-          size="medium"
-        />
-        <p>Width: {width} {unit}</p>
-        <p><small>Supports context-aware percentage, viewport, and font-relative units</small></p>
-      </div>
-    </UnitConversionProvider>
+    <div>
+      <h2>Width Input with Unit Conversion</h2>
+      <DimensionInput
+        label="Width"
+        value={width}
+        unit={unit}
+        unitSystem="length"
+        units={['cm', 'mm', 'in', 'px', 'pt', '%', 'vw', 'vh', 'em', 'rem']}
+        onChange={handleChange}
+        size="medium"
+        context={{
+          referenceWidth: 20,
+          referenceHeight: 15,
+          containerWidth: 30,
+          containerHeight: 20,
+          fontSize: 0.4,
+          rootFontSize: 0.35,
+        }}
+      />
+      <p>Width: {width} {unit}</p>
+      <p><small>Supports automatic unit conversion with full precision</small></p>
+    </div>
   );
 }
 ```
 
-### Example 3: Color Selector Grid
+### Example 4: Temperature Input
+
+```tsx
+import React, { useState } from 'react';
+import { DimensionInput } from '@frndfrts/fluent-ui-custom-components';
+
+function MyApp() {
+  const [temperature, setTemperature] = useState(25); // °C
+  const [unit, setUnit] = useState('°C');
+
+  const handleChange = (value: number | '', newUnit: string) => {
+    setTemperature(value as number);
+    setUnit(newUnit);
+  };
+
+  return (
+    <div>
+      <h2>Temperature Input</h2>
+      <DimensionInput
+        label="Temperature"
+        value={temperature}
+        unit={unit}
+        unitSystem="temperature"
+        units={['°C', '°F', 'K']}
+        onChange={handleChange}
+        size="medium"
+      />
+      <p>Temperature: {temperature} {unit}</p>
+      <p><small>Automatic conversion between Celsius, Fahrenheit, and Kelvin</small></p>
+    </div>
+  );
+}
+```
+
+### Example 5: Color Selector Grid
 
 ```tsx
 import React, { useState } from 'react';
@@ -222,7 +242,7 @@ function MyApp() {
 }
 ```
 
-### Example 4: Aspect Ratio Selector
+### Example 6: Aspect Ratio Selector
 
 ```tsx
 import React, { useState } from 'react';
@@ -300,7 +320,7 @@ function MyApp() {
 }
 ```
 
-### Form Validation
+### Form Validation with Unit Conversion
 
 ```tsx
 import React, { useState } from 'react';
@@ -309,7 +329,13 @@ import { NumericInput, DimensionInput } from '@frndfrts/fluent-ui-custom-compone
 function FormExample() {
   const [width, setWidth] = useState(100);
   const [height, setHeight] = useState(100);
+  const [unit, setUnit] = useState('cm');
   const [errors, setErrors] = useState<string[]>([]);
+
+  const handleDimensionChange = (value: number | '', newUnit: string) => {
+    setWidth(value as number);
+    setUnit(newUnit);
+  };
 
   const handleSubmit = () => {
     const newErrors = [];
@@ -319,7 +345,7 @@ function FormExample() {
     setErrors(newErrors);
     
     if (newErrors.length === 0) {
-      console.log('Form submitted:', { width, height });
+      console.log('Form submitted:', { width, height, unit });
     }
   };
 
@@ -329,8 +355,9 @@ function FormExample() {
         <DimensionInput
           label="Width"
           value={width}
-          unit="px"
-          onChange={(value) => setWidth(value as number)}
+          unit={unit}
+          unitSystem="length"
+          onChange={handleDimensionChange}
           onError={(error) => console.error('Width error:', error)}
         />
       </div>
@@ -339,8 +366,12 @@ function FormExample() {
         <DimensionInput
           label="Height"
           value={height}
-          unit="px"
-          onChange={(value) => setHeight(value as number)}
+          unit={unit}
+          unitSystem="length"
+          onChange={(value, newUnit) => {
+            setHeight(value as number);
+            setUnit(newUnit);
+          }}
           onError={(error) => console.error('Height error:', error)}
         />
       </div>
@@ -372,6 +403,8 @@ import {
   DimensionInput, 
   ColorSelector,
   AspectRatioSelector,
+  TabbedNavbar,
+  PreviewSection,
   ErrorBoundary 
 } from '@frndfrts/fluent-ui-custom-components';
 import { makeStyles } from '@fluentui/react-components';
@@ -379,7 +412,7 @@ import { makeStyles } from '@fluentui/react-components';
 const useStyles = makeStyles({
   app: {
     padding: '20px',
-    maxWidth: '800px',
+    maxWidth: '1200px',
     margin: '0 auto',
   },
   section: {
@@ -404,24 +437,25 @@ const useStyles = makeStyles({
 function App() {
   const styles = useStyles();
   const [color, setColor] = useState('#FF6B35');
-  const [width, setWidth] = useState(100);
-  const [unit, setUnit] = useState('px');
+  const [width, setWidth] = useState(10);
+  const [unit, setUnit] = useState('cm');
   const [selectedColor, setSelectedColor] = useState('#FF0000');
   const [aspectRatio, setAspectRatio] = useState('16:9');
+  const [selectedTab, setSelectedTab] = useState('design');
 
   const handleDimensionChange = (value: number | '', newUnit: string) => {
     setWidth(value as number);
     setUnit(newUnit);
   };
 
-  return (
-    <div className={styles.app}>
-      <h1>My Fluent UI App</h1>
-      
-      <ErrorBoundary>
+  const tabs = [
+    {
+      id: 'design',
+      label: 'Design',
+      content: (
         <div className={styles.grid}>
           <div className={styles.section}>
-            <h2 className={styles.title}>Color Input</h2>
+            <h3 className={styles.title}>Color Input</h3>
             <ColorInput
               value={color}
               onChange={setColor}
@@ -431,39 +465,65 @@ function App() {
           </div>
 
           <div className={styles.section}>
-            <h2 className={styles.title}>Dimension Input</h2>
+            <h3 className={styles.title}>Dimension Input</h3>
             <DimensionInput
               label="Width"
               value={width}
               unit={unit}
-              units={['px', 'em', 'rem', '%', 'pt', 'in', 'cm', 'mm']}
+              unitSystem="length"
+              units={['cm', 'mm', 'in', 'px', 'pt', '%', 'vw', 'vh']}
               onChange={handleDimensionChange}
               size="medium"
+              context={{
+                referenceWidth: 20,
+                referenceHeight: 15,
+                containerWidth: 30,
+                containerHeight: 20,
+                fontSize: 0.4,
+                rootFontSize: 0.35,
+              }}
             />
             <p>Width: {width} {unit}</p>
           </div>
-
-          <div className={styles.section}>
-            <h2 className={styles.title}>Color Palette</h2>
-            <ColorSelector
-              value={selectedColor}
-              onChange={setSelectedColor}
-              columns={6}
-              showTooltips={true}
-            />
-            <p>Selected: {selectedColor}</p>
-          </div>
-
-          <div className={styles.section}>
-            <h2 className={styles.title}>Aspect Ratio</h2>
-            <AspectRatioSelector
-              value={aspectRatio}
-              onChange={setAspectRatio}
-              size="medium"
-            />
-            <p>Ratio: {aspectRatio}</p>
-          </div>
         </div>
+      ),
+    },
+    {
+      id: 'preview',
+      label: 'Preview',
+      content: (
+        <PreviewSection
+          content={
+            <div style={{ padding: '20px', textAlign: 'center' }}>
+              <h3>Design Preview</h3>
+              <div style={{ 
+                width: `${width}${unit}`, 
+                height: '100px', 
+                backgroundColor: color,
+                margin: '0 auto',
+                borderRadius: '8px'
+              }}></div>
+              <p>Aspect Ratio: {aspectRatio}</p>
+            </div>
+          }
+          width={800}
+          height={600}
+          backgroundColor="#f5f5f5"
+        />
+      ),
+    },
+  ];
+
+  return (
+    <div className={styles.app}>
+      <h1>My Fluent UI App v1.1.0</h1>
+      
+      <ErrorBoundary>
+        <TabbedNavbar
+          tabs={tabs}
+          selectedTab={selectedTab}
+          onTabSelect={setSelectedTab}
+        />
       </ErrorBoundary>
     </div>
   );
@@ -472,17 +532,19 @@ function App() {
 export default App;
 ```
 
-### Custom Hook Integration
+### Custom Hook Integration with Unit Conversion
 
 ```tsx
 import React, { useState, useEffect } from 'react';
-import { ColorInput, ColorSelector } from '@frndfrts/fluent-ui-custom-components';
+import { ColorInput, ColorSelector, DimensionInput } from '@frndfrts/fluent-ui-custom-components';
 import { useLocalStorage, useDebounce } from '@frndfrts/fluent-ui-custom-components';
 
 function AdvancedColorApp() {
   const [color, setColor] = useLocalStorage('selectedColor', '#FF6B35');
   const [debouncedColor] = useDebounce(color, 500);
   const [recentColors, setRecentColors] = useState<string[]>([]);
+  const [size, setSize] = useState(100);
+  const [unit, setUnit] = useState('cm');
 
   // Save color to recent colors when it changes
   useEffect(() => {
@@ -493,13 +555,28 @@ function AdvancedColorApp() {
 
   return (
     <div>
-      <h2>Advanced Color App</h2>
+      <h2>Advanced Color App with Unit Conversion</h2>
       
       <div style={{ marginBottom: '20px' }}>
         <ColorInput
           value={color}
           onChange={setColor}
           size="large"
+        />
+      </div>
+
+      <div style={{ marginBottom: '20px' }}>
+        <DimensionInput
+          label="Size"
+          value={size}
+          unit={unit}
+          unitSystem="length"
+          units={['cm', 'mm', 'in', 'px', 'pt']}
+          onChange={(value, newUnit) => {
+            setSize(value as number);
+            setUnit(newUnit);
+          }}
+          size="medium"
         />
       </div>
       
@@ -515,6 +592,7 @@ function AdvancedColorApp() {
       </div>
       
       <p>Current: {color}</p>
+      <p>Size: {size} {unit}</p>
       <p>Debounced: {debouncedColor}</p>
     </div>
   );
@@ -529,7 +607,8 @@ import {
   PaperSelector, 
   OrientationSelector, 
   AspectRatioSelector,
-  DimensionInput 
+  DimensionInput,
+  PreviewPanel
 } from '@frndfrts/fluent-ui-custom-components';
 import { makeStyles } from '@fluentui/react-components';
 
@@ -584,7 +663,7 @@ function DocumentSetup() {
           size="medium"
         />
         <OrientationSelector
-          orientation={orientation}
+          value={orientation}
           onChange={setOrientation}
           size="medium"
         />
@@ -601,6 +680,7 @@ function DocumentSetup() {
           label="Margin"
           value={margin}
           unit={marginUnit}
+          unitSystem="length"
           units={['mm', 'cm', 'in', 'pt']}
           onChange={handleMarginChange}
           size="medium"
@@ -609,21 +689,64 @@ function DocumentSetup() {
 
       <div className={styles.card}>
         <h3 className={styles.title}>Preview</h3>
-        <div className={styles.preview}>
-          <p><strong>Paper:</strong> {paperSize}</p>
-          <p><strong>Orientation:</strong> {orientation}</p>
-          <p><strong>Aspect Ratio:</strong> {aspectRatio}</p>
-          <p><strong>Margin:</strong> {margin} {marginUnit}</p>
-        </div>
+        <PreviewPanel
+          content={
+            <div className={styles.preview}>
+              <p><strong>Paper:</strong> {paperSize}</p>
+              <p><strong>Orientation:</strong> {orientation}</p>
+              <p><strong>Aspect Ratio:</strong> {aspectRatio}</p>
+              <p><strong>Margin:</strong> {margin} {marginUnit}</p>
+            </div>
+          }
+          width={300}
+          height={200}
+          backgroundColor="#ffffff"
+          shadow={true}
+        />
       </div>
     </div>
   );
 }
 ```
 
-## 🆕 Enhanced Unit Conversion Features
+## 🔄 Enhanced Unit Conversion Features
+
+### 5 Unit Systems Support
+
+The library now supports comprehensive unit conversion across 5 different unit systems:
+
+#### **1. Length System**
+- **Internal Unit**: `cm` (centimeters)
+- **Units**: `cm`, `mm`, `in`, `px`, `pt`, `%`, `vw`, `vh`, `em`, `rem`
+- **Precision**: Full floating-point precision
+- **Context**: Required for relative units (`%`, `vw`, `vh`, `em`, `rem`)
+
+#### **2. Temperature System**
+- **Internal Unit**: `°C` (celsius)
+- **Units**: `°C`, `°F`, `K` (kelvin)
+- **Precision**: 1 decimal place
+- **Conversions**: Automatic temperature scale conversion
+
+#### **3. Volume System**
+- **Internal Unit**: `ml` (milliliters)
+- **Units**: `ml`, `l`, `oz`, `gal`, `pt`
+- **Precision**: 2 decimal places
+- **Conversions**: Metric and imperial volume units
+
+#### **4. Weight System**
+- **Internal Unit**: `g` (grams)
+- **Units**: `g`, `kg`, `oz`, `lb`
+- **Precision**: 2 decimal places
+- **Conversions**: Metric and imperial weight units
+
+#### **5. Energy System**
+- **Internal Unit**: `J` (joules)
+- **Units**: `J`, `cal`, `kcal`, `Wh`
+- **Precision**: 2 decimal places
+- **Conversions**: Various energy measurement units
 
 ### Context-Aware Unit Conversions
+
 The library now supports advanced unit conversion with context awareness:
 
 - **Percentage (%)**: Requires reference dimensions for proper calculations
@@ -632,6 +755,7 @@ The library now supports advanced unit conversion with context awareness:
 - **Absolute Units**: Standard conversions (cm, mm, in, px, pt)
 
 ### Unit-Specific Step Values
+
 Each unit type has appropriate step values for precise control:
 - **px/pt**: Step by 1 (whole numbers)
 - **mm**: Step by 0.1 (1 decimal place)
@@ -642,6 +766,7 @@ Each unit type has appropriate step values for precise control:
 - **em/rem**: Step by 0.01 (2 decimal places)
 
 ### Context Provider System
+
 ```tsx
 import { UnitConversionProvider } from '@frndfrts/fluent-ui-custom-components';
 
@@ -649,12 +774,38 @@ import { UnitConversionProvider } from '@frndfrts/fluent-ui-custom-components';
   referenceWidth={20}    // For percentage calculations
   referenceHeight={15}   // For percentage calculations
   containerWidth={30}    // For viewport units
-  containerHeight={20}   // For viewport units
+  containerHeight={20}    // For viewport units
   fontSize={0.4}         // For em calculations
   rootFontSize={0.35}   // For rem calculations
 >
   {/* Your components here */}
 </UnitConversionProvider>
+```
+
+### Direct Service Usage
+
+```tsx
+import { unitConversionService } from '@frndfrts/fluent-ui-custom-components';
+
+// Length conversion
+const inches = unitConversionService.fromInternalUnit(10, 'in', 'length'); // 3.94
+const cm = unitConversionService.toInternalUnit(3.94, 'in', 'length'); // 10
+
+// Temperature conversion
+const fahrenheit = unitConversionService.fromInternalUnit(25, '°F', 'temperature'); // 77
+const celsius = unitConversionService.toInternalUnit(77, '°F', 'temperature'); // 25
+
+// Context-aware conversion
+const context = {
+  referenceWidth: 20,
+  referenceHeight: 15,
+  containerWidth: 30,
+  containerHeight: 20,
+  fontSize: 0.4,
+  rootFontSize: 0.35,
+};
+
+const percentage = unitConversionService.fromInternalUnit(10, '%', 'length', context);
 ```
 
 ## 📚 Available Components
@@ -665,7 +816,7 @@ Basic building blocks for forms and inputs:
 - `HexInput` - Hexadecimal color input
 - `SliderInput` - Slider input component
 - `ColorSliderInput` - Color-specific slider
-- `UniversalSelector` - Generic selector component
+- `UniversalSelector` - Generic selector component with interactive state management
 - `LockAspectRatio` - Aspect ratio lock toggle
 
 ### Components (Level 2)
@@ -675,6 +826,7 @@ Molecule-level combinations:
 - `OrientationSelector` - Portrait/landscape selection
 - `PaperSelector` - Paper size selection
 - `PositionSelector` - Position value selection
+- `UnitSelector` - Enhanced unit selector with 5 unit systems support
 
 ### Compositions (Level 3)
 Complex functional units:
@@ -686,13 +838,13 @@ Complex functional units:
 - `LabeledColorHexInput` - Color input with label
 - `LabeledColorPicker` - Color picker with label
 - `MultipleSlidersInput` - Multiple slider inputs
-- `TabbedNavbar` - Complete tabbed navigation bar with menu support
+- `TabbedNavbar` - Complete tabbed navigation bar with focus management
 
 ### Panels (Level 4)
 Layout containers with specific functionality:
 - `PaperSizePanel` - Paper size configuration
 - `SizeAndPositionPanel` - Size and position controls
-- `SizeFields` - Size input fields
+- `SizeFields` - Size input fields with unit conversion
 - `PositionFields` - Position input fields
 - `MarginsPanel` - Margin configuration
 - `PaddingPanel` - Padding configuration
@@ -754,6 +906,7 @@ Custom React hooks and utilities:
 - `useIsMountedRef` - Mount state ref
 - `useUnitConversion` - Enhanced unit conversion with context awareness
 - `UnitConversionProvider` - Context provider for unit conversion reference dimensions
+- `unitConversionService` - Direct service for unit conversions
 
 ## 🔍 Troubleshooting
 
@@ -763,6 +916,7 @@ Custom React hooks and utilities:
 2. **Registry Error**: Verify `.npmrc` is in your project root
 3. **Import Errors**: Check that you're importing from the correct path
 4. **Build Errors**: Ensure you have the required peer dependencies
+5. **Unit Conversion Errors**: Verify unit system and context are properly configured
 
 ### Getting Help
 
@@ -770,6 +924,7 @@ Custom React hooks and utilities:
 - Use Storybook locally to explore components: `npm run dev`
 - Review component stories for usage examples
 - Check GitHub issues for known problems
+- Review unit conversion documentation: [UNIT_CONVERSION_IMPLEMENTATION.md](./UNIT_CONVERSION_IMPLEMENTATION.md)
 
 ## Best Practices
 
@@ -781,6 +936,8 @@ Custom React hooks and utilities:
 6. **TypeScript** - Use TypeScript for better type safety and IntelliSense
 7. **Responsive Design** - Components adapt to different screen sizes
 8. **Theme Integration** - Components use Fluent UI design tokens
+9. **Unit Conversion** - Use appropriate unit systems and context for conversions
+10. **Interactive Stories** - Leverage Storybook's interactive features for testing
 
 ## Migration Guide
 
@@ -792,6 +949,15 @@ If you're upgrading from a previous version:
 2. **Review props** - Some component interfaces may have changed
 3. **Test functionality** - Verify components work as expected
 4. **Check peer dependencies** - Ensure Fluent UI v9 is installed
+5. **Update unit conversion** - Migrate to new unit conversion system
+6. **Test Storybook** - Verify Storybook 9 compatibility
+
+### Breaking Changes in v1.1.0
+
+1. **Storybook Configuration** - Updated to framework-based configuration
+2. **Unit Conversion** - New architecture with 5 unit systems
+3. **Component Props** - Some components have new unit-related props
+4. **Context System** - New UnitConversionProvider for relative units
 
 ## Support
 
@@ -801,7 +967,8 @@ For additional support:
 2. **Explore Storybook** - Run `npm run dev` to see components in action
 3. **Review Issues** - Check GitHub issues for known problems
 4. **Contact Team** - Reach out to the development team for help
+5. **Unit Conversion** - Review unit conversion documentation for advanced usage
 
 ---
 
-*This library is designed to work seamlessly with Fluent UI v9 and provides enterprise-grade components for professional applications. All components are built with accessibility, performance, and maintainability in mind.*
+*This library is designed to work seamlessly with Fluent UI v9 and provides enterprise-grade components for professional applications. All components are built with accessibility, performance, and maintainability in mind. Version 1.1.0 introduces comprehensive unit conversion, Storybook 9 upgrade, and enhanced interactive features.*
