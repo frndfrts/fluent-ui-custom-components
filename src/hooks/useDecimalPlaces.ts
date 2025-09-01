@@ -1,6 +1,7 @@
 /**
  * useDecimalPlaces.ts
  * Custom hook for determining appropriate decimal places based on unit type.
+ * Now matches the enhanced unit conversion implementation.
  */
 import React from 'react';
 import { Unit } from './useUnitConversion';
@@ -19,7 +20,12 @@ export const useDecimalPlaces = (unit: Unit, onError?: (error: Error) => void) =
         case 'in':
           return 3; // 3 decimal places for inches
         case '%':
-          return 1; // 1 decimal place for percentages
+        case 'vw':
+        case 'vh':
+          return 1; // 1 decimal place for percentages and viewport units
+        case 'em':
+        case 'rem':
+          return 2; // 2 decimal places for font-relative units
         default:
           return 2; // Default to 2 decimal places
       }

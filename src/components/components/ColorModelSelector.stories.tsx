@@ -1,5 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-webpack5';
+import * as React from 'react';
 import { ColorModelSelector } from './ColorModelSelector';
+import type { ColorModel } from '../compositions/ColorInput';
 
 const meta: Meta<typeof ColorModelSelector> = {
   title: '04-Components/ColorModelSelector',
@@ -46,68 +48,128 @@ const meta: Meta<typeof ColorModelSelector> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// Basic usage
+// Basic usage with interactive state
 export const Default: Story = {
+  render: (args) => {
+    const [colorModel, setColorModel] = React.useState<ColorModel>(args.colorModel || 'rgb');
+    
+    const handleChange = (newModel: ColorModel) => {
+      setColorModel(newModel);
+      args.onChange?.(newModel);
+    };
+
+    return (
+      <div style={{ padding: '20px', minWidth: '300px' }}>
+        <ColorModelSelector
+          colorModel={colorModel}
+          onChange={handleChange}
+          onError={args.onError}
+          size={args.size}
+          disabled={args.disabled}
+          label={args.label}
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          Selected: {colorModel}
+        </div>
+      </div>
+    );
+  },
   args: {
-    colorModel: 'rgb',
-    onChange: (model: string) => console.log('Color model changed:', model),
+    colorModel: 'rgb' as ColorModel,
+    onChange: (model: ColorModel) => console.log('Color model changed:', model),
   },
 };
 
 // Small size
 export const Small: Story = {
+  render: (args) => {
+    const [colorModel, setColorModel] = React.useState<ColorModel>(args.colorModel || 'rgb');
+    
+    const handleChange = (newModel: ColorModel) => {
+      setColorModel(newModel);
+      args.onChange?.(newModel);
+    };
+
+    return (
+      <div style={{ padding: '20px', minWidth: '300px' }}>
+        <ColorModelSelector
+          colorModel={colorModel}
+          onChange={handleChange}
+          onError={args.onError}
+          size="small"
+          disabled={args.disabled}
+          label={args.label}
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          Selected: {colorModel}
+        </div>
+      </div>
+    );
+  },
   args: {
     ...Default.args,
-    size: 'small',
   },
 };
 
 // Large size
 export const Large: Story = {
+  render: (args) => {
+    const [colorModel, setColorModel] = React.useState<ColorModel>(args.colorModel || 'rgb');
+    
+    const handleChange = (newModel: ColorModel) => {
+      setColorModel(newModel);
+      args.onChange?.(newModel);
+    };
+
+    return (
+      <div style={{ padding: '20px', minWidth: '300px' }}>
+        <ColorModelSelector
+          colorModel={colorModel}
+          onChange={handleChange}
+          onError={args.onError}
+          size="large"
+          disabled={args.disabled}
+          label={args.label}
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          Selected: {colorModel}
+        </div>
+      </div>
+    );
+  },
   args: {
     ...Default.args,
-    size: 'large',
   },
 };
 
 // HSL model
 export const HSLModel: Story = {
-  args: {
-    ...Default.args,
-    colorModel: 'hsl',
-  },
-};
+  render: (args) => {
+    const [colorModel, setColorModel] = React.useState<ColorModel>('hsl');
+    
+    const handleChange = (newModel: ColorModel) => {
+      setColorModel(newModel);
+      args.onChange?.(newModel);
+    };
 
-// HSV model
-export const HSVModel: Story = {
-  args: {
-    ...Default.args,
-    selectedModel: 'hsv',
-    availableModels: ['rgb', 'hsl', 'hex', 'hsv'],
+    return (
+      <div style={{ padding: '20px', minWidth: '300px' }}>
+        <ColorModelSelector
+          colorModel={colorModel}
+          onChange={handleChange}
+          onError={args.onError}
+          size={args.size}
+          disabled={args.disabled}
+          label={args.label}
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          Selected: {colorModel}
+        </div>
+      </div>
+    );
   },
-};
-
-// With labels
-export const WithLabels: Story = {
   args: {
-    ...Default.args,
-    showLabels: true,
-  },
-};
-
-// With descriptions
-export const WithDescriptions: Story = {
-  args: {
-    ...Default.args,
-    showDescriptions: true,
-  },
-};
-
-// Custom width
-export const CustomWidth: Story = {
-  args: {
-    ...Default.args,
-    width: 300,
+    onChange: (model: ColorModel) => console.log('Color model changed:', model),
   },
 };
 
@@ -121,32 +183,32 @@ export const Disabled: Story = {
 
 // With label
 export const WithLabel: Story = {
-  args: {
-    ...Default.args,
-    label: 'Color Model',
-  },
-};
+  render: (args) => {
+    const [colorModel, setColorModel] = React.useState<ColorModel>(args.colorModel || 'rgb');
+    
+    const handleChange = (newModel: ColorModel) => {
+      setColorModel(newModel);
+      args.onChange?.(newModel);
+    };
 
-// Extended models
-export const ExtendedModels: Story = {
-  args: {
-    ...Default.args,
-    availableModels: ['rgb', 'hsl', 'hex', 'cmyk', 'hsv', 'lab', 'xyz'],
-    selectedModel: 'lab',
+    return (
+      <div style={{ padding: '20px', minWidth: '300px' }}>
+        <ColorModelSelector
+          colorModel={colorModel}
+          onChange={handleChange}
+          onError={args.onError}
+          size={args.size}
+          disabled={args.disabled}
+          label="Color Model"
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          Selected: {colorModel}
+        </div>
+      </div>
+    );
   },
-};
-
-// Complex example
-export const Complex: Story = {
   args: {
     ...Default.args,
-    size: 'large',
-    width: 400,
-    showLabels: true,
-    showDescriptions: true,
-    label: 'Advanced Color Model Selection',
-    availableModels: ['rgb', 'hsl', 'hex', 'cmyk', 'hsv'],
-    selectedModel: 'hsl',
   },
 };
 

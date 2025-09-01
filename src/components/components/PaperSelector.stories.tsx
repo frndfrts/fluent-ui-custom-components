@@ -1,4 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-webpack5';
+import * as React from 'react';
 import { PaperSelector } from './PaperSelector';
 
 const meta: Meta<typeof PaperSelector> = {
@@ -35,14 +36,6 @@ const meta: Meta<typeof PaperSelector> = {
       control: { type: 'boolean' },
       description: 'Whether the selector is disabled',
     },
-    showLabel: {
-      control: { type: 'boolean' },
-      description: 'Whether to show the label',
-    },
-    labelText: {
-      control: { type: 'text' },
-      description: 'Text to display as label',
-    },
   },
   tags: ['autodocs'],
 };
@@ -50,8 +43,31 @@ const meta: Meta<typeof PaperSelector> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// Basic usage
+// Basic usage with interactive state
 export const Default: Story = {
+  render: (args) => {
+    const [value, setValue] = React.useState(args.value || 'A4');
+    
+    const handleChange = (newValue: string) => {
+      setValue(newValue);
+      args.onChange?.(newValue);
+    };
+
+    return (
+      <div style={{ padding: '20px', minWidth: '300px' }}>
+        <PaperSelector
+          value={value}
+          onChange={handleChange}
+          onError={args.onError}
+          size={args.size}
+          disabled={args.disabled}
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          Selected: {value}
+        </div>
+      </div>
+    );
+  },
   args: {
     value: 'A4',
     onChange: (size: string) => console.log('Paper size changed:', size),
@@ -60,65 +76,151 @@ export const Default: Story = {
 
 // Small size
 export const Small: Story = {
+  render: (args) => {
+    const [value, setValue] = React.useState(args.value || 'A4');
+    
+    const handleChange = (newValue: string) => {
+      setValue(newValue);
+      args.onChange?.(newValue);
+    };
+
+    return (
+      <div style={{ padding: '20px', minWidth: '300px' }}>
+        <PaperSelector
+          value={value}
+          onChange={handleChange}
+          onError={args.onError}
+          size="small"
+          disabled={args.disabled}
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          Selected: {value}
+        </div>
+      </div>
+    );
+  },
   args: {
     ...Default.args,
-    size: 'small',
   },
 };
 
 // Large size
 export const Large: Story = {
+  render: (args) => {
+    const [value, setValue] = React.useState(args.value || 'A4');
+    
+    const handleChange = (newValue: string) => {
+      setValue(newValue);
+      args.onChange?.(newValue);
+    };
+
+    return (
+      <div style={{ padding: '20px', minWidth: '300px' }}>
+        <PaperSelector
+          value={value}
+          onChange={handleChange}
+          onError={args.onError}
+          size="large"
+          disabled={args.disabled}
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          Selected: {value}
+        </div>
+      </div>
+    );
+  },
   args: {
     ...Default.args,
-    size: 'large',
   },
 };
 
 // Letter size
 export const Letter: Story = {
+  render: (args) => {
+    const [value, setValue] = React.useState('Letter');
+    
+    const handleChange = (newValue: string) => {
+      setValue(newValue);
+      args.onChange?.(newValue);
+    };
+
+    return (
+      <div style={{ padding: '20px', minWidth: '300px' }}>
+        <PaperSelector
+          value={value}
+          onChange={handleChange}
+          onError={args.onError}
+          size={args.size}
+          disabled={args.disabled}
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          Selected: {value}
+        </div>
+      </div>
+    );
+  },
   args: {
-    ...Default.args,
-    selectedSize: 'Letter',
+    onChange: (size: string) => console.log('Paper size changed:', size),
   },
 };
 
 // Legal size
 export const Legal: Story = {
+  render: (args) => {
+    const [value, setValue] = React.useState('Legal');
+    
+    const handleChange = (newValue: string) => {
+      setValue(newValue);
+      args.onChange?.(newValue);
+    };
+
+    return (
+      <div style={{ padding: '20px', minWidth: '300px' }}>
+        <PaperSelector
+          value={value}
+          onChange={handleChange}
+          onError={args.onError}
+          size={args.size}
+          disabled={args.disabled}
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          Selected: {value}
+        </div>
+      </div>
+    );
+  },
   args: {
-    ...Default.args,
-    selectedSize: 'Legal',
+    onChange: (size: string) => console.log('Paper size changed:', size),
   },
 };
 
 // A3 size
 export const A3: Story = {
-  args: {
-    ...Default.args,
-    selectedSize: 'A3',
-  },
-};
+  render: (args) => {
+    const [value, setValue] = React.useState('A3');
+    
+    const handleChange = (newValue: string) => {
+      setValue(newValue);
+      args.onChange?.(newValue);
+    };
 
-// Landscape orientation
-export const Landscape: Story = {
-  args: {
-    ...Default.args,
-    orientation: 'landscape',
+    return (
+      <div style={{ padding: '20px', minWidth: '300px' }}>
+        <PaperSelector
+          value={value}
+          onChange={handleChange}
+          onError={args.onError}
+          size={args.size}
+          disabled={args.disabled}
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          Selected: {value}
+        </div>
+      </div>
+    );
   },
-};
-
-// With dimensions
-export const WithDimensions: Story = {
   args: {
-    ...Default.args,
-    showDimensions: true,
-  },
-};
-
-// With orientation controls
-export const WithOrientation: Story = {
-  args: {
-    ...Default.args,
-    showOrientation: true,
+    onChange: (size: string) => console.log('Paper size changed:', size),
   },
 };
 
@@ -127,41 +229,5 @@ export const Disabled: Story = {
   args: {
     ...Default.args,
     disabled: true,
-  },
-};
-
-// Custom sizes
-export const CustomSizes: Story = {
-  args: {
-    ...Default.args,
-    customSizes: {
-      'Business Card': { width: 85, height: 55, unit: 'mm' },
-      'Postcard': { width: 148, height: 105, unit: 'mm' },
-      'Brochure': { width: 210, height: 297, unit: 'mm' },
-    },
-    selectedSize: 'Business Card',
-  },
-};
-
-// With label
-export const WithLabel: Story = {
-  args: {
-    ...Default.args,
-    label: 'Document Paper Size',
-  },
-};
-
-// Complex example
-export const Complex: Story = {
-  args: {
-    ...Default.args,
-    size: 'large',
-    showDimensions: true,
-    showOrientation: true,
-    label: 'Page Setup',
-    customSizes: {
-      'Custom 1': { width: 200, height: 300, unit: 'mm' },
-      'Custom 2': { width: 8, height: 12, unit: 'in' },
-    },
   },
 };

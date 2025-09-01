@@ -1,4 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-webpack5';
+import * as React from 'react';
 import { PositionSelector } from './PositionSelector';
 
 const meta: Meta<typeof PositionSelector> = {
@@ -47,32 +48,148 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
+  render: (args) => {
+    const [value, setValue] = React.useState(args.value || 'top-left');
+    
+    const handleChange = (newValue: string) => {
+      setValue(newValue);
+      args.onChange?.(newValue);
+    };
+
+    return (
+      <div style={{ padding: '20px', minWidth: '300px' }}>
+        <PositionSelector
+          value={value}
+          onChange={handleChange}
+          onError={args.onError}
+          size={args.size}
+          disabled={args.disabled}
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          Selected: {value}
+        </div>
+      </div>
+    );
+  },
   args: {
     value: 'top-left',
+    onChange: (position: string) => console.log('Position changed:', position),
   },
 };
 
 export const Top: Story = {
+  render: (args) => {
+    const [value, setValue] = React.useState('top');
+    
+    const handleChange = (newValue: string) => {
+      setValue(newValue);
+      args.onChange?.(newValue);
+    };
+
+    return (
+      <div style={{ padding: '20px', minWidth: '300px' }}>
+        <PositionSelector
+          value={value}
+          onChange={handleChange}
+          onError={args.onError}
+          size={args.size}
+          disabled={args.disabled}
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          Selected: {value}
+        </div>
+      </div>
+    );
+  },
   args: {
-    value: 'top',
+    onChange: (position: string) => console.log('Position changed:', position),
   },
 };
 
 export const Bottom: Story = {
+  render: (args) => {
+    const [value, setValue] = React.useState('bottom');
+    
+    const handleChange = (newValue: string) => {
+      setValue(newValue);
+      args.onChange?.(newValue);
+    };
+
+    return (
+      <div style={{ padding: '20px', minWidth: '300px' }}>
+        <PositionSelector
+          value={value}
+          onChange={handleChange}
+          onError={args.onError}
+          size={args.size}
+          disabled={args.disabled}
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          Selected: {value}
+        </div>
+      </div>
+    );
+  },
   args: {
-    value: 'bottom',
+    onChange: (position: string) => console.log('Position changed:', position),
   },
 };
 
 export const Left: Story = {
+  render: (args) => {
+    const [value, setValue] = React.useState('left');
+    
+    const handleChange = (newValue: string) => {
+      setValue(newValue);
+      args.onChange?.(newValue);
+    };
+
+    return (
+      <div style={{ padding: '20px', minWidth: '300px' }}>
+        <PositionSelector
+          value={value}
+          onChange={handleChange}
+          onError={args.onError}
+          size={args.size}
+          disabled={args.disabled}
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          Selected: {value}
+        </div>
+      </div>
+    );
+  },
   args: {
-    value: 'left',
+    onChange: (position: string) => console.log('Position changed:', position),
   },
 };
 
 export const Right: Story = {
+  render: (args) => {
+    const [value, setValue] = React.useState('right');
+    
+    const handleChange = (newValue: string) => {
+      setValue(newValue);
+      args.onChange?.(newValue);
+    };
+
+    return (
+      <div style={{ padding: '20px', minWidth: '300px' }}>
+        <PositionSelector
+          value={value}
+          onChange={handleChange}
+          onError={args.onError}
+          size={args.size}
+          disabled={args.disabled}
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          Selected: {value}
+        </div>
+      </div>
+    );
+  },
   args: {
-    value: 'right',
+    onChange: (position: string) => console.log('Position changed:', position),
   },
 };
 

@@ -1,4 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-webpack5';
+import * as React from 'react';
 import { UnitSelector } from './UnitSelector';
 
 const meta: Meta<typeof UnitSelector> = {
@@ -58,8 +59,41 @@ const meta: Meta<typeof UnitSelector> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// Basic usage
+// Basic usage with interactive state
 export const Default: Story = {
+  render: (args) => {
+    const [unit, setUnit] = React.useState(args.unit || 'cm');
+    
+    const handleChange = (newUnit: string) => {
+      setUnit(newUnit);
+      args.onChange?.(newUnit);
+    };
+
+    return (
+      <div style={{ padding: '20px', minWidth: '300px' }}>
+        <UnitSelector
+          unit={unit}
+          onChange={handleChange}
+          units={args.units}
+          size={args.size}
+          width={args.width}
+          minWidth={args.minWidth}
+          maxWidth={args.maxWidth}
+          fullWidth={args.fullWidth}
+          disabled={args.disabled}
+          sortAlphabetically={args.sortAlphabetically}
+          label={args.label}
+          ariaLabel={args.ariaLabel}
+          ariaDescribedBy={args.ariaDescribedBy}
+          ariaLabelledBy={args.ariaLabelledBy}
+          onError={args.onError}
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          Selected: {unit}
+        </div>
+      </div>
+    );
+  },
   args: {
     unit: 'cm',
     units: ['cm', 'mm', 'in', 'pt', 'px'],
@@ -69,25 +103,121 @@ export const Default: Story = {
 
 // Small size
 export const Small: Story = {
+  render: (args) => {
+    const [unit, setUnit] = React.useState(args.unit || 'cm');
+    
+    const handleChange = (newUnit: string) => {
+      setUnit(newUnit);
+      args.onChange?.(newUnit);
+    };
+
+    return (
+      <div style={{ padding: '20px', minWidth: '300px' }}>
+        <UnitSelector
+          unit={unit}
+          onChange={handleChange}
+          units={args.units}
+          size="small"
+          width={args.width}
+          minWidth={args.minWidth}
+          maxWidth={args.maxWidth}
+          fullWidth={args.fullWidth}
+          disabled={args.disabled}
+          sortAlphabetically={args.sortAlphabetically}
+          label={args.label}
+          ariaLabel={args.ariaLabel}
+          ariaDescribedBy={args.ariaDescribedBy}
+          ariaLabelledBy={args.ariaLabelledBy}
+          onError={args.onError}
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          Selected: {unit}
+        </div>
+      </div>
+    );
+  },
   args: {
     ...Default.args,
-    size: 'small',
   },
 };
 
 // Large size
 export const Large: Story = {
+  render: (args) => {
+    const [unit, setUnit] = React.useState(args.unit || 'cm');
+    
+    const handleChange = (newUnit: string) => {
+      setUnit(newUnit);
+      args.onChange?.(newUnit);
+    };
+
+    return (
+      <div style={{ padding: '20px', minWidth: '300px' }}>
+        <UnitSelector
+          unit={unit}
+          onChange={handleChange}
+          units={args.units}
+          size="large"
+          width={args.width}
+          minWidth={args.minWidth}
+          maxWidth={args.maxWidth}
+          fullWidth={args.fullWidth}
+          disabled={args.disabled}
+          sortAlphabetically={args.sortAlphabetically}
+          label={args.label}
+          ariaLabel={args.ariaLabel}
+          ariaDescribedBy={args.ariaDescribedBy}
+          ariaLabelledBy={args.ariaLabelledBy}
+          onError={args.onError}
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          Selected: {unit}
+        </div>
+      </div>
+    );
+  },
   args: {
     ...Default.args,
-    size: 'large',
   },
 };
 
 // Custom width
 export const CustomWidth: Story = {
+  render: (args) => {
+    const [unit, setUnit] = React.useState(args.unit || 'cm');
+    
+    const handleChange = (newUnit: string) => {
+      setUnit(newUnit);
+      args.onChange?.(newUnit);
+    };
+
+    return (
+      <div style={{ padding: '20px' }}>
+        <UnitSelector
+          unit={unit}
+          onChange={handleChange}
+          units={args.units}
+          size={args.size}
+          width={200}
+          minWidth={args.minWidth}
+          maxWidth={args.maxWidth}
+          fullWidth={args.fullWidth}
+          disabled={args.disabled}
+          sortAlphabetically={args.sortAlphabetically}
+          label={args.label}
+          ariaLabel={args.ariaLabel}
+          ariaDescribedBy={args.ariaDescribedBy}
+          ariaLabelledBy={args.ariaLabelledBy}
+          onError={args.onError}
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          Selected: {unit}
+        </div>
+      </div>
+    );
+  },
   args: {
     ...Default.args,
-    width: 200,
   },
 };
 
@@ -101,25 +231,122 @@ export const Disabled: Story = {
 
 // With label
 export const WithLabel: Story = {
+  render: (args) => {
+    const [unit, setUnit] = React.useState(args.unit || 'cm');
+    
+    const handleChange = (newUnit: string) => {
+      setUnit(newUnit);
+      args.onChange?.(newUnit);
+    };
+
+    return (
+      <div style={{ padding: '20px', minWidth: '300px' }}>
+        <UnitSelector
+          unit={unit}
+          onChange={handleChange}
+          units={args.units}
+          size={args.size}
+          width={args.width}
+          minWidth={args.minWidth}
+          maxWidth={args.maxWidth}
+          fullWidth={args.fullWidth}
+          disabled={args.disabled}
+          sortAlphabetically={args.sortAlphabetically}
+          label="Measurement Unit"
+          ariaLabel={args.ariaLabel}
+          ariaDescribedBy={args.ariaDescribedBy}
+          ariaLabelledBy={args.ariaLabelledBy}
+          onError={args.onError}
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          Selected: {unit}
+        </div>
+      </div>
+    );
+  },
   args: {
     ...Default.args,
-    label: 'Measurement Unit',
   },
 };
 
 // Custom units
 export const CustomUnits: Story = {
+  render: (args) => {
+    const [unit, setUnit] = React.useState(args.unit || 'em');
+    
+    const handleChange = (newUnit: string) => {
+      setUnit(newUnit);
+      args.onChange?.(newUnit);
+    };
+
+    return (
+      <div style={{ padding: '20px', minWidth: '300px' }}>
+        <UnitSelector
+          unit={unit}
+          onChange={handleChange}
+          units={['em', 'rem', 'vw', 'vh', '%']}
+          size={args.size}
+          width={args.width}
+          minWidth={args.minWidth}
+          maxWidth={args.maxWidth}
+          fullWidth={args.fullWidth}
+          disabled={args.disabled}
+          sortAlphabetically={args.sortAlphabetically}
+          label={args.label}
+          ariaLabel={args.ariaLabel}
+          ariaDescribedBy={args.ariaDescribedBy}
+          ariaLabelledBy={args.ariaLabelledBy}
+          onError={args.onError}
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          Selected: {unit}
+        </div>
+      </div>
+    );
+  },
   args: {
-    ...Default.args,
-    units: ['em', 'rem', 'vw', 'vh', '%'],
     unit: 'em',
+    units: ['em', 'rem', 'vw', 'vh', '%'],
+    onChange: (unit: string) => console.log('Unit changed:', unit),
   },
 };
 
 // Sorted alphabetically
 export const SortedAlphabetically: Story = {
+  render: (args) => {
+    const [unit, setUnit] = React.useState(args.unit || 'cm');
+    
+    const handleChange = (newUnit: string) => {
+      setUnit(newUnit);
+      args.onChange?.(newUnit);
+    };
+
+    return (
+      <div style={{ padding: '20px', minWidth: '300px' }}>
+        <UnitSelector
+          unit={unit}
+          onChange={handleChange}
+          units={args.units}
+          size={args.size}
+          width={args.width}
+          minWidth={args.minWidth}
+          maxWidth={args.maxWidth}
+          fullWidth={args.fullWidth}
+          disabled={args.disabled}
+          sortAlphabetically={true}
+          label={args.label}
+          ariaLabel={args.ariaLabel}
+          ariaDescribedBy={args.ariaDescribedBy}
+          ariaLabelledBy={args.ariaLabelledBy}
+          onError={args.onError}
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          Selected: {unit}
+        </div>
+      </div>
+    );
+  },
   args: {
     ...Default.args,
-    sortAlphabetically: true,
   },
 };

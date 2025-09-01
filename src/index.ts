@@ -20,32 +20,63 @@
  */
 
 // ============================================================================
-// COMPONENTS - All component exports
+// COMPONENTS - UI Components
 // ============================================================================
 
-// Re-export all components from the main components index
+// Export all components
 export * from './components';
 
 // ============================================================================
-// HOOKS - Custom React hooks
+// HOOKS - Custom React Hooks
 // ============================================================================
 
+// Export all hooks
 export * from './hooks';
 
 // ============================================================================
-// TYPES - TypeScript type definitions
+// CONTEXTS - React Contexts
 // ============================================================================
 
-export * from './types';
+// Export all contexts
+export * from './contexts';
 
 // ============================================================================
-// STYLES - Layout system and utilities
+// SERVICES - Custom services
 // ============================================================================
 
+// Export services (excluding conflicting types)
+export { unitConversionService, UnitConversionService } from './services/UnitConversionService';
+export type { UnitConversionContext as ServiceUnitConversionContext } from './services/UnitConversionService';
+
+// ============================================================================
+// SYSTEMS - Custom systems
+// ============================================================================
+
+// Export systems (excluding conflicting functions)
+export { 
+  LENGTH_SYSTEM, 
+  TEMPERATURE_SYSTEM, 
+  VOLUME_SYSTEM, 
+  WEIGHT_SYSTEM, 
+  ENERGY_SYSTEM,
+  UNIT_SYSTEMS,
+  getUnitSystem,
+  getUnitDefinition,
+  getAvailableUnits,
+  getUnitMetadata
+} from './systems/UnitSystems';
+export type { UnitSystem, UnitDefinition } from './systems/UnitSystems';
+
+// ============================================================================
+// STYLES - Styling utilities
+// ============================================================================
+
+// Export all styles
 export * from './styles';
 
 // ============================================================================
-// UTILS - Utility functions
+// UTILITIES - Helper functions
 // ============================================================================
 
+// Export utilities (excluding conflicting functions)
 export * from './utils';

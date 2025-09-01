@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-webpack5';
 import { LegacyColorPicker } from './LegacyColorPicker';
 
 const meta: Meta<typeof LegacyColorPicker> = {

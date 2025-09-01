@@ -1,11 +1,13 @@
 
 /**
  * UnitSelector.tsx
- * Dropdown component for selecting units of measurement.
+ * Enhanced dropdown component for selecting units of measurement.
+ * Now supports unit systems and provides better unit metadata.
  */
 import * as React from 'react';
 import { Select } from '@fluentui/react-select';
 import { makeStyles } from '@fluentui/react-components';
+import { UnitSystem, getUnitSystem, getUnitDefinition } from '../../systems/UnitSystems';
 
 const useStyles = makeStyles({
   container: {
@@ -17,13 +19,28 @@ const useStyles = makeStyles({
   },
 });
 
-// Standard units array with cm as default first option
-export const DEFAULT_UNITS = ['cm', 'mm', 'in', 'pt', 'px'];
+// Standard units array with cm as default first option (for backward compatibility)
+export const DEFAULT_UNITS = ['cm', 'mm', 'in', 'pt', 'px', '%', 'vw', 'vh', 'em', 'rem'];
 export const DEFAULT_UNIT = 'cm';
 
+// Extended units for different use cases
+export const ABSOLUTE_UNITS = ['cm', 'mm', 'in', 'pt', 'px'];
+export const RELATIVE_UNITS = ['%', 'vw', 'vh', 'em', 'rem'];
+export const PRINT_UNITS = ['cm', 'mm', 'in', 'pt'];
+export const SCREEN_UNITS = ['px', '%', 'vw', 'vh', 'em', 'rem'];
+
 export interface UnitSelectorProps {
+  // Unit system support
+  unitSystem?: UnitSystem | string; // Can be UnitSystem object or system ID string
+  
+  // Legacy props (for backward compatibility)
   unit?: string;
   units?: string[];
+  
+  // Enhanced props
+  selectedUnit?: string;
+  availableUnits?: string[];
+  
   onChange: (unit: string) => void;
   onError?: (error: Error) => void;
   size?: 'small' | 'medium' | 'large';
@@ -37,11 +54,24 @@ export interface UnitSelectorProps {
   ariaLabel?: string; // Custom ARIA label
   ariaDescribedBy?: string; // ID for description element
   ariaLabelledBy?: string; // ID for label element
+  
+  // Enhanced features
+  showUnitNames?: boolean; // Show full unit names instead of symbols
+  filterUnits?: (unit: string) => boolean; // Filter function for units
 }
 
 export const UnitSelector = React.memo<UnitSelectorProps>(({ 
+  // Unit system props
+  unitSystem,
+  
+  // Legacy props
   unit = DEFAULT_UNIT, 
-  units = DEFAULT_UNITS, 
+  units = DEFAULT_UNITS,
+  
+  // Enhanced props
+  selectedUnit,
+  availableUnits,
+  
   onChange,
   onError,
   size = 'medium',
@@ -55,8 +85,62 @@ export const UnitSelector = React.memo<UnitSelectorProps>(({
   ariaLabel,
   ariaDescribedBy,
   ariaLabelledBy,
+  showUnitNames = false,
+  filterUnits,
 }) => {
   const styles = useStyles();
+
+  // Resolve unit system
+  const resolvedUnitSystem = React.useMemo(() => {
+    try {
+      if (typeof unitSystem === 'string') {
+        return getUnitSystem(unitSystem);
+      }
+      return unitSystem;
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in unit system resolution');
+      onError?.(errorObj);
+      return undefined;
+    }
+  }, [unitSystem, onError]);
+
+  // Determine current unit and available units
+  const currentUnit = React.useMemo(() => {
+    return selectedUnit || unit;
+  }, [selectedUnit, unit]);
+
+  const resolvedUnits = React.useMemo(() => {
+    try {
+      // Priority: availableUnits > unitSystem units > legacy units
+      if (availableUnits) {
+        return availableUnits;
+      }
+      
+      if (resolvedUnitSystem) {
+        return resolvedUnitSystem.units.map(u => u.symbol);
+      }
+      
+      return units;
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in units resolution');
+      onError?.(errorObj);
+      return units;
+    }
+  }, [availableUnits, resolvedUnitSystem, units, onError]);
+
+  // Apply unit filter if provided
+  const filteredUnits = React.useMemo(() => {
+    try {
+      if (filterUnits) {
+        return resolvedUnits.filter(filterUnits);
+      }
+      return resolvedUnits;
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in unit filtering');
+      onError?.(errorObj);
+      return resolvedUnits;
+    }
+  }, [resolvedUnits, filterUnits, onError]);
 
   // Generate accessible label and description
   const accessibleLabel = React.useMemo(() => {
@@ -66,8 +150,11 @@ export const UnitSelector = React.memo<UnitSelectorProps>(({
       
       // Generate descriptive label from props
       let desc = 'Unit selector';
-      if (units.length > 0) {
-        desc += ` (${units.length} options available)`;
+      if (resolvedUnitSystem) {
+        desc += ` (${resolvedUnitSystem.name})`;
+      }
+      if (filteredUnits.length > 0) {
+        desc += ` (${filteredUnits.length} options available)`;
       }
       return desc;
     } catch (error) {
@@ -75,13 +162,16 @@ export const UnitSelector = React.memo<UnitSelectorProps>(({
       onError?.(errorObj);
       return 'Unit selector';
     }
-  }, [ariaLabel, label, units.length, onError]);
+  }, [ariaLabel, label, resolvedUnitSystem, filteredUnits.length, onError]);
 
   const accessibleDescription = React.useMemo(() => {
     try {
       let desc = 'Select a unit of measurement. ';
-      if (units.length > 0) {
-        desc += `Available options: ${units.join(', ')}. `;
+      if (resolvedUnitSystem) {
+        desc += `${resolvedUnitSystem.name} units. `;
+      }
+      if (filteredUnits.length > 0) {
+        desc += `Available options: ${filteredUnits.join(', ')}. `;
       }
       desc += 'Use arrow keys to navigate options, Enter to select, or click to open dropdown.';
       return desc;
@@ -90,7 +180,7 @@ export const UnitSelector = React.memo<UnitSelectorProps>(({
       onError?.(errorObj);
       return 'Unit selector dropdown.';
     }
-  }, [units, onError]);
+  }, [resolvedUnitSystem, filteredUnits, onError]);
 
   // Generate unique IDs for accessibility
   const selectId = React.useMemo(() => `unit-selector-${Math.random().toString(36).substr(2, 9)}`, []);
@@ -100,15 +190,30 @@ export const UnitSelector = React.memo<UnitSelectorProps>(({
   const sortedUnits = React.useMemo(() => {
     try {
       if (sortAlphabetically) {
-        return [...units].sort((a, b) => a.localeCompare(b));
+        return [...filteredUnits].sort((a, b) => a.localeCompare(b));
       }
-      return units;
+      return filteredUnits;
     } catch (error) {
       const errorObj = error instanceof Error ? error : new Error('Unknown error in unit sorting');
       onError?.(errorObj);
-      return units;
+      return filteredUnits;
     }
-  }, [units, sortAlphabetically, onError]);
+  }, [filteredUnits, sortAlphabetically, onError]);
+
+  // Get unit display text
+  const getUnitDisplayText = React.useCallback((unitSymbol: string): string => {
+    try {
+      if (showUnitNames && resolvedUnitSystem) {
+        const unitDef = getUnitDefinition(resolvedUnitSystem.id, unitSymbol);
+        return unitDef?.name || unitSymbol;
+      }
+      return unitSymbol;
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in unit display text generation');
+      onError?.(errorObj);
+      return unitSymbol;
+    }
+  }, [showUnitNames, resolvedUnitSystem, onError]);
 
   // UnitSelector defines its own sizing logic
   const getUnitSelectorWidth = React.useCallback(() => {
@@ -196,7 +301,7 @@ export const UnitSelector = React.memo<UnitSelectorProps>(({
       
       <Select 
         id={selectId}
-        value={unit} 
+        value={currentUnit} 
         onChange={handleChange} 
         className={styles.select}
         style={{ width: '100%', minWidth: '0' }}
@@ -215,9 +320,9 @@ export const UnitSelector = React.memo<UnitSelectorProps>(({
           <option 
             key={unitOption} 
             value={unitOption}
-            aria-selected={unitOption === unit}
+            aria-selected={unitOption === currentUnit}
           >
-            {unitOption}
+            {getUnitDisplayText(unitOption)}
           </option>
         ))}
       </Select>
@@ -236,8 +341,10 @@ export const UnitSelector = React.memo<UnitSelectorProps>(({
         }}
       >
         {accessibleDescription}
-        {` Current selection: ${unit}`}
+        {` Current selection: ${getUnitDisplayText(currentUnit)}`}
       </div>
     </div>
   );
 });
+
+UnitSelector.displayName = 'UnitSelector';

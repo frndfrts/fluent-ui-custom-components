@@ -1,28 +1,34 @@
+import React from 'react';
 import { FluentProvider, webLightTheme } from '@fluentui/react-components';
 import { FormLayoutProvider } from '../src/styles/FormLayoutContext';
 
 /** @type { import('@storybook/react-webpack5').Preview } */
 const preview = {
   parameters: {
-    actions: { argTypesRegex: "^on[A-Z].*" },
-    controls: {
-      matchers: {
-        color: /(background|color)$/i,
-        date: /Date$/i,
-      },
-    },
+    // Enhanced documentation
     docs: {
       source: {
         type: 'dynamic',
         excludeDecorators: true,
       },
+      toc: true,
+      canvas: {
+        sourceState: 'shown',
+      },
     },
+    
+    // Performance and layout
+    layout: 'centered',
+    chromatic: { disableSnapshot: false },
   },
+  
   decorators: [
     (Story) => (
       <FluentProvider theme={webLightTheme}>
         <FormLayoutProvider>
-          <Story />
+          <div style={{ padding: '20px', minHeight: '100vh' }}>
+            <Story />
+          </div>
         </FormLayoutProvider>
       </FluentProvider>
     ),

@@ -1,24 +1,32 @@
 import type { StorybookConfig } from "@storybook/react-webpack5";
 
 const config: StorybookConfig = {
-  stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
+  stories: ["../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
   addons: [
     "@storybook/addon-links",
-    "@storybook/addon-essentials",
-    "@storybook/addon-interactions",
+    "@storybook/addon-docs"
   ],
+
   framework: {
     name: "@storybook/react-webpack5",
     options: {},
   },
-  docs: {
-    autodocs: "tag",
-  },
+
   typescript: {
     check: false,
     checkOptions: {},
     reactDocgen: false,
   },
+
+  // Story organization
+  staticDirs: ['../public'],
+
+  // Performance optimizations
+  core: {
+    disableTelemetry: true,
+  },
+
+  // Enhanced webpack configuration
   webpackFinal: async (config) => {
     // Ensure TypeScript and JSX are properly handled
     if (config.module && config.module.rules) {
@@ -35,9 +43,23 @@ const config: StorybookConfig = {
         ],
       });
     }
+
+    // Optimize bundle size
+    if (config.optimization) {
+      config.optimization.splitChunks = {
+        chunks: 'all',
+        cacheGroups: {
+          vendor: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendors',
+            chunks: 'all',
+          },
+        },
+      };
+    }
     
     return config;
-  },
+  }
 };
 
 export default config;

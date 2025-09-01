@@ -1,4 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-webpack5';
+import * as React from 'react';
 import { AspectRatioSelector } from './AspectRatioSelector';
 
 const meta: Meta<typeof AspectRatioSelector> = {
@@ -46,8 +47,31 @@ const meta: Meta<typeof AspectRatioSelector> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// Basic usage
+// Basic usage with interactive state
 export const Default: Story = {
+  render: (args) => {
+    const [value, setValue] = React.useState(args.value || '16:9');
+    
+    const handleChange = (newValue: string) => {
+      setValue(newValue);
+      args.onChange?.(newValue);
+    };
+
+    return (
+      <div style={{ padding: '20px', minWidth: '300px' }}>
+        <AspectRatioSelector
+          value={value}
+          onChange={handleChange}
+          onError={args.onError}
+          size={args.size}
+          disabled={args.disabled}
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          Selected: {value}
+        </div>
+      </div>
+    );
+  },
   args: {
     value: '16:9',
     onChange: (ratio: string) => console.log('Aspect ratio changed:', ratio),
@@ -56,57 +80,181 @@ export const Default: Story = {
 
 // Small size
 export const Small: Story = {
+  render: (args) => {
+    const [value, setValue] = React.useState(args.value || '16:9');
+    
+    const handleChange = (newValue: string) => {
+      setValue(newValue);
+      args.onChange?.(newValue);
+    };
+
+    return (
+      <div style={{ padding: '20px', minWidth: '300px' }}>
+        <AspectRatioSelector
+          value={value}
+          onChange={handleChange}
+          onError={args.onError}
+          size="small"
+          disabled={args.disabled}
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          Selected: {value}
+        </div>
+      </div>
+    );
+  },
   args: {
     ...Default.args,
-    size: 'small',
   },
 };
 
 // Large size
 export const Large: Story = {
+  render: (args) => {
+    const [value, setValue] = React.useState(args.value || '16:9');
+    
+    const handleChange = (newValue: string) => {
+      setValue(newValue);
+      args.onChange?.(newValue);
+    };
+
+    return (
+      <div style={{ padding: '20px', minWidth: '300px' }}>
+        <AspectRatioSelector
+          value={value}
+          onChange={handleChange}
+          onError={args.onError}
+          size="large"
+          disabled={args.disabled}
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          Selected: {value}
+        </div>
+      </div>
+    );
+  },
   args: {
     ...Default.args,
-    size: 'large',
   },
 };
 
 // 4:3 ratio
 export const FourByThree: Story = {
+  render: (args) => {
+    const [value, setValue] = React.useState('4:3');
+    
+    const handleChange = (newValue: string) => {
+      setValue(newValue);
+      args.onChange?.(newValue);
+    };
+
+    return (
+      <div style={{ padding: '20px', minWidth: '300px' }}>
+        <AspectRatioSelector
+          value={value}
+          onChange={handleChange}
+          onError={args.onError}
+          size={args.size}
+          disabled={args.disabled}
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          Selected: {value}
+        </div>
+      </div>
+    );
+  },
   args: {
-    ...Default.args,
-    value: '4:3',
+    onChange: (ratio: string) => console.log('Aspect ratio changed:', ratio),
   },
 };
 
 // Square ratio
 export const Square: Story = {
+  render: (args) => {
+    const [value, setValue] = React.useState('1:1');
+    
+    const handleChange = (newValue: string) => {
+      setValue(newValue);
+      args.onChange?.(newValue);
+    };
+
+    return (
+      <div style={{ padding: '20px', minWidth: '300px' }}>
+        <AspectRatioSelector
+          value={value}
+          onChange={handleChange}
+          onError={args.onError}
+          size={args.size}
+          disabled={args.disabled}
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          Selected: {value}
+        </div>
+      </div>
+    );
+  },
   args: {
-    ...Default.args,
-    value: '1:1',
+    onChange: (ratio: string) => console.log('Aspect ratio changed:', ratio),
   },
 };
 
 // Portrait ratio
 export const Portrait: Story = {
+  render: (args) => {
+    const [value, setValue] = React.useState('3:4');
+    
+    const handleChange = (newValue: string) => {
+      setValue(newValue);
+      args.onChange?.(newValue);
+    };
+
+    return (
+      <div style={{ padding: '20px', minWidth: '300px' }}>
+        <AspectRatioSelector
+          value={value}
+          onChange={handleChange}
+          onError={args.onError}
+          size={args.size}
+          disabled={args.disabled}
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          Selected: {value}
+        </div>
+      </div>
+    );
+  },
   args: {
-    ...Default.args,
-    value: '3:4',
+    onChange: (ratio: string) => console.log('Aspect ratio changed:', ratio),
   },
 };
 
 // With custom ratio
 export const CustomRatio: Story = {
-  args: {
-    ...Default.args,
-    value: 'Custom',
-  },
-};
+  render: (args) => {
+    const [value, setValue] = React.useState('Custom');
+    
+    const handleChange = (newValue: string) => {
+      setValue(newValue);
+      args.onChange?.(newValue);
+    };
 
-// With label
-export const WithLabel: Story = {
+    return (
+      <div style={{ padding: '20px', minWidth: '300px' }}>
+        <AspectRatioSelector
+          value={value}
+          onChange={handleChange}
+          onError={args.onError}
+          size={args.size}
+          disabled={args.disabled}
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          Selected: {value}
+        </div>
+      </div>
+    );
+  },
   args: {
-    ...Default.args,
-    label: 'Page Aspect Ratio',
+    onChange: (ratio: string) => console.log('Aspect ratio changed:', ratio),
   },
 };
 

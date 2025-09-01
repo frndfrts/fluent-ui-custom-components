@@ -6,6 +6,7 @@ export { ColorInput } from './ColorInput';
 export { ColorSelector } from './ColorSelector';
 export { DimensionInput } from './DimensionInput';
 export { MultipleSlidersInput } from './MultipleSlidersInput';
+export { TabbedNavbar } from './TabbedNavbar';
 
 export { RGBHSLColorSlidersInput } from './RGBHSLColorSlidersInput';
 
@@ -15,5 +16,6 @@ export type { ColorInputProps, ColorModel } from './ColorInput';
 export type { ColorSelectorProps } from './ColorSelector';
 export type { DimensionInputProps } from './DimensionInput';
 export type { MultipleSlidersInputProps, SliderConfig } from './MultipleSlidersInput';
+export type { TabbedNavbarProps, TabData } from './TabbedNavbar';
 
 export type { RGBHSLColorSlidersInputProps, ColorSliderConfig, ColorMode } from './RGBHSLColorSlidersInput'; 

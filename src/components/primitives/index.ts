@@ -5,7 +5,6 @@ export { SliderInput } from './SliderInput';
 export { UnitSelector } from '../components/UnitSelector';
 export { ColorSliderInput } from './ColorSliderInput';
 export { LockAspectRatio } from './LockAspectRatio';
-
 // Re-export types for convenience
 export type { HexInputProps } from './HexInput';
 export type { NumericInputProps } from './NumericInput';

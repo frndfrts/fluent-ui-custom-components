@@ -1,4 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-webpack5';
+import * as React from 'react';
 import { OrientationSelector } from './OrientationSelector';
 
 const meta: Meta<typeof OrientationSelector> = {
@@ -47,20 +48,93 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
+  render: (args) => {
+    const [orientation, setOrientation] = React.useState(args.orientation || 'portrait');
+    
+    const handleChange = (newOrientation: string) => {
+      setOrientation(newOrientation);
+      args.onChange?.(newOrientation);
+    };
+
+    return (
+      <div style={{ padding: '20px', minWidth: '300px' }}>
+        <OrientationSelector
+          orientation={orientation}
+          onChange={handleChange}
+          onError={args.onError}
+          size={args.size}
+          disabled={args.disabled}
+          label={args.label}
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          Selected: {orientation}
+        </div>
+      </div>
+    );
+  },
   args: {
     orientation: 'portrait',
+    onChange: (orientation: string) => console.log('Orientation changed:', orientation),
   },
 };
 
 export const Portrait: Story = {
+  render: (args) => {
+    const [orientation, setOrientation] = React.useState('portrait');
+    
+    const handleChange = (newOrientation: string) => {
+      setOrientation(newOrientation);
+      args.onChange?.(newOrientation);
+    };
+
+    return (
+      <div style={{ padding: '20px', minWidth: '300px' }}>
+        <OrientationSelector
+          orientation={orientation}
+          onChange={handleChange}
+          onError={args.onError}
+          size={args.size}
+          disabled={args.disabled}
+          label={args.label}
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          Selected: {orientation}
+        </div>
+      </div>
+    );
+  },
   args: {
-    orientation: 'portrait',
+    onChange: (orientation: string) => console.log('Orientation changed:', orientation),
   },
 };
 
 export const Landscape: Story = {
+  render: (args) => {
+    const [orientation, setOrientation] = React.useState('landscape');
+    
+    const handleChange = (newOrientation: string) => {
+      setOrientation(newOrientation);
+      args.onChange?.(newOrientation);
+    };
+
+    return (
+      <div style={{ padding: '20px', minWidth: '300px' }}>
+        <OrientationSelector
+          orientation={orientation}
+          onChange={handleChange}
+          onError={args.onError}
+          size={args.size}
+          disabled={args.disabled}
+          label={args.label}
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          Selected: {orientation}
+        </div>
+      </div>
+    );
+  },
   args: {
-    orientation: 'landscape',
+    onChange: (orientation: string) => console.log('Orientation changed:', orientation),
   },
 };
 

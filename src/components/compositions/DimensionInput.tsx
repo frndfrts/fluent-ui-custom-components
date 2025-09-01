@@ -1,13 +1,16 @@
 
 /**
  * DimensionInput.tsx
- * Combines NumericInput and UnitSelector into one component for size, position, margin, etc.
+ * Enhanced composition component that combines NumericInput and UnitSelector.
+ * Now supports unit systems for different measurement types (length, temperature, volume, etc.).
  */
 import * as React from 'react';
 import { makeStyles } from '@fluentui/react-components';
 import { NumericInput } from '../primitives/NumericInput';
 import { UnitSelector, DEFAULT_UNIT } from '../components/UnitSelector';
-import { useUnitConversion, Unit } from '../../hooks/useUnitConversion';
+import { UnitSystem } from '../../systems/UnitSystems';
+import { unitConversionService, UnitConversionContext } from '../../services/UnitConversionService';
+import { useUnitConversionContext } from '../../contexts/UnitConversionContext';
 import { useFormLayout } from '../../styles/FormLayoutContext';
 import { ErrorBoundary } from '../error/ErrorBoundary';
 
@@ -41,55 +44,59 @@ const useStyles = makeStyles({
 
 export interface DimensionInputProps {
   label: string;
-  value: number | ''; // This is the cm value (internal storage)
-  unit?: string; // This is the display unit, UnitSelector will default to cm
-  units?: string[]; // Available units, UnitSelector will default to standard units with cm first
-  onChange: (value: number | '', unit: string) => void; // value is always in cm
+  value: number | ''; // This is the internal unit value (e.g., cm for length, celsius for temperature)
+  unit?: string; // This is the display unit
+  units?: string[]; // Available units
+  
+  // Unit system support
+  unitSystem?: UnitSystem | string; // Can be UnitSystem object or system ID string
+  
+  onChange: (value: number | '', unit: string) => void; // value is always in internal unit
   onError?: (error: Error) => void;
   size?: 'small' | 'medium' | 'large';
   disabled?: boolean;
   hideLabel?: boolean;
+  
+  // Context for relative unit calculations (props override context)
+  referenceWidth?: number;   // For percentage calculations (in internal unit)
+  referenceHeight?: number;  // For percentage calculations (in internal unit)
+  containerWidth?: number;   // For viewport-relative units (in internal unit)
+  containerHeight?: number;  // For viewport-relative units (in internal unit)
+  fontSize?: number;         // For em calculations (in internal unit)
+  rootFontSize?: number;     // For rem calculations (in internal unit)
+  
+  // Enhanced features
+  showUnitNames?: boolean; // Show full unit names instead of symbols
+  filterUnits?: (unit: string) => boolean; // Filter function for units
 }
 
 // Custom error fallback for DimensionInput
 const DimensionInputErrorFallback: React.FC<{ error: Error; resetError: () => void }> = ({ error, resetError }) => {
-  const styles = useStyles();
-  
   return (
-    <div className={styles.container}>
-      <div style={{
-        padding: 'var(--spacingVerticalS)',
-        color: 'var(--colorPaletteRedForeground1)',
-        textAlign: 'center',
-        border: '1px solid var(--colorPaletteRedBorder1)',
-        borderRadius: 'var(--borderRadiusMedium)',
-        backgroundColor: 'var(--colorPaletteRedBackground1)',
-        width: '100%'
-      }}>
-        <div style={{ marginBottom: 'var(--spacingVerticalS)' }}>
-          Failed to load dimension input
-        </div>
-        <div style={{ 
-          fontSize: 'var(--fontSizeBase200)', 
-          color: 'var(--colorPaletteRedForeground2)',
-          marginBottom: 'var(--spacingVerticalM)' 
-        }}>
-          {error.message}
-        </div>
-        <button 
-          onClick={resetError}
-          style={{
-            padding: 'var(--spacingVerticalS) var(--spacingHorizontalM)',
-            backgroundColor: 'var(--colorPaletteRedBackground2)',
-            border: '1px solid var(--colorPaletteRedBorder2)',
-            borderRadius: 'var(--borderRadiusMedium)',
-            color: 'var(--colorPaletteRedForeground1)',
-            cursor: 'pointer'
-          }}
-        >
-          Try Again
-        </button>
-      </div>
+    <div style={{ 
+      padding: '8px', 
+      border: '1px solid var(--colorPaletteRedBorder1)', 
+      borderRadius: '4px',
+      backgroundColor: 'var(--colorPaletteRedBackground1)',
+      color: 'var(--colorPaletteRedForeground1)',
+      fontSize: '12px'
+    }}>
+      <div><strong>Dimension Input Error:</strong></div>
+      <div>{error.message}</div>
+      <button 
+        onClick={resetError}
+        style={{ 
+          marginTop: '4px', 
+          padding: '2px 8px', 
+          border: '1px solid currentColor', 
+          borderRadius: '2px',
+          background: 'transparent',
+          color: 'inherit',
+          cursor: 'pointer'
+        }}
+      >
+        Retry
+      </button>
     </div>
   );
 };
@@ -99,15 +106,69 @@ export const DimensionInput = React.memo<DimensionInputProps>(({
   value, 
   unit, 
   units, 
+  unitSystem,
   onChange, 
   onError,
   size = 'medium',
   disabled = false,
   hideLabel = false,
+  referenceWidth,
+  referenceHeight,
+  containerWidth,
+  containerHeight,
+  fontSize,
+  rootFontSize,
+  showUnitNames = false,
+  filterUnits,
 }) => {
   const styles = useStyles();
   const layout = useFormLayout();
-  const { cmToDisplay, displayToCm } = useUnitConversion();
+
+  // Resolve unit system
+  const resolvedUnitSystem = React.useMemo(() => {
+    try {
+      if (typeof unitSystem === 'string') {
+        return unitConversionService.getSystem(unitSystem);
+      }
+      return unitSystem;
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Unknown error in unit system resolution');
+      onError?.(errorObj);
+      return undefined;
+    }
+  }, [unitSystem, onError]);
+
+  // Get system ID for conversion service
+  const systemId = React.useMemo(() => {
+    return resolvedUnitSystem?.id || 'length'; // Default to length for backward compatibility
+  }, [resolvedUnitSystem]);
+
+  // Get internal unit for the system
+  const internalUnit = React.useMemo(() => {
+    return resolvedUnitSystem?.internalUnit || 'cm'; // Default to cm for backward compatibility
+  }, [resolvedUnitSystem]);
+
+  // Try to get context from provider, fall back to props
+  let contextContext: UnitConversionContext | undefined;
+  try {
+    contextContext = useUnitConversionContext();
+  } catch {
+    // Context not available, will use props
+  }
+
+  // Create context object for unit conversions (props override context)
+  const context: UnitConversionContext = React.useMemo(() => ({
+    referenceWidth: referenceWidth ?? contextContext?.referenceWidth,
+    referenceHeight: referenceHeight ?? contextContext?.referenceHeight,
+    containerWidth: containerWidth ?? contextContext?.containerWidth,
+    containerHeight: containerHeight ?? contextContext?.containerHeight,
+    fontSize: fontSize ?? contextContext?.fontSize,
+    rootFontSize: rootFontSize ?? contextContext?.rootFontSize,
+  }), [
+    referenceWidth, referenceHeight, containerWidth, containerHeight, fontSize, rootFontSize,
+    contextContext?.referenceWidth, contextContext?.referenceHeight, contextContext?.containerWidth,
+    contextContext?.containerHeight, contextContext?.fontSize, contextContext?.rootFontSize
+  ]);
 
   const getLabelStyle = React.useCallback((): React.CSSProperties => {
     try {
@@ -119,12 +180,18 @@ export const DimensionInput = React.memo<DimensionInputProps>(({
     }
   }, [layout.labelWidth, onError]);
 
-  // Convert cm value to display value in current unit
+  // Convert internal unit value to display value in current unit
   const displayValue = React.useMemo(() => {
     try {
       if (typeof value === 'number') {
-        const currentUnit = unit || DEFAULT_UNIT;
-        return cmToDisplay(value, currentUnit as Unit);
+        const currentUnit = unit || internalUnit;
+        
+        // Validate context for relative units
+        if (!unitConversionService.validateContext(currentUnit, systemId, context)) {
+          throw new Error(`Context required for unit '${currentUnit}' but not provided`);
+        }
+        
+        return unitConversionService.fromInternalUnit(value, currentUnit, systemId, context);
       }
       return value;
     } catch (error) {
@@ -132,15 +199,26 @@ export const DimensionInput = React.memo<DimensionInputProps>(({
       onError?.(errorObj);
       return value; // Return original value on error
     }
-  }, [value, unit, cmToDisplay, onError]);
+  }, [value, unit, internalUnit, systemId, context, onError]);
 
-  // Handle numeric input change (convert display value back to cm)
+  // Get step value and decimal places for current unit
+  const currentUnit = unit || internalUnit;
+  const stepValue = React.useMemo(() => unitConversionService.getStepValue(currentUnit, systemId), [currentUnit, systemId]);
+  const decimalPlaces = React.useMemo(() => unitConversionService.getDecimalPlaces(currentUnit, systemId), [currentUnit, systemId]);
+
+  // Handle numeric input change (convert display value back to internal unit)
   const handleNumericChange = React.useCallback((displayValue: number | '') => {
     try {
-      const currentUnit = unit || DEFAULT_UNIT;
+      const currentUnit = unit || internalUnit;
+      
+      // Validate context for relative units
+      if (!unitConversionService.validateContext(currentUnit, systemId, context)) {
+        throw new Error(`Context required for unit '${currentUnit}' but not provided`);
+      }
+      
       if (typeof displayValue === 'number') {
-        const cmValue = displayToCm(displayValue, currentUnit as Unit);
-        onChange(cmValue, currentUnit);
+        const internalValue = unitConversionService.toInternalUnit(displayValue, currentUnit, systemId, context);
+        onChange(internalValue, currentUnit);
       } else {
         onChange(displayValue, currentUnit);
       }
@@ -148,18 +226,24 @@ export const DimensionInput = React.memo<DimensionInputProps>(({
       const errorObj = error instanceof Error ? error : new Error('Unknown error in numeric input change');
       onError?.(errorObj);
     }
-  }, [unit, displayToCm, onChange, onError]);
+  }, [unit, internalUnit, systemId, onChange, onError, context]);
 
-  // Handle unit change (convert cm value to new display unit)
+  // Handle unit change (convert internal unit value to new display unit)
   const handleUnitChange = React.useCallback((newUnit: string) => {
     try {
-      // The internal cm value stays the same, only the display unit changes
+      // Validate context for the new unit
+      if (!unitConversionService.validateContext(newUnit, systemId, context)) {
+        throw new Error(`Context required for unit '${newUnit}' but not provided`);
+      }
+      
+      // The internal unit value stays the same, only the display unit changes
+      // The displayValue will be recalculated automatically in the useMemo
       onChange(value, newUnit);
     } catch (error) {
       const errorObj = error instanceof Error ? error : new Error('Unknown error in unit change');
       onError?.(errorObj);
     }
-  }, [value, onChange, onError]);
+  }, [value, onChange, onError, systemId, context]);
 
   const labelStyle = React.useMemo(() => {
     try {
@@ -190,20 +274,27 @@ export const DimensionInput = React.memo<DimensionInputProps>(({
         <NumericInput
           value={displayValue}
           onChange={handleNumericChange}
+          step={stepValue}
+          decimalPlaces={decimalPlaces}
           size={size}
           disabled={disabled}
           onError={onError}
         />
         
         <UnitSelector
-          {...(unit !== undefined && { unit })}
-          {...(units !== undefined && { units })}
+          unitSystem={resolvedUnitSystem}
+          unit={unit}
+          units={units}
           onChange={handleUnitChange}
           size={size}
           disabled={disabled}
           onError={onError}
+          showUnitNames={showUnitNames}
+          filterUnits={filterUnits}
         />
       </div>
     </ErrorBoundary>
   );
 });
+
+DimensionInput.displayName = 'DimensionInput';

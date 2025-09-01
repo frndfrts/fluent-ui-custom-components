@@ -5,7 +5,6 @@ export { OrientationSelector } from './OrientationSelector';
 export { PaperSelector } from './PaperSelector';
 export { PositionSelector } from './PositionSelector';
 export { UniversalSelector } from '../primitives/UniversalSelector';
-
 // Re-export types for convenience
 export type { AspectRatioSelectorProps } from './AspectRatioSelector';
 export type { ColorModelSelectorProps } from './ColorModelSelector';

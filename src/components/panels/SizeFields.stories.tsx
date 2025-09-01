@@ -1,4 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-webpack5';
+import * as React from 'react';
 import { SizeFields } from './SizeFields';
 
 const meta: Meta<typeof SizeFields> = {
@@ -21,32 +22,33 @@ const meta: Meta<typeof SizeFields> = {
       control: { type: 'number' },
       description: 'Current height value',
     },
-    unit: {
+    widthUnit: {
       control: { type: 'select' },
       options: ['px', 'cm', 'mm', 'in', 'pt'],
-      description: 'Unit of measurement',
+      description: 'Unit of measurement for width',
+    },
+    heightUnit: {
+      control: { type: 'select' },
+      options: ['px', 'cm', 'mm', 'in', 'pt'],
+      description: 'Unit of measurement for height',
+    },
+    units: {
+      control: { type: 'object' },
+      description: 'Available units for selection',
     },
     lockAspectRatio: {
       control: { type: 'boolean' },
       description: 'Whether aspect ratio is locked',
     },
-    aspectRatio: {
-      control: { type: 'number' },
-      description: 'Current aspect ratio value',
+    showLockAspectRatio: {
+      control: { type: 'boolean' },
+      description: 'Whether to show aspect ratio lock control',
     },
-    onWidthChange: {
-      action: 'widthChanged',
-      description: 'Callback when width changes',
+    onChange: {
+      action: 'changed',
+      description: 'Callback when dimensions change',
     },
-    onHeightChange: {
-      action: 'heightChanged',
-      description: 'Callback when height changes',
-    },
-    onUnitChange: {
-      action: 'unitChanged',
-      description: 'Callback when unit changes',
-    },
-    onAspectRatioLockChange: {
+    onLockAspectRatioChange: {
       action: 'aspectRatioLockChanged',
       description: 'Callback when aspect ratio lock changes',
     },
@@ -54,42 +56,9 @@ const meta: Meta<typeof SizeFields> = {
       action: 'error',
       description: 'Callback when errors occur',
     },
-    size: {
-      control: { type: 'select' },
-      options: ['small', 'medium', 'large'],
-      description: 'Size variant of the panel',
-    },
     disabled: {
       control: { type: 'boolean' },
       description: 'Whether the panel is disabled',
-    },
-    showUnitSelector: {
-      control: { type: 'boolean' },
-      description: 'Whether to show unit selector',
-    },
-    showAspectRatio: {
-      control: { type: 'boolean' },
-      description: 'Whether to show aspect ratio display',
-    },
-    minWidth: {
-      control: { type: 'number' },
-      description: 'Minimum allowed width',
-    },
-    maxWidth: {
-      control: { type: 'number' },
-      description: 'Maximum allowed width',
-    },
-    minHeight: {
-      control: { type: 'number' },
-      description: 'Minimum allowed height',
-    },
-    maxHeight: {
-      control: { type: 'number' },
-      description: 'Maximum allowed height',
-    },
-    label: {
-      control: { type: 'text' },
-      description: 'Visible label for the panel',
     },
   },
   tags: ['autodocs'],
@@ -100,153 +69,256 @@ type Story = StoryObj<typeof meta>;
 
 // Basic usage
 export const Default: Story = {
+  render: (args) => {
+    const [width, setWidth] = React.useState(args.width || 800);
+    const [height, setHeight] = React.useState(args.height || 600);
+    const [widthUnit, setWidthUnit] = React.useState(args.widthUnit || 'px');
+    const [heightUnit, setHeightUnit] = React.useState(args.heightUnit || 'px');
+    const [lockAspectRatio, setLockAspectRatio] = React.useState(args.lockAspectRatio || false);
+
+    const handleChange = (fields: { width: number; height: number; widthUnit: string; heightUnit: string }) => {
+      setWidth(fields.width);
+      setHeight(fields.height);
+      setWidthUnit(fields.widthUnit);
+      setHeightUnit(fields.heightUnit);
+      args.onChange?.(fields);
+    };
+
+    const handleLockAspectRatioChange = (locked: boolean) => {
+      setLockAspectRatio(locked);
+      args.onLockAspectRatioChange?.(locked);
+    };
+
+    return (
+      <div style={{ padding: '20px' }}>
+        <SizeFields
+          width={width}
+          height={height}
+          widthUnit={widthUnit}
+          heightUnit={heightUnit}
+          units={args.units}
+          lockAspectRatio={lockAspectRatio}
+          showLockAspectRatio={args.showLockAspectRatio}
+          onChange={handleChange}
+          onLockAspectRatioChange={handleLockAspectRatioChange}
+          onError={args.onError}
+          disabled={args.disabled}
+        />
+        <div style={{ marginTop: '20px', fontSize: '12px', color: '#666' }}>
+          <div><strong>Current Values:</strong></div>
+          <div>Width: {width} {widthUnit}</div>
+          <div>Height: {height} {heightUnit}</div>
+          <div>Aspect Ratio: {(width / height).toFixed(2)}</div>
+          <div>Locked: {lockAspectRatio ? 'Yes' : 'No'}</div>
+        </div>
+      </div>
+    );
+  },
   args: {
     width: 800,
     height: 600,
-    unit: 'px',
+    widthUnit: 'px',
+    heightUnit: 'px',
+    units: ['px', 'cm', 'mm', 'in', 'pt'],
     lockAspectRatio: false,
-    aspectRatio: 1.33,
-    onWidthChange: (width: number) => console.log('Width changed:', width),
-    onHeightChange: (height: number) => console.log('Height changed:', height),
-    onUnitChange: (unit: string) => console.log('Unit changed:', unit),
-    onAspectRatioLockChange: (locked: boolean) => console.log('Aspect ratio lock changed:', locked),
-  },
-};
-
-// Small size
-export const Small: Story = {
-  args: {
-    ...Default.args,
-    size: 'small',
-  },
-};
-
-// Large size
-export const Large: Story = {
-  args: {
-    ...Default.args,
-    size: 'large',
+    showLockAspectRatio: true,
+    onChange: (fields: any) => console.log('Dimensions changed:', fields),
+    onLockAspectRatioChange: (locked: boolean) => console.log('Aspect ratio lock changed:', locked),
   },
 };
 
 // Centimeters
 export const Centimeters: Story = {
+  render: (args) => {
+    const [width, setWidth] = React.useState(args.width || 21.0);
+    const [height, setHeight] = React.useState(args.height || 29.7);
+    const [widthUnit, setWidthUnit] = React.useState(args.widthUnit || 'cm');
+    const [heightUnit, setHeightUnit] = React.useState(args.heightUnit || 'cm');
+    const [lockAspectRatio, setLockAspectRatio] = React.useState(args.lockAspectRatio || false);
+
+    const handleChange = (fields: { width: number; height: number; widthUnit: string; heightUnit: string }) => {
+      setWidth(fields.width);
+      setHeight(fields.height);
+      setWidthUnit(fields.widthUnit);
+      setHeightUnit(fields.heightUnit);
+      args.onChange?.(fields);
+    };
+
+    const handleLockAspectRatioChange = (locked: boolean) => {
+      setLockAspectRatio(locked);
+      args.onLockAspectRatioChange?.(locked);
+    };
+
+    return (
+      <div style={{ padding: '20px' }}>
+        <SizeFields
+          width={width}
+          height={height}
+          widthUnit={widthUnit}
+          heightUnit={heightUnit}
+          units={args.units}
+          lockAspectRatio={lockAspectRatio}
+          showLockAspectRatio={args.showLockAspectRatio}
+          onChange={handleChange}
+          onLockAspectRatioChange={handleLockAspectRatioChange}
+          onError={args.onError}
+          disabled={args.disabled}
+        />
+        <div style={{ marginTop: '20px', fontSize: '12px', color: '#666' }}>
+          <div><strong>Current Values:</strong></div>
+          <div>Width: {width} {widthUnit}</div>
+          <div>Height: {height} {heightUnit}</div>
+          <div>Aspect Ratio: {(width / height).toFixed(2)}</div>
+          <div>Locked: {lockAspectRatio ? 'Yes' : 'No'}</div>
+        </div>
+      </div>
+    );
+  },
   args: {
-    ...Default.args,
-    unit: 'cm',
     width: 21.0,
     height: 29.7,
+    widthUnit: 'cm',
+    heightUnit: 'cm',
+    units: ['px', 'cm', 'mm', 'in', 'pt'],
+    lockAspectRatio: false,
+    showLockAspectRatio: true,
+    onChange: (fields: any) => console.log('Dimensions changed:', fields),
+    onLockAspectRatioChange: (locked: boolean) => console.log('Aspect ratio lock changed:', locked),
   },
 };
 
 // Inches
 export const Inches: Story = {
+  render: (args) => {
+    const [width, setWidth] = React.useState(args.width || 8.5);
+    const [height, setHeight] = React.useState(args.height || 11.0);
+    const [widthUnit, setWidthUnit] = React.useState(args.widthUnit || 'in');
+    const [heightUnit, setHeightUnit] = React.useState(args.heightUnit || 'in');
+    const [lockAspectRatio, setLockAspectRatio] = React.useState(args.lockAspectRatio || false);
+
+    const handleChange = (fields: { width: number; height: number; widthUnit: string; heightUnit: string }) => {
+      setWidth(fields.width);
+      setHeight(fields.height);
+      setWidthUnit(fields.widthUnit);
+      setHeightUnit(fields.heightUnit);
+      args.onChange?.(fields);
+    };
+
+    const handleLockAspectRatioChange = (locked: boolean) => {
+      setLockAspectRatio(locked);
+      args.onLockAspectRatioChange?.(locked);
+    };
+
+    return (
+      <div style={{ padding: '20px' }}>
+        <SizeFields
+          width={width}
+          height={height}
+          widthUnit={widthUnit}
+          heightUnit={heightUnit}
+          units={args.units}
+          lockAspectRatio={lockAspectRatio}
+          showLockAspectRatio={args.showLockAspectRatio}
+          onChange={handleChange}
+          onLockAspectRatioChange={handleLockAspectRatioChange}
+          onError={args.onError}
+          disabled={args.disabled}
+        />
+        <div style={{ marginTop: '20px', fontSize: '12px', color: '#666' }}>
+          <div><strong>Current Values:</strong></div>
+          <div>Width: {width} {widthUnit}</div>
+          <div>Height: {height} {heightUnit}</div>
+          <div>Aspect Ratio: {(width / height).toFixed(2)}</div>
+          <div>Locked: {lockAspectRatio ? 'Yes' : 'No'}</div>
+        </div>
+      </div>
+    );
+  },
   args: {
-    ...Default.args,
-    unit: 'in',
     width: 8.5,
     height: 11.0,
+    widthUnit: 'in',
+    heightUnit: 'in',
+    units: ['px', 'cm', 'mm', 'in', 'pt'],
+    lockAspectRatio: false,
+    showLockAspectRatio: true,
+    onChange: (fields: any) => console.log('Dimensions changed:', fields),
+    onLockAspectRatioChange: (locked: boolean) => console.log('Aspect ratio lock changed:', locked),
   },
 };
 
 // Locked aspect ratio
 export const LockedAspectRatio: Story = {
+  render: (args) => {
+    const [width, setWidth] = React.useState(args.width || 800);
+    const [height, setHeight] = React.useState(args.height || 600);
+    const [widthUnit, setWidthUnit] = React.useState(args.widthUnit || 'px');
+    const [heightUnit, setHeightUnit] = React.useState(args.heightUnit || 'px');
+    const [lockAspectRatio, setLockAspectRatio] = React.useState(args.lockAspectRatio || true);
+
+    const handleChange = (fields: { width: number; height: number; widthUnit: string; heightUnit: string }) => {
+      setWidth(fields.width);
+      setHeight(fields.height);
+      setWidthUnit(fields.widthUnit);
+      setHeightUnit(fields.heightUnit);
+      args.onChange?.(fields);
+    };
+
+    const handleLockAspectRatioChange = (locked: boolean) => {
+      setLockAspectRatio(locked);
+      args.onLockAspectRatioChange?.(locked);
+    };
+
+    return (
+      <div style={{ padding: '20px' }}>
+        <SizeFields
+          width={width}
+          height={height}
+          widthUnit={widthUnit}
+          heightUnit={heightUnit}
+          units={args.units}
+          lockAspectRatio={lockAspectRatio}
+          showLockAspectRatio={args.showLockAspectRatio}
+          onChange={handleChange}
+          onLockAspectRatioChange={handleLockAspectRatioChange}
+          onError={args.onError}
+          disabled={args.disabled}
+        />
+        <div style={{ marginTop: '20px', fontSize: '12px', color: '#666' }}>
+          <div><strong>Current Values:</strong></div>
+          <div>Width: {width} {widthUnit}</div>
+          <div>Height: {height} {heightUnit}</div>
+          <div>Aspect Ratio: {(width / height).toFixed(2)}</div>
+          <div>Locked: {lockAspectRatio ? 'Yes' : 'No'}</div>
+        </div>
+      </div>
+    );
+  },
   args: {
-    ...Default.args,
+    width: 800,
+    height: 600,
+    widthUnit: 'px',
+    heightUnit: 'px',
+    units: ['px', 'cm', 'mm', 'in', 'pt'],
     lockAspectRatio: true,
-    aspectRatio: 1.5,
-  },
-};
-
-// With constraints
-export const WithConstraints: Story = {
-  args: {
-    ...Default.args,
-    minWidth: 100,
-    maxWidth: 2000,
-    minHeight: 100,
-    maxHeight: 2000,
-  },
-};
-
-// Without unit selector
-export const NoUnitSelector: Story = {
-  args: {
-    ...Default.args,
-    showUnitSelector: false,
-  },
-};
-
-// Without aspect ratio display
-export const NoAspectRatio: Story = {
-  args: {
-    ...Default.args,
-    showAspectRatio: false,
+    showLockAspectRatio: true,
+    onChange: (fields: any) => console.log('Dimensions changed:', fields),
+    onLockAspectRatioChange: (locked: boolean) => console.log('Aspect ratio lock changed:', locked),
   },
 };
 
 // Disabled state
 export const Disabled: Story = {
   args: {
-    ...Default.args,
+    width: 800,
+    height: 600,
+    widthUnit: 'px',
+    heightUnit: 'px',
+    units: ['px', 'cm', 'mm', 'in', 'pt'],
+    lockAspectRatio: false,
+    showLockAspectRatio: true,
     disabled: true,
-  },
-};
-
-// With label
-export const WithLabel: Story = {
-  args: {
-    ...Default.args,
-    label: 'Document Dimensions',
-  },
-};
-
-// Square dimensions
-export const Square: Story = {
-  args: {
-    ...Default.args,
-    width: 1000,
-    height: 1000,
-    aspectRatio: 1.0,
-  },
-};
-
-// Portrait dimensions
-export const Portrait: Story = {
-  args: {
-    ...Default.args,
-    width: 600,
-    height: 800,
-    aspectRatio: 0.75,
-  },
-};
-
-// Landscape dimensions
-export const Landscape: Story = {
-  args: {
-    ...Default.args,
-    width: 1200,
-    height: 800,
-    aspectRatio: 1.5,
-  },
-};
-
-// Complex example
-export const Complex: Story = {
-  args: {
-    ...Default.args,
-    size: 'large',
-    unit: 'cm',
-    width: 21.0,
-    height: 29.7,
-    lockAspectRatio: true,
-    aspectRatio: 1.41,
-    minWidth: 5,
-    maxWidth: 100,
-    minHeight: 5,
-    maxHeight: 100,
-    label: 'Page Size Configuration',
-    showUnitSelector: true,
-    showAspectRatio: true,
+    onChange: (fields: any) => console.log('Dimensions changed:', fields),
+    onLockAspectRatioChange: (locked: boolean) => console.log('Aspect ratio lock changed:', locked),
   },
 };

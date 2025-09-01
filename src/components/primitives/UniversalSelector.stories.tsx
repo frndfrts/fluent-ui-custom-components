@@ -1,4 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-webpack5';
+import * as React from 'react';
 import { UniversalSelector } from './UniversalSelector';
 
 const meta: Meta<typeof UniversalSelector> = {
@@ -29,11 +30,6 @@ const meta: Meta<typeof UniversalSelector> = {
       action: 'error',
       description: 'Callback when errors occur',
     },
-    size: {
-      control: { type: 'select' },
-      options: ['small', 'medium', 'large'],
-      description: 'Size variant of the selector',
-    },
     width: {
       control: { type: 'number' },
       description: 'Custom width in pixels',
@@ -46,21 +42,21 @@ const meta: Meta<typeof UniversalSelector> = {
       control: { type: 'text' },
       description: 'Placeholder text when no value is selected',
     },
-    label: {
+    fullWidth: {
+      control: { type: 'boolean' },
+      description: 'Whether to use full width',
+    },
+    sortAlphabetically: {
+      control: { type: 'boolean' },
+      description: 'Whether to sort options alphabetically',
+    },
+    showCustomOption: {
+      control: { type: 'boolean' },
+      description: 'Whether to show a custom option',
+    },
+    customOptionText: {
       control: { type: 'text' },
-      description: 'Visible label for the selector',
-    },
-    searchable: {
-      control: { type: 'boolean' },
-      description: 'Whether the selector supports searching',
-    },
-    multiSelect: {
-      control: { type: 'boolean' },
-      description: 'Whether multiple selections are allowed',
-    },
-    clearable: {
-      control: { type: 'boolean' },
-      description: 'Whether the selection can be cleared',
+      description: 'Text for the custom option',
     },
   },
   tags: ['autodocs'],
@@ -69,8 +65,39 @@ const meta: Meta<typeof UniversalSelector> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// Basic usage
+// Basic usage with interactive state
 export const Default: Story = {
+  render: (args) => {
+    const [value, setValue] = React.useState(args.value || 'option1');
+    
+    const handleChange = (newValue: string) => {
+      setValue(newValue);
+      args.onChange?.(newValue);
+    };
+
+    return (
+      <div style={{ padding: '20px', minWidth: '300px' }}>
+        <UniversalSelector
+          value={value}
+          onChange={handleChange}
+          options={args.options}
+          disabled={args.disabled}
+          width={args.width}
+          minWidth={args.minWidth}
+          maxWidth={args.maxWidth}
+          fullWidth={args.fullWidth}
+          customOptionText={args.customOptionText}
+          showCustomOption={args.showCustomOption}
+          sortAlphabetically={args.sortAlphabetically}
+          placeholder={args.placeholder}
+          onError={args.onError}
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          Selected: {value}
+        </div>
+      </div>
+    );
+  },
   args: {
     value: 'option1',
     options: [
@@ -82,44 +109,41 @@ export const Default: Story = {
   },
 };
 
-// Small size
-export const Small: Story = {
-  args: {
-    ...Default.args,
-    size: 'small',
-  },
-};
-
-// Large size
-export const Large: Story = {
-  args: {
-    ...Default.args,
-    size: 'large',
-  },
-};
-
 // With placeholder
 export const WithPlaceholder: Story = {
+  render: (args) => {
+    const [value, setValue] = React.useState(args.value || '');
+    
+    const handleChange = (newValue: string) => {
+      setValue(newValue);
+      args.onChange?.(newValue);
+    };
+
+    return (
+      <div style={{ padding: '20px', minWidth: '300px' }}>
+        <UniversalSelector
+          value={value}
+          onChange={handleChange}
+          options={args.options}
+          disabled={args.disabled}
+          width={args.width}
+          minWidth={args.minWidth}
+          maxWidth={args.maxWidth}
+          fullWidth={args.fullWidth}
+          customOptionText={args.customOptionText}
+          showCustomOption={args.showCustomOption}
+          sortAlphabetically={args.sortAlphabetically}
+          placeholder="Select an option..."
+          onError={args.onError}
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          Selected: {value || 'None'}
+        </div>
+      </div>
+    );
+  },
   args: {
-    ...Default.args,
     value: '',
-    placeholder: 'Select an option...',
-  },
-};
-
-// With label
-export const WithLabel: Story = {
-  args: {
-    ...Default.args,
-    label: 'Choose Option',
-  },
-};
-
-// Searchable
-export const Searchable: Story = {
-  args: {
-    ...Default.args,
-    searchable: true,
     options: [
       { value: 'apple', label: 'Apple' },
       { value: 'banana', label: 'Banana' },
@@ -130,21 +154,131 @@ export const Searchable: Story = {
   },
 };
 
-// Multi-select
-export const MultiSelect: Story = {
+// Custom width
+export const CustomWidth: Story = {
+  render: (args) => {
+    const [value, setValue] = React.useState(args.value || 'option1');
+    
+    const handleChange = (newValue: string) => {
+      setValue(newValue);
+      args.onChange?.(newValue);
+    };
+
+    return (
+      <div style={{ padding: '20px' }}>
+        <UniversalSelector
+          value={value}
+          onChange={handleChange}
+          options={args.options}
+          disabled={args.disabled}
+          width={300}
+          minWidth={args.minWidth}
+          maxWidth={args.maxWidth}
+          fullWidth={args.fullWidth}
+          customOptionText={args.customOptionText}
+          showCustomOption={args.showCustomOption}
+          sortAlphabetically={args.sortAlphabetically}
+          placeholder={args.placeholder}
+          onError={args.onError}
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          Selected: {value}
+        </div>
+      </div>
+    );
+  },
   args: {
     ...Default.args,
-    multiSelect: true,
-    value: ['option1', 'option2'],
-    onChange: (value: string | string[]) => console.log('Selection changed:', value),
   },
 };
 
-// Clearable
-export const Clearable: Story = {
+// Color options
+export const ColorOptions: Story = {
+  render: (args) => {
+    const [value, setValue] = React.useState(args.value || 'red');
+    
+    const handleChange = (newValue: string) => {
+      setValue(newValue);
+      args.onChange?.(newValue);
+    };
+
+    return (
+      <div style={{ padding: '20px', minWidth: '300px' }}>
+        <UniversalSelector
+          value={value}
+          onChange={handleChange}
+          options={args.options}
+          disabled={args.disabled}
+          width={args.width}
+          minWidth={args.minWidth}
+          maxWidth={args.maxWidth}
+          fullWidth={args.fullWidth}
+          customOptionText={args.customOptionText}
+          showCustomOption={args.showCustomOption}
+          sortAlphabetically={args.sortAlphabetically}
+          placeholder={args.placeholder}
+          onError={args.onError}
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          Selected: {value}
+        </div>
+      </div>
+    );
+  },
   args: {
-    ...Default.args,
-    clearable: true,
+    value: 'red',
+    options: [
+      { value: 'red', label: 'Red' },
+      { value: 'green', label: 'Green' },
+      { value: 'blue', label: 'Blue' },
+      { value: 'yellow', label: 'Yellow' },
+      { value: 'purple', label: 'Purple' },
+    ],
+  },
+};
+
+// Size options
+export const SizeOptions: Story = {
+  render: (args) => {
+    const [value, setValue] = React.useState(args.value || 'medium');
+    
+    const handleChange = (newValue: string) => {
+      setValue(newValue);
+      args.onChange?.(newValue);
+    };
+
+    return (
+      <div style={{ padding: '20px', minWidth: '300px' }}>
+        <UniversalSelector
+          value={value}
+          onChange={handleChange}
+          options={args.options}
+          disabled={args.disabled}
+          width={args.width}
+          minWidth={args.minWidth}
+          maxWidth={args.maxWidth}
+          fullWidth={args.fullWidth}
+          customOptionText={args.customOptionText}
+          showCustomOption={args.showCustomOption}
+          sortAlphabetically={args.sortAlphabetically}
+          placeholder={args.placeholder}
+          onError={args.onError}
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          Selected: {value}
+        </div>
+      </div>
+    );
+  },
+  args: {
+    value: 'medium',
+    options: [
+      { value: 'xs', label: 'Extra Small' },
+      { value: 'small', label: 'Small' },
+      { value: 'medium', label: 'Medium' },
+      { value: 'large', label: 'Large' },
+      { value: 'xl', label: 'Extra Large' },
+    ],
   },
 };
 
@@ -156,65 +290,85 @@ export const Disabled: Story = {
   },
 };
 
-// Custom width
-export const CustomWidth: Story = {
+// With custom option
+export const WithCustomOption: Story = {
+  render: (args) => {
+    const [value, setValue] = React.useState(args.value || 'option1');
+    
+    const handleChange = (newValue: string) => {
+      setValue(newValue);
+      args.onChange?.(newValue);
+    };
+
+    return (
+      <div style={{ padding: '20px', minWidth: '300px' }}>
+        <UniversalSelector
+          value={value}
+          onChange={handleChange}
+          options={args.options}
+          disabled={args.disabled}
+          width={args.width}
+          minWidth={args.minWidth}
+          maxWidth={args.maxWidth}
+          fullWidth={args.fullWidth}
+          customOptionText="Custom Option"
+          showCustomOption={true}
+          sortAlphabetically={args.sortAlphabetically}
+          placeholder={args.placeholder}
+          onError={args.onError}
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          Selected: {value}
+        </div>
+      </div>
+    );
+  },
   args: {
     ...Default.args,
-    width: 300,
   },
 };
 
-// Color options
-export const ColorOptions: Story = {
-  args: {
-    ...Default.args,
-    value: 'red',
-    options: [
-      { value: 'red', label: 'Red' },
-      { value: 'green', label: 'Green' },
-      { value: 'blue', label: 'Blue' },
-      { value: 'yellow', label: 'Yellow' },
-      { value: 'purple', label: 'Purple' },
-    ],
-    label: 'Color Selection',
-  },
-};
+// Sorted alphabetically
+export const SortedAlphabetically: Story = {
+  render: (args) => {
+    const [value, setValue] = React.useState(args.value || '');
+    
+    const handleChange = (newValue: string) => {
+      setValue(newValue);
+      args.onChange?.(newValue);
+    };
 
-// Size options
-export const SizeOptions: Story = {
-  args: {
-    ...Default.args,
-    value: 'medium',
-    options: [
-      { value: 'xs', label: 'Extra Small' },
-      { value: 'small', label: 'Small' },
-      { value: 'medium', label: 'Medium' },
-      { value: 'large', label: 'Large' },
-      { value: 'xl', label: 'Extra Large' },
-    ],
-    label: 'Size Selection',
+    return (
+      <div style={{ padding: '20px', minWidth: '300px' }}>
+        <UniversalSelector
+          value={value}
+          onChange={handleChange}
+          options={args.options}
+          disabled={args.disabled}
+          width={args.width}
+          minWidth={args.minWidth}
+          maxWidth={args.maxWidth}
+          fullWidth={args.fullWidth}
+          customOptionText={args.customOptionText}
+          showCustomOption={args.showCustomOption}
+          sortAlphabetically={true}
+          placeholder="Select an option..."
+          onError={args.onError}
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          Selected: {value || 'None'}
+        </div>
+      </div>
+    );
   },
-};
-
-// Complex example
-export const Complex: Story = {
   args: {
-    ...Default.args,
-    size: 'large',
-    width: 400,
-    searchable: true,
-    clearable: true,
-    label: 'Advanced Selection',
-    placeholder: 'Search and select an option...',
+    value: '',
     options: [
-      { value: 'design', label: 'Design System' },
-      { value: 'development', label: 'Development' },
-      { value: 'testing', label: 'Testing' },
-      { value: 'deployment', label: 'Deployment' },
-      { value: 'maintenance', label: 'Maintenance' },
-      { value: 'documentation', label: 'Documentation' },
-      { value: 'research', label: 'Research' },
-      { value: 'planning', label: 'Planning' },
+      { value: 'zebra', label: 'Zebra' },
+      { value: 'apple', label: 'Apple' },
+      { value: 'banana', label: 'Banana' },
+      { value: 'cherry', label: 'Cherry' },
+      { value: 'date', label: 'Date' },
     ],
   },
 };

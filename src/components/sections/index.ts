@@ -2,6 +2,7 @@
 export { PaperSection } from './PaperSection';
 export { NotesSection } from './NotesSection';
 export { SlidesSection } from './SlidesSection';
+export { PreviewSection } from './PreviewSection';
 
 // Placeholder sections - Level 4.5: Organized collections of panels with padding
 export { TitlePlaceholderSection } from './TitlePlaceholderSection';
@@ -17,6 +18,7 @@ export { ColorsSection } from './ColorsSection';
 export type { PaperSectionProps } from './PaperSection';
 export type { NotesSectionProps } from './NotesSection';
 export type { SlidesSectionProps } from './SlidesSection';
+export type { PreviewSectionProps } from './PreviewSection';
 export type { TitlePlaceholderSectionProps } from './TitlePlaceholderSection';
 export type { SubtitlePlaceholderSectionProps } from './SubtitlePlaceholderSection';
 export type { BodyPlaceholderSectionProps } from './BodyPlaceholderSection';

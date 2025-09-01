@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-webpack5';
 import { NumericInput } from './NumericInput';
 
 const meta: Meta<typeof NumericInput> = {

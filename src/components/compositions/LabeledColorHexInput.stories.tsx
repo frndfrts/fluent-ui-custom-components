@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-webpack5';
 import { LabeledColorHexInput } from './LabeledColorHexInput';
 
 const meta: Meta<typeof LabeledColorHexInput> = {

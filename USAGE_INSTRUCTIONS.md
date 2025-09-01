@@ -1,783 +1,807 @@
 # Fluent UI Custom Components - Usage Instructions
 
-This document provides comprehensive step-by-step instructions on how to use the components from this library in a different React application.
-
-## Table of Contents
-
-1. [Prerequisites](#prerequisites)
-2. [Installation](#installation)
-3. [Basic Usage](#basic-usage)
-4. [Component Categories](#component-categories)
-5. [Detailed Component Examples](#detailed-component-examples)
-6. [Advanced Configuration](#advanced-configuration)
-7. [Troubleshooting](#troubleshooting)
-8. [Migration Guide](#migration-guide)
+This document provides comprehensive instructions on how to use the Fluent UI Custom Components library in your projects, including basic, intermediate, and advanced examples.
 
 ## Prerequisites
 
-Before using this component library, ensure your project has:
-
-- **Node.js** version 16 or higher
-- **React** version 18 or higher
+- **Node.js** (version 16 or higher)
+- **npm** or **yarn** package manager
+- **React** (version 18 or higher)
 - **TypeScript** (recommended) or JavaScript
 - A modern bundler (Webpack, Vite, Parcel, etc.)
-- **Organization Access**: Access to the private GitHub organization repository
-- **GitHub Token**: Personal Access Token with appropriate permissions
+- **GitHub Access**: Access to the private GitHub repository
+- **GitHub Token**: Personal Access Token with `read:packages` permission
 
-## Organization Setup
+## Setup & Installation
 
-This is a **private organization library** published to GitHub Packages. Before installation, you must:
+### Step 1: Configure npm for GitHub Packages
 
-1. **Configure npm for GitHub Packages** - Create `.npmrc` in your project root:
-   ```ini
-   @frndfrts:registry=https://npm.pkg.github.com
-   //npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
-   ```
+In your new project, create a `.npmrc` file in the root directory:
 
-2. **Set GitHub Token** - Set your GitHub Personal Access Token:
-   ```bash
-   export GITHUB_TOKEN=your_github_personal_access_token
-   ```
+```ini
+@frndfrts:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
+```
 
-3. **Contact Organization Admin** - Ensure you have access to the repository and packages
+### Step 2: Set GitHub Token
 
-For detailed setup instructions, see [ORGANIZATION_SETUP.md](./ORGANIZATION_SETUP.md).
+Set your GitHub Personal Access Token as an environment variable:
 
-## Installation
+```bash
+# Windows (PowerShell)
+$env:GITHUB_TOKEN="your_github_personal_access_token"
 
-### Step 1: Install the Package
+# Windows (Command Prompt)
+set GITHUB_TOKEN=your_github_personal_access_token
+
+# macOS/Linux
+export GITHUB_TOKEN=your_github_personal_access_token
+```
+
+**Note**: You need a token with `read:packages` permission.
+
+### Step 3: Install the Package
 
 ```bash
 npm install @frndfrts/fluent-ui-custom-components
-# or
-yarn add @frndfrts/fluent-ui-custom-components
-# or
-pnpm add @frndfrts/fluent-ui-custom-components
-
-### Step 2: Install Peer Dependencies
-
-This library requires Fluent UI v9 as a peer dependency:
-
-```bash
-npm install @fluentui/react-components
-# or
-yarn add @fluentui/react-components
-# or
-pnpm add @fluentui/react-components
 ```
 
-### Step 3: Install Additional Dependencies (if needed)
+## 🚀 Basic Usage Examples
 
-Some components may require additional packages:
-
-```bash
-npm install @fluentui/react-icons
-# or
-yarn add @fluentui/react-icons
-# or
-pnpm add @fluentui/react-icons
-```
-
-## Basic Usage
-
-### Step 1: Import Components
-
-```typescript
-// Import individual components
-import { ColorsSection } from '@frndfrts/fluent-ui-custom-components';
-
-// Import multiple components
-import { 
-  ColorsSection, 
-  ColorPicker, 
-  HexInput,
-  UnitSelector 
-} from '@frndfrts/fluent-ui-custom-components';
-
-// Import all components
-import * as FluentComponents from '@frndfrts/fluent-ui-custom-components';
-```
-
-### Step 2: Set Up Providers
-
-Wrap your app with the required Fluent UI providers:
+### Example 1: Tabbed Navigation with Preview
 
 ```tsx
-import { FluentProvider, webLightTheme } from '@fluentui/react-components';
-import { FormLayoutProvider } from '@frndfrts/fluent-ui-custom-components';
+import React, { useState } from 'react';
+import { TabbedNavbar, PreviewSection } from '@frndfrts/fluent-ui-custom-components';
 
-function App() {
+function MyApp() {
+  const [selectedTab, setSelectedTab] = useState('paper');
+
+  const tabs = [
+    {
+      value: 'file',
+      label: 'File',
+      type: 'menu',
+      menuItems: [
+        { key: 'new', label: 'New', onClick: () => console.log('New clicked') },
+        { key: 'open', label: 'Open', onClick: () => console.log('Open clicked') },
+        { key: 'save', label: 'Save', onClick: () => console.log('Save clicked') },
+      ],
+    },
+    {
+      value: 'edit',
+      label: 'Edit',
+      type: 'menu',
+      menuItems: [
+        { key: 'undo', label: 'Undo', onClick: () => console.log('Undo clicked') },
+        { key: 'redo', label: 'Redo', onClick: () => console.log('Redo clicked') },
+      ],
+    },
+    { value: 'paper', label: 'Paper', type: 'simple' },
+    { value: 'notes', label: 'Notes', type: 'simple' },
+    { value: 'slides', label: 'Slides', type: 'simple' },
+  ];
+
   return (
-    <FluentProvider theme={webLightTheme}>
-      <FormLayoutProvider>
-        {/* Your app content */}
-        <MyComponent />
-      </FormLayoutProvider>
-    </FluentProvider>
+    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <TabbedNavbar
+        selectedTab={selectedTab}
+        onTabSelect={setSelectedTab}
+        tabs={tabs}
+      />
+      <PreviewSection previewTitle="Document Preview">
+        <div style={{ padding: '20px', textAlign: 'center' }}>
+          <h3>Content for {selectedTab}</h3>
+          <p>This is the content area for the selected tab.</p>
+        </div>
+      </PreviewSection>
+    </div>
   );
 }
 ```
 
-### Step 3: Use Components
+### Example 2: Basic Color Input
 
 ```tsx
-import { ColorsSection } from 'fluent-ui-custom-components';
+import React, { useState } from 'react';
+import { ColorInput } from '@frndfrts/fluent-ui-custom-components';
 
-function MyComponent() {
-  const handleColorChange = (color: string) => {
-    console.log('Selected color:', color);
+function MyApp() {
+  const [color, setColor] = useState('#FF6B35');
+
+  return (
+    <div>
+      <h2>Color Picker</h2>
+      <ColorInput
+        value={color}
+        onChange={setColor}
+        size="medium"
+      />
+      <p>Selected color: {color}</p>
+    </div>
+  );
+}
+```
+
+### Example 2: Dimension Input with Units
+
+```tsx
+import React, { useState } from 'react';
+import { DimensionInput } from '@frndfrts/fluent-ui-custom-components';
+
+function MyApp() {
+  const [width, setWidth] = useState(100);
+  const [unit, setUnit] = useState('px');
+
+  const handleChange = (value: number | '', newUnit: string) => {
+    setWidth(value as number);
+    setUnit(newUnit);
   };
 
   return (
     <div>
-      <h1>My Color Picker</h1>
-      <ColorsSection
-        selectedColor="#ff0000"
-        onColorChange={handleColorChange}
-        showHexInput={true}
-        showRGBInput={true}
-        showHSLInput={true}
-      />
-    </div>
-  );
-}
-```
-
-## Component Categories
-
-### 1. Sections (High-Level Components)
-- **ColorsSection**: Complete color management interface
-- **AspectRatioSection**: Aspect ratio selection and management
-- **SizeSection**: Size and dimension controls
-
-### 2. Panels (Medium-Level Components)
-- **ColorPicker**: Main color selection interface
-- **AspectRatioSelector**: Aspect ratio selection panel
-- **SizeFields**: Size input fields
-
-### 3. Compositions (Combined Components)
-- **ColorHexInput**: Hex color input with validation
-- **ColorInput**: RGB/HSL color input
-- **UnitSelector**: Unit selection with conversion
-
-### 4. Components (Individual UI Elements)
-- **Button**: Custom button component
-- **Input**: Custom input component
-- **Select**: Custom select component
-
-### 5. Primitives (Base Components)
-- **NumericInput**: Number input with validation
-- **TextInput**: Text input with formatting
-- **Toggle**: Toggle switch component
-
-## Detailed Component Examples
-
-### ColorsSection Component
-
-```tsx
-import { ColorsSection } from 'fluent-ui-custom-components';
-
-function ColorManagementApp() {
-  const [selectedColor, setSelectedColor] = useState('#ff0000');
-  const [showHexInput, setShowHexInput] = useState(true);
-  const [showRGBInput, setShowRGBInput] = useState(true);
-  const [showHSLInput, setShowHSLInput] = useState(false);
-
-  const handleColorChange = (color: string) => {
-    setSelectedColor(color);
-    // Additional logic: save to database, update theme, etc.
-  };
-
-  const handleError = (error: string) => {
-    console.error('Color error:', error);
-    // Handle errors: show notification, fallback to default, etc.
-  };
-
-  return (
-    <div className="color-app">
-      <h1>Color Management</h1>
-      
-      <ColorsSection
-        selectedColor={selectedColor}
-        onColorChange={handleColorChange}
-        onError={handleError}
-        showHexInput={showHexInput}
-        showRGBInput={showRGBInput}
-        showHSLInput={showHSLInput}
-        disabled={false}
-        size="medium"
-      />
-      
-      <div className="controls">
-        <label>
-          <input
-            type="checkbox"
-            checked={showHexInput}
-            onChange={(e) => setShowHexInput(e.target.checked)}
-          />
-          Show Hex Input
-        </label>
-        
-        <label>
-          <input
-            type="checkbox"
-            checked={showRGBInput}
-            onChange={(e) => setShowRGBInput(e.target.checked)}
-          />
-          Show RGB Input
-        </label>
-        
-        <label>
-          <input
-            type="checkbox"
-            checked={showHSLInput}
-            onChange={(e) => setShowHSLInput(e.target.checked)}
-          />
-          Show HSL Input
-        </label>
-      </div>
-      
-      <div className="current-color">
-        <h3>Current Color: {selectedColor}</h3>
-        <div 
-          className="color-preview" 
-          style={{ backgroundColor: selectedColor, width: '100px', height: '100px' }}
-        />
-      </div>
-    </div>
-  );
-}
-```
-
-### AspectRatioSelector Component
-
-```tsx
-import { AspectRatioSelector } from 'fluent-ui-custom-components';
-
-function ImageEditor() {
-  const [aspectRatio, setAspectRatio] = useState('16:9');
-  const [customRatio, setCustomRatio] = useState({ width: 16, height: 9 });
-  const [showCustom, setShowCustom] = useState(false);
-
-  const handleAspectRatioChange = (ratio: string) => {
-    setAspectRatio(ratio);
-    // Update image canvas, crop guides, etc.
-  };
-
-  const handleCustomRatioChange = (width: number, height: number) => {
-    setCustomRatio({ width, height });
-    setAspectRatio(`${width}:${height}`);
-  };
-
-  const handleError = (error: string) => {
-    console.error('Aspect ratio error:', error);
-    // Show error message to user
-  };
-
-  const customPresets = [
-    { label: 'Instagram Post', ratio: '1:1' },
-    { label: 'Instagram Story', ratio: '9:16' },
-    { label: 'Twitter Post', ratio: '16:9' },
-    { label: 'LinkedIn Post', ratio: '1.91:1' }
-  ];
-
-  return (
-    <div className="image-editor">
-      <h2>Image Editor</h2>
-      
-      <AspectRatioSelector
-        aspectRatio={aspectRatio}
-        onChange={handleAspectRatioChange}
-        customRatio={customRatio}
-        onError={handleError}
-        size="medium"
-        disabled={false}
-        showCustom={showCustom}
-        presets={customPresets}
-        label="Aspect Ratio"
-      />
-      
-      <div className="editor-controls">
-        <button onClick={() => setShowCustom(!showCustom)}>
-          {showCustom ? 'Hide' : 'Show'} Custom Ratio
-        </button>
-      </div>
-      
-      <div className="canvas-preview">
-        <div 
-          className="canvas"
-          style={{
-            width: '400px',
-            height: '400px',
-            border: '2px solid #ccc',
-            position: 'relative'
-          }}
-        >
-          <div 
-            className="crop-guide"
-            style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: aspectRatio === '16:9' ? '320px' : '200px',
-              height: aspectRatio === '16:9' ? '180px' : '200px',
-              border: '2px dashed #0078d4',
-              backgroundColor: 'rgba(0, 120, 212, 0.1)'
-            }}
-          />
-        </div>
-      </div>
-    </div>
-  );
-}
-```
-
-### UnitSelector Component
-
-```tsx
-import { UnitSelector } from 'fluent-ui-custom-components';
-
-function MeasurementApp() {
-  const [value, setValue] = useState(100);
-  const [unit, setUnit] = useState('cm');
-  const [customUnits, setCustomUnits] = useState([
-    { value: 'px', label: 'Pixels' },
-    { value: 'pt', label: 'Points' },
-    { value: 'in', label: 'Inches' }
-  ]);
-
-  const handleValueChange = (newValue: number) => {
-    setValue(newValue);
-    // Convert and update other unit displays
-  };
-
-  const handleUnitChange = (newUnit: string) => {
-    setUnit(newUnit);
-    // Convert value to new unit
-  };
-
-  const handleError = (error: string) => {
-    console.error('Unit error:', error);
-    // Show error notification
-  };
-
-  const handleCustomUnitAdd = (unit: string, label: string) => {
-    setCustomUnits(prev => [...prev, { value: unit, label }]);
-  };
-
-  return (
-    <div className="measurement-app">
-      <h2>Measurement Converter</h2>
-      
-      <UnitSelector
-        value={value}
+      <h2>Width Input</h2>
+      <DimensionInput
+        label="Width"
+        value={width}
         unit={unit}
-        onValueChange={handleValueChange}
-        onUnitChange={handleUnitChange}
-        onError={handleError}
-        customUnits={customUnits}
-        onCustomUnitAdd={handleCustomUnitAdd}
+        units={['px', 'em', 'rem', '%', 'pt', 'in', 'cm', 'mm']}
+        onChange={handleChange}
         size="medium"
-        disabled={false}
-        showCustom={true}
-        label="Measurement"
       />
-      
-      <div className="conversions">
-        <h3>Conversions</h3>
-        <div className="conversion-grid">
-          <div className="conversion-item">
-            <span>Centimeters:</span>
-            <span>{unit === 'cm' ? value : (value * 2.54).toFixed(2)} cm</span>
-          </div>
-          <div className="conversion-item">
-            <span>Inches:</span>
-            <span>{unit === 'in' ? value : (value / 2.54).toFixed(2)} in</span>
-          </div>
-          <div className="conversion-item">
-            <span>Pixels:</span>
-            <span>{unit === 'px' ? value : (value * 37.795).toFixed(0)} px</span>
-          </div>
-        </div>
-      </div>
+      <p>Width: {width} {unit}</p>
     </div>
   );
 }
 ```
 
-### SizeFields Component
+### Example 2a: Enhanced Dimension Input with Context-Aware Units
 
 ```tsx
-import { SizeFields } from 'fluent-ui-custom-components';
+import React, { useState } from 'react';
+import { DimensionInput, UnitConversionProvider } from '@frndfrts/fluent-ui-custom-components';
 
-function LayoutEditor() {
-  const [sizes, setSizes] = useState({
-    width: 800,
-    height: 600,
-    depth: 100
-  });
-  const [units, setUnits] = useState({
-    width: 'px',
-    height: 'px',
-    depth: 'mm'
-  });
+function MyApp() {
+  const [width, setWidth] = useState(10); // cm
+  const [unit, setUnit] = useState('cm');
 
-  const handleSizeChange = (dimension: string, value: number) => {
-    setSizes(prev => ({ ...prev, [dimension]: value }));
-    // Update layout preview, validate constraints, etc.
-  };
-
-  const handleUnitChange = (dimension: string, unit: string) => {
-    setUnits(prev => ({ ...prev, [dimension]: unit }));
-    // Convert values to new units
-  };
-
-  const handleError = (error: string) => {
-    console.error('Size error:', error);
-    // Show error message
+  const handleChange = (value: number | '', newUnit: string) => {
+    setWidth(value as number);
+    setUnit(newUnit);
   };
 
   return (
-    <div className="layout-editor">
-      <h2>Layout Editor</h2>
-      
-      <SizeFields
-        sizes={sizes}
-        units={units}
-        onSizeChange={handleSizeChange}
-        onUnitChange={handleUnitChange}
-        onError={handleError}
-        disabled={false}
-        size="medium"
-        showDepth={true}
-        label="Dimensions"
-      />
-      
-      <div className="layout-preview">
-        <h3>Layout Preview</h3>
-        <div 
-          className="preview-container"
-          style={{
-            width: '400px',
-            height: '300px',
-            border: '2px solid #ccc',
-            position: 'relative'
-          }}
-        >
-          <div 
-            className="preview-element"
-            style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: `${(sizes.width / 10)}px`,
-              height: `${(sizes.height / 10)}px`,
-              backgroundColor: '#0078d4',
-              border: '1px solid #005a9e'
-            }}
-          />
-        </div>
-      </div>
-    </div>
-  );
-}
-```
-
-## Advanced Configuration
-
-### Custom Theme Integration
-
-```tsx
-import { FluentProvider, createDarkTheme } from '@fluentui/react-components';
-import { FormLayoutProvider } from 'fluent-ui-custom-components';
-
-// Create custom theme
-const customTheme = createDarkTheme({
-  colorNeutralBackground1: '#1a1a1a',
-  colorNeutralForeground1: '#ffffff',
-  colorBrandBackground: '#0078d4',
-  colorBrandForeground1: '#ffffff',
-});
-
-function App() {
-  return (
-    <FluentProvider theme={customTheme}>
-      <FormLayoutProvider>
-        <YourApp />
-      </FormLayoutProvider>
-    </FluentProvider>
-  );
-}
-```
-
-### Error Boundary Integration
-
-```tsx
-import { ErrorBoundary } from 'react-error-boundary';
-import { ColorsSection } from 'fluent-ui-custom-components';
-
-function ErrorFallback({ error, resetErrorBoundary }) {
-  return (
-    <div className="error-container">
-      <h2>Something went wrong:</h2>
-      <pre>{error.message}</pre>
-      <button onClick={resetErrorBoundary}>Try again</button>
-    </div>
-  );
-}
-
-function App() {
-  return (
-    <ErrorBoundary
-      FallbackComponent={ErrorFallback}
-      onReset={() => {
-        // Reset the state of your app here
-      }}
+    <UnitConversionProvider
+      referenceWidth={20}    // 20cm reference width
+      referenceHeight={15}  // 15cm reference height
+      containerWidth={30}   // 30cm container width
+      containerHeight={20}  // 20cm container height
+      fontSize={0.4}        // 0.4cm font size
+      rootFontSize={0.35}  // 0.35cm root font size
     >
-      <ColorsSection
-        selectedColor="#ff0000"
-        onColorChange={(color) => console.log(color)}
-        onError={(error) => console.error(error)}
+      <div>
+        <h2>Enhanced Width Input</h2>
+        <DimensionInput
+          label="Width"
+          value={width}
+          unit={unit}
+          units={['px', 'em', 'rem', '%', 'vw', 'vh', 'pt', 'in', 'cm', 'mm']}
+          onChange={handleChange}
+          size="medium"
+        />
+        <p>Width: {width} {unit}</p>
+        <p><small>Supports context-aware percentage, viewport, and font-relative units</small></p>
+      </div>
+    </UnitConversionProvider>
+  );
+}
+```
+
+### Example 3: Color Selector Grid
+
+```tsx
+import React, { useState } from 'react';
+import { ColorSelector } from '@frndfrts/fluent-ui-custom-components';
+
+function MyApp() {
+  const [selectedColor, setSelectedColor] = useState('#FF0000');
+
+  return (
+    <div>
+      <h2>Color Palette</h2>
+      <ColorSelector
+        value={selectedColor}
+        onChange={setSelectedColor}
+        columns={8}
+        showTooltips={true}
+        colorModel="rgb"
+      />
+      <p>Selected: {selectedColor}</p>
+    </div>
+  );
+}
+```
+
+### Example 4: Aspect Ratio Selector
+
+```tsx
+import React, { useState } from 'react';
+import { AspectRatioSelector } from '@frndfrts/fluent-ui-custom-components';
+
+function MyApp() {
+  const [aspectRatio, setAspectRatio] = useState('16:9');
+
+  return (
+    <div>
+      <h2>Aspect Ratio</h2>
+      <AspectRatioSelector
+        value={aspectRatio}
+        onChange={setAspectRatio}
+        size="medium"
+      />
+      <p>Current ratio: {aspectRatio}</p>
+    </div>
+  );
+}
+```
+
+## 🔧 Intermediate Usage Examples
+
+### Error Handling
+
+```tsx
+import { ErrorBoundary } from '@frndfrts/fluent-ui-custom-components';
+
+function MyApp() {
+  return (
+    <ErrorBoundary>
+      <ColorInput
+        value="#invalid"
+        onChange={setColor}
+        onError={(error) => console.error('Color error:', error)}
       />
     </ErrorBoundary>
   );
 }
 ```
 
-### Custom Validation
+### Custom Styling with Fluent UI
 
 ```tsx
-import { ColorsSection } from 'fluent-ui-custom-components';
+import { makeStyles } from '@fluentui/react-components';
+import { ColorInput } from '@frndfrts/fluent-ui-custom-components';
 
-function App() {
-  const validateColor = (color: string) => {
-    // Custom validation logic
-    if (color === '#000000') {
-      throw new Error('Black is not allowed');
-    }
-    return true;
-  };
+const useStyles = makeStyles({
+  container: {
+    padding: '20px',
+    backgroundColor: 'var(--colorNeutralBackground1)',
+    borderRadius: 'var(--borderRadiusMedium)',
+  },
+  title: {
+    color: 'var(--colorNeutralForeground1)',
+    fontSize: 'var(--fontSizeBase500)',
+    marginBottom: 'var(--spacingVerticalM)',
+  },
+});
 
-  const handleColorChange = (color: string) => {
-    try {
-      if (validateColor(color)) {
-        console.log('Valid color:', color);
-        // Process color
-      }
-    } catch (error) {
-      console.error('Invalid color:', error.message);
-      // Handle validation error
-    }
-  };
+function MyApp() {
+  const styles = useStyles();
 
   return (
-    <ColorsSection
-      selectedColor="#ff0000"
-      onColorChange={handleColorChange}
-      onError={(error) => console.error(error)}
-    />
+    <div className={styles.container}>
+      <h2 className={styles.title}>Custom Styled App</h2>
+      <ColorInput
+        value="#FF6B35"
+        onChange={setColor}
+        size="large"
+      />
+    </div>
   );
 }
 ```
 
-## Troubleshooting
-
-### Common Issues and Solutions
-
-#### 1. Components Not Rendering
-
-**Problem**: Components appear blank or don't render
-**Solution**: Ensure you have the required providers:
+### Form Validation
 
 ```tsx
-import { FluentProvider, webLightTheme } from '@fluentui/react-components';
-import { FormLayoutProvider } from 'fluent-ui-custom-components';
+import React, { useState } from 'react';
+import { NumericInput, DimensionInput } from '@frndfrts/fluent-ui-custom-components';
 
-// Wrap your app with these providers
-<FluentProvider theme={webLightTheme}>
-  <FormLayoutProvider>
-    <YourComponents />
-  </FormLayoutProvider>
-</FluentProvider>
-```
+function FormExample() {
+  const [width, setWidth] = useState(100);
+  const [height, setHeight] = useState(100);
+  const [errors, setErrors] = useState<string[]>([]);
 
-#### 2. TypeScript Errors
+  const handleSubmit = () => {
+    const newErrors = [];
+    if (width <= 0) newErrors.push('Width must be positive');
+    if (height <= 0) newErrors.push('Height must be positive');
+    
+    setErrors(newErrors);
+    
+    if (newErrors.length === 0) {
+      console.log('Form submitted:', { width, height });
+    }
+  };
 
-**Problem**: TypeScript compilation errors
-**Solution**: Check your `tsconfig.json`:
-
-```json
-{
-  "compilerOptions": {
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "jsx": "react-jsx",
-    "moduleResolution": "node"
-  }
+  return (
+    <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
+      <div>
+        <DimensionInput
+          label="Width"
+          value={width}
+          unit="px"
+          onChange={(value) => setWidth(value as number)}
+          onError={(error) => console.error('Width error:', error)}
+        />
+      </div>
+      
+      <div>
+        <DimensionInput
+          label="Height"
+          value={height}
+          unit="px"
+          onChange={(value) => setHeight(value as number)}
+          onError={(error) => console.error('Height error:', error)}
+        />
+      </div>
+      
+      {errors.length > 0 && (
+        <div style={{ color: 'red', marginTop: '10px' }}>
+          {errors.map((error, index) => (
+            <div key={index}>{error}</div>
+          ))}
+        </div>
+      )}
+      
+      <button type="submit">Submit</button>
+    </form>
+  );
 }
 ```
 
-#### 3. Styling Issues
+## 🚀 Advanced Usage Examples
 
-**Problem**: Components look unstyled
-**Solution**: Ensure Fluent UI CSS is imported:
+### Complete Application Example
 
-```tsx
-import '@fluentui/react-components/dist/web-components.css';
-```
-
-#### 4. Event Handler Errors
-
-**Problem**: Event handlers not working
-**Solution**: Check prop names and types:
+Here's a complete React app that demonstrates multiple components working together:
 
 ```tsx
-// Correct
-<ColorsSection onColorChange={handleColorChange} />
+import React, { useState } from 'react';
+import { 
+  ColorInput, 
+  DimensionInput, 
+  ColorSelector,
+  AspectRatioSelector,
+  ErrorBoundary 
+} from '@frndfrts/fluent-ui-custom-components';
+import { makeStyles } from '@fluentui/react-components';
 
-// Incorrect
-<ColorsSection onChange={handleColorChange} />
+const useStyles = makeStyles({
+  app: {
+    padding: '20px',
+    maxWidth: '800px',
+    margin: '0 auto',
+  },
+  section: {
+    marginBottom: '30px',
+    padding: '20px',
+    border: '1px solid var(--colorNeutralBorder1)',
+    borderRadius: 'var(--borderRadiusMedium)',
+  },
+  title: {
+    color: 'var(--colorNeutralForeground1)',
+    fontSize: 'var(--fontSizeBase600)',
+    marginBottom: 'var(--spacingVerticalM)',
+  },
+  grid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+    gap: '20px',
+    marginTop: '20px',
+  },
+});
+
+function App() {
+  const styles = useStyles();
+  const [color, setColor] = useState('#FF6B35');
+  const [width, setWidth] = useState(100);
+  const [unit, setUnit] = useState('px');
+  const [selectedColor, setSelectedColor] = useState('#FF0000');
+  const [aspectRatio, setAspectRatio] = useState('16:9');
+
+  const handleDimensionChange = (value: number | '', newUnit: string) => {
+    setWidth(value as number);
+    setUnit(newUnit);
+  };
+
+  return (
+    <div className={styles.app}>
+      <h1>My Fluent UI App</h1>
+      
+      <ErrorBoundary>
+        <div className={styles.grid}>
+          <div className={styles.section}>
+            <h2 className={styles.title}>Color Input</h2>
+            <ColorInput
+              value={color}
+              onChange={setColor}
+              size="medium"
+            />
+            <p>Selected: {color}</p>
+          </div>
+
+          <div className={styles.section}>
+            <h2 className={styles.title}>Dimension Input</h2>
+            <DimensionInput
+              label="Width"
+              value={width}
+              unit={unit}
+              units={['px', 'em', 'rem', '%', 'pt', 'in', 'cm', 'mm']}
+              onChange={handleDimensionChange}
+              size="medium"
+            />
+            <p>Width: {width} {unit}</p>
+          </div>
+
+          <div className={styles.section}>
+            <h2 className={styles.title}>Color Palette</h2>
+            <ColorSelector
+              value={selectedColor}
+              onChange={setSelectedColor}
+              columns={6}
+              showTooltips={true}
+            />
+            <p>Selected: {selectedColor}</p>
+          </div>
+
+          <div className={styles.section}>
+            <h2 className={styles.title}>Aspect Ratio</h2>
+            <AspectRatioSelector
+              value={aspectRatio}
+              onChange={setAspectRatio}
+              size="medium"
+            />
+            <p>Ratio: {aspectRatio}</p>
+          </div>
+        </div>
+      </ErrorBoundary>
+    </div>
+  );
+}
+
+export default App;
 ```
 
-#### 5. Bundle Size Issues
-
-**Problem**: Large bundle size
-**Solution**: Use tree-shaking imports:
+### Custom Hook Integration
 
 ```tsx
-// Good - only imports what you need
-import { ColorsSection } from 'fluent-ui-custom-components';
+import React, { useState, useEffect } from 'react';
+import { ColorInput, ColorSelector } from '@frndfrts/fluent-ui-custom-components';
+import { useLocalStorage, useDebounce } from '@frndfrts/fluent-ui-custom-components';
 
-// Avoid - imports everything
-import * as Components from 'fluent-ui-custom-components';
-```
+function AdvancedColorApp() {
+  const [color, setColor] = useLocalStorage('selectedColor', '#FF6B35');
+  const [debouncedColor] = useDebounce(color, 500);
+  const [recentColors, setRecentColors] = useState<string[]>([]);
 
-## Migration Guide
+  // Save color to recent colors when it changes
+  useEffect(() => {
+    if (debouncedColor && !recentColors.includes(debouncedColor)) {
+      setRecentColors(prev => [debouncedColor, ...prev.slice(0, 9)]);
+    }
+  }, [debouncedColor, recentColors]);
 
-### From React App to Component Library
-
-If you're migrating from using these components in a React app to using them as a library:
-
-#### Step 1: Update Imports
-
-```tsx
-// Before (local components)
-import { ColorsSection } from './components/sections/ColorsSection';
-
-// After (library components)
-import { ColorsSection } from 'fluent-ui-custom-components';
-```
-
-#### Step 2: Update Dependencies
-
-```bash
-# Remove local component dependencies
-npm uninstall @fluentui/react-components
-
-# Install library package
-npm install fluent-ui-custom-components
-
-# Reinstall peer dependencies
-npm install @fluentui/react-components
-```
-
-#### Step 3: Update Build Configuration
-
-```json
-// package.json
-{
-  "scripts": {
-    "build": "rollup -c",
-    "dev": "storybook dev -p 6006"
-  }
+  return (
+    <div>
+      <h2>Advanced Color App</h2>
+      
+      <div style={{ marginBottom: '20px' }}>
+        <ColorInput
+          value={color}
+          onChange={setColor}
+          size="large"
+        />
+      </div>
+      
+      <div>
+        <h3>Recent Colors</h3>
+        <ColorSelector
+          value={color}
+          onChange={setColor}
+          colors={recentColors}
+          columns={5}
+          showTooltips={true}
+        />
+      </div>
+      
+      <p>Current: {color}</p>
+      <p>Debounced: {debouncedColor}</p>
+    </div>
+  );
 }
 ```
 
-### From Other Component Libraries
-
-#### Step 1: Identify Replacements
-
-| Current Library | This Library | Notes |
-|----------------|---------------|-------|
-| `@mui/material` | `fluent-ui-custom-components` | Different design system |
-| `antd` | `fluent-ui-custom-components` | Different design system |
-| `chakra-ui` | `fluent-ui-custom-components` | Different design system |
-
-#### Step 2: Update Component Usage
+### Responsive Layout with Multiple Components
 
 ```tsx
-// Before (Material-UI)
-import { TextField } from '@mui/material';
+import React, { useState } from 'react';
+import { 
+  PaperSelector, 
+  OrientationSelector, 
+  AspectRatioSelector,
+  DimensionInput 
+} from '@frndfrts/fluent-ui-custom-components';
+import { makeStyles } from '@fluentui/react-components';
 
-<TextField label="Color" value={color} onChange={handleChange} />
+const useStyles = makeStyles({
+  container: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+    gap: '20px',
+    padding: '20px',
+  },
+  card: {
+    padding: '20px',
+    border: '1px solid var(--colorNeutralBorder2)',
+    borderRadius: 'var(--borderRadiusMedium)',
+    backgroundColor: 'var(--colorNeutralBackground1)',
+  },
+  title: {
+    fontSize: 'var(--fontSizeBase500)',
+    fontWeight: 'var(--fontWeightSemibold)',
+    marginBottom: 'var(--spacingVerticalM)',
+    color: 'var(--colorNeutralForeground1)',
+  },
+  preview: {
+    marginTop: '20px',
+    padding: '20px',
+    backgroundColor: 'var(--colorNeutralBackground2)',
+    borderRadius: 'var(--borderRadiusSmall)',
+    textAlign: 'center',
+  },
+});
 
-// After (This Library)
-import { HexInput } from 'fluent-ui-custom-components';
+function DocumentSetup() {
+  const styles = useStyles();
+  const [paperSize, setPaperSize] = useState('A4');
+  const [orientation, setOrientation] = useState('portrait');
+  const [aspectRatio, setAspectRatio] = useState('16:9');
+  const [margin, setMargin] = useState(20);
+  const [marginUnit, setMarginUnit] = useState('mm');
 
-<HexInput value={color} onChange={handleChange} label="Color" />
+  const handleMarginChange = (value: number | '', unit: string) => {
+    setMargin(value as number);
+    setMarginUnit(unit);
+  };
+
+  return (
+    <div className={styles.container}>
+      <div className={styles.card}>
+        <h3 className={styles.title}>Paper Settings</h3>
+        <PaperSelector
+          value={paperSize}
+          onChange={setPaperSize}
+          size="medium"
+        />
+        <OrientationSelector
+          orientation={orientation}
+          onChange={setOrientation}
+          size="medium"
+        />
+      </div>
+
+      <div className={styles.card}>
+        <h3 className={styles.title}>Layout Settings</h3>
+        <AspectRatioSelector
+          value={aspectRatio}
+          onChange={setAspectRatio}
+          size="medium"
+        />
+        <DimensionInput
+          label="Margin"
+          value={margin}
+          unit={marginUnit}
+          units={['mm', 'cm', 'in', 'pt']}
+          onChange={handleMarginChange}
+          size="medium"
+        />
+      </div>
+
+      <div className={styles.card}>
+        <h3 className={styles.title}>Preview</h3>
+        <div className={styles.preview}>
+          <p><strong>Paper:</strong> {paperSize}</p>
+          <p><strong>Orientation:</strong> {orientation}</p>
+          <p><strong>Aspect Ratio:</strong> {aspectRatio}</p>
+          <p><strong>Margin:</strong> {margin} {marginUnit}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
 ```
 
-#### Step 3: Update Styling
+## 🆕 Enhanced Unit Conversion Features
 
+### Context-Aware Unit Conversions
+The library now supports advanced unit conversion with context awareness:
+
+- **Percentage (%)**: Requires reference dimensions for proper calculations
+- **Viewport Units (vw/vh)**: Uses container dimensions for relative calculations  
+- **Font-Relative Units (em/rem)**: Uses font size context for proper scaling
+- **Absolute Units**: Standard conversions (cm, mm, in, px, pt)
+
+### Unit-Specific Step Values
+Each unit type has appropriate step values for precise control:
+- **px/pt**: Step by 1 (whole numbers)
+- **mm**: Step by 0.1 (1 decimal place)
+- **cm**: Step by 0.01 (2 decimal places)
+- **in**: Step by 0.001 (3 decimal places)
+- **%**: Step by 0.1 (1 decimal place)
+- **vw/vh**: Step by 0.1 (1 decimal place)
+- **em/rem**: Step by 0.01 (2 decimal places)
+
+### Context Provider System
 ```tsx
-// Before (Material-UI theme)
-import { ThemeProvider, createTheme } from '@mui/material';
+import { UnitConversionProvider } from '@frndfrts/fluent-ui-custom-components';
 
-// After (Fluent UI theme)
-import { FluentProvider, webLightTheme } from '@fluentui/react-components';
+<UnitConversionProvider
+  referenceWidth={20}    // For percentage calculations
+  referenceHeight={15}   // For percentage calculations
+  containerWidth={30}    // For viewport units
+  containerHeight={20}   // For viewport units
+  fontSize={0.4}         // For em calculations
+  rootFontSize={0.35}   // For rem calculations
+>
+  {/* Your components here */}
+</UnitConversionProvider>
 ```
+
+## 📚 Available Components
+
+### Primitives (Level 1)
+Basic building blocks for forms and inputs:
+- `NumericInput` - Number input with validation and unit-aware steps
+- `HexInput` - Hexadecimal color input
+- `SliderInput` - Slider input component
+- `ColorSliderInput` - Color-specific slider
+- `UniversalSelector` - Generic selector component
+- `LockAspectRatio` - Aspect ratio lock toggle
+
+### Components (Level 2)
+Molecule-level combinations:
+- `AspectRatioSelector` - Aspect ratio selection
+- `ColorModelSelector` - RGB/HSL model selection
+- `OrientationSelector` - Portrait/landscape selection
+- `PaperSelector` - Paper size selection
+- `PositionSelector` - Position value selection
+
+### Compositions (Level 3)
+Complex functional units:
+- `ColorInput` - Full color input with picker
+- `ColorHexInput` - Hex color input with swatch
+- `ColorSelector` - Color palette grid
+- `DimensionInput` - Enhanced number + unit input with context-aware conversions
+- `RGBHSLColorSlidersInput` - RGB/HSL sliders
+- `LabeledColorHexInput` - Color input with label
+- `LabeledColorPicker` - Color picker with label
+- `MultipleSlidersInput` - Multiple slider inputs
+- `TabbedNavbar` - Complete tabbed navigation bar with menu support
+
+### Panels (Level 4)
+Layout containers with specific functionality:
+- `PaperSizePanel` - Paper size configuration
+- `SizeAndPositionPanel` - Size and position controls
+- `SizeFields` - Size input fields
+- `PositionFields` - Position input fields
+- `MarginsPanel` - Margin configuration
+- `PaddingPanel` - Padding configuration
+- `ResponsiveColorPicker` - Responsive color picker
+- `PreviewPanel` - Preview container with header and content area
+
+### Sections (Level 5)
+High-level functional areas:
+- `PaperSection` - Paper configuration section
+- `NotesSection` - Notes and annotations
+- `SlidesSection` - Presentation slides
+- `PreviewSection` - Preview area for content display
+- `BodyPlaceholderSection` - Body content placeholder
+- `TitlePlaceholderSection` - Title placeholder
+- `SubtitlePlaceholderSection` - Subtitle placeholder
+- `SourcePlaceholderSection` - Source placeholder
+- `PageNumberPlaceholderSection` - Page number placeholder
+- `LogoPlaceholderSection` - Logo placeholder
+- `FootnotePlaceholderSection` - Footnote placeholder
+
+### Hooks & Utilities
+Custom React hooks and utilities:
+- `useInputValidation` - Input validation logic
+- `useComponentSize` - Component size management
+- `useColorManager` - Color state management
+- `useFormValidation` - Form validation
+- `useLocalStorage` - Local storage persistence
+- `useDebounce` - Debounced value updates
+- `usePrevious` - Previous value tracking
+- `useToggle` - Boolean toggle state
+- `useWindowSize` - Window size tracking
+- `useClickOutside` - Click outside detection
+- `useHover` - Hover state management
+- `useAsync` - Async operation handling
+- `useThrottle` - Throttled function calls
+- `useKeyPress` - Keyboard event handling
+- `useIntersectionObserver` - Intersection observer
+- `useMediaQuery` - Media query responses
+- `useScrollPosition` - Scroll position tracking
+- `useOnlineStatus` - Online/offline status
+- `useCopyToClipboard` - Clipboard operations
+- `useGeolocation` - Geolocation data
+- `useNetworkStatus` - Network status
+- `useFocus` - Focus state management
+- `useEventListener` - Event listener management
+- `useInterval` - Interval timer
+- `useTimeout` - Timeout timer
+- `useUpdateEffect` - Update-only effect
+- `useWhyDidYouUpdate` - Update debugging
+- `useForceUpdate` - Force re-render
+- `useIsMounted` - Mount state tracking
+- `useUnmountEffect` - Unmount cleanup
+- `useMountEffect` - Mount-only effect
+- `useDeepCompareEffect` - Deep comparison effect
+- `useShallowCompareEffect` - Shallow comparison effect
+- `useFirstMountState` - First mount state
+- `useIsFirstRender` - First render detection
+- `useIsLastRender` - Last render detection
+- `useIsMountedRef` - Mount state ref
+- `useUnitConversion` - Enhanced unit conversion with context awareness
+- `UnitConversionProvider` - Context provider for unit conversion reference dimensions
+
+## 🔍 Troubleshooting
+
+### Common Issues
+
+1. **Authentication Error**: Make sure your `GITHUB_TOKEN` has `read:packages` permission
+2. **Registry Error**: Verify `.npmrc` is in your project root
+3. **Import Errors**: Check that you're importing from the correct path
+4. **Build Errors**: Ensure you have the required peer dependencies
+
+### Getting Help
+
+- Check the [ORGANIZATION_SETUP.md](./ORGANIZATION_SETUP.md) for detailed setup
+- Use Storybook locally to explore components: `npm run dev`
+- Review component stories for usage examples
+- Check GitHub issues for known problems
 
 ## Best Practices
 
-### 1. Component Organization
+1. **Use Error Boundaries** - Wrap components in ErrorBoundary for production
+2. **Handle Errors** - Implement onError callbacks for better UX
+3. **Consistent Sizing** - Use consistent size props across components
+4. **Accessibility** - Components include built-in accessibility features
+5. **Performance** - Components are memoized for optimal performance
+6. **TypeScript** - Use TypeScript for better type safety and IntelliSense
+7. **Responsive Design** - Components adapt to different screen sizes
+8. **Theme Integration** - Components use Fluent UI design tokens
 
-- Group related components together
-- Use consistent naming conventions
-- Implement proper error boundaries
+## Migration Guide
 
-### 2. Performance Optimization
+### From Previous Versions
 
-- Use React.memo for expensive components
-- Implement proper dependency arrays in useEffect
-- Avoid unnecessary re-renders
+If you're upgrading from a previous version:
 
-### 3. Accessibility
+1. **Update imports** - Check for any renamed components
+2. **Review props** - Some component interfaces may have changed
+3. **Test functionality** - Verify components work as expected
+4. **Check peer dependencies** - Ensure Fluent UI v9 is installed
 
-- Provide proper ARIA labels
-- Ensure keyboard navigation
-- Test with screen readers
+## Support
 
-### 4. Testing
+For additional support:
 
-- Write unit tests for components
-- Test error scenarios
-- Validate prop types
-
-### 5. Documentation
-
-- Document component props
-- Provide usage examples
-- Include accessibility notes
-
-## Support and Resources
-
-### Documentation
-- [Storybook Demo](http://localhost:6006) (when running locally)
-- [Fluent UI Documentation](https://react.fluentui.dev/)
-- [Component API Reference](./src/components/index.ts)
-
-### Getting Help
-- Check the troubleshooting section above
-- Review component stories in Storybook
-- Examine the source code for implementation details
-
-### Contributing
-- Report issues with detailed reproduction steps
-- Suggest improvements through pull requests
-- Follow the project's coding standards
+1. **Check Documentation** - Review component stories and examples
+2. **Explore Storybook** - Run `npm run dev` to see components in action
+3. **Review Issues** - Check GitHub issues for known problems
+4. **Contact Team** - Reach out to the development team for help
 
 ---
 
-**Note**: This library is designed to work with Fluent UI v9. If you encounter compatibility issues, ensure you're using the correct version of Fluent UI and React.
+*This library is designed to work seamlessly with Fluent UI v9 and provides enterprise-grade components for professional applications. All components are built with accessibility, performance, and maintainability in mind.*

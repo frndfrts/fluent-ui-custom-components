@@ -154,4 +154,6 @@ export const UniversalSelector = React.memo<UniversalSelectorProps>(({
       </Select>
     </div>
   );
-}); 
+});
+
+UniversalSelector.displayName = 'UniversalSelector'; 

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-webpack5';
 import { HexInput } from './HexInput';
 
 const meta: Meta<typeof HexInput> = {

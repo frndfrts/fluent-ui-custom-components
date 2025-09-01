@@ -31,7 +31,6 @@ export { UnitSelector, DEFAULT_UNITS, DEFAULT_UNIT } from './components/UnitSele
 export { SliderInput } from './primitives/SliderInput';
 export { ColorSliderInput } from './primitives/ColorSliderInput';
 export { LockAspectRatio } from './primitives/LockAspectRatio';
-
 // ============================================================================
 // COMPONENTS (Level 2) - Molecule-level combinations
 // ============================================================================
@@ -57,6 +56,9 @@ export { LabeledColorPicker } from './compositions/LabeledColorPicker';
 export { RGBHSLColorSlidersInput } from './compositions/RGBHSLColorSlidersInput';
 export { MultipleSlidersInput } from './compositions/MultipleSlidersInput';
 
+// Navigation and layout compositions
+export { TabbedNavbar } from './compositions/TabbedNavbar';
+
 // Dimension and layout compositions
 export { DimensionInput } from './compositions/DimensionInput';
 
@@ -74,6 +76,7 @@ export { PositionFields } from './panels/PositionFields';
 
 // Color and UI panels
 export { ResponsiveColorPicker } from './panels/ResponsiveColorPicker';
+export { PreviewPanel } from './panels/PreviewPanel';
 
 // ============================================================================
 // SECTIONS (Level 5) - High-level functional areas
@@ -83,6 +86,7 @@ export { ResponsiveColorPicker } from './panels/ResponsiveColorPicker';
 export { PaperSection } from './sections/PaperSection';
 export { NotesSection } from './sections/NotesSection';
 export { SlidesSection } from './sections/SlidesSection';
+export { PreviewSection } from './sections/PreviewSection';
 
 // ============================================================================
 // LEGACY (Level 6) - Backward compatibility components
