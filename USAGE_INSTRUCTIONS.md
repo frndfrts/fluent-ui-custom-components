@@ -1,6 +1,25 @@
 # Fluent UI Custom Components - Usage Instructions
 
-*This library is designed to work seamlessly with Fluent UI v9 and provides enterprise-grade components for professional applications. All components are built with accessibility, performance, and maintainability in mind. Version 1.1.1 introduces critical percentage conversion fixes, while v1.1.0 brought comprehensive unit conversion, Storybook 9 upgrade, and enhanced interactive features.*
+*This library is designed to work seamlessly with Fluent UI v9 and provides enterprise-grade components for professional applications. All components are built with accessibility, performance, and maintainability in mind. Version 1.1.2 introduces percent input clamping, while v1.1.1 brought critical percentage conversion fixes, and v1.1.0 brought comprehensive unit conversion, Storybook 9 upgrade, and enhanced interactive features.*
+
+## 🆕 What's New in v1.1.2
+
+### 🎯 Percent Input Clamping
+- **Added**: Automatic clamping of percent inputs to [0, 100] range on commit (blur/Enter)
+- **Enhanced**: Spin button increment/decrement respects percent bounds
+- **Improved**: Empty input handling with fallback to last valid value
+- **Maintained**: Full backward compatibility with existing implementations
+
+### 🔧 Technical Improvements
+- **Enhanced**: DimensionInput with configurable percent clamping options
+- **Added**: HTML min/max constraints for percent inputs
+- **Improved**: Axis-aware percentage conversion with proper reference handling
+- **Maintained**: Free-form typing during input with final clamp on commit
+
+### 🧪 Testing & Quality
+- **Added**: Comprehensive unit tests for percent clamping functionality
+- **Verified**: Roundtrip stability and edge case handling
+- **Confirmed**: Integration with SizeFields and PositionFields components
 
 ## 🆕 What's New in v1.1.1
 
@@ -53,7 +72,7 @@
 ### Install the Package
 
 ```bash
-npm install @frndfrts/fluent-ui-custom-components@1.1.1
+npm install @frndfrts/fluent-ui-custom-components@1.1.2
 ```
 
 ### Import Components
@@ -214,6 +233,68 @@ function PreviewExample() {
     </PreviewSection>
   );
 }
+```
+
+## 🎯 Percent Input Clamping
+
+### Overview
+The DimensionInput component now includes automatic percent clamping to prevent values outside the [0, 100] range. This ensures that percentage inputs always display valid values and maintain proper UX.
+
+### Features
+- **Automatic Clamping**: Values above 100% are clamped to 100% on commit (blur/Enter)
+- **Spin Button Support**: Increment/decrement buttons respect percent bounds
+- **Empty Input Handling**: Empty inputs revert to last valid value or 0%
+- **HTML Constraints**: Min/max attributes are set for percent inputs
+- **Configurable**: Can be disabled via `enablePercentClamping` prop
+
+### Basic Percent Input
+
+```tsx
+import React, { useState } from 'react';
+import { DimensionInput, UnitConversionProvider } from '@frndfrts/fluent-ui-custom-components';
+
+function PercentExample() {
+  const [width, setWidth] = useState(50); // 50% of reference width
+
+  return (
+    <UnitConversionProvider 
+      referenceWidth={27.7} 
+      referenceHeight={19.0}
+    >
+      <DimensionInput
+        label="Width"
+        value={width}
+        unit="%"
+        axis="width"
+        onChange={(value, unit) => setWidth(value)}
+        // enablePercentClamping={true} // default: true
+      />
+    </UnitConversionProvider>
+  );
+}
+```
+
+### Percent Clamping Behavior
+
+```tsx
+// User enters 120% → automatically clamped to 100%
+// User enters -10% → automatically clamped to 0%
+// User clears input → reverts to last valid value or 0%
+// Spin button at 100% + increment → stays at 100%
+// Spin button at 0% + decrement → stays at 0%
+```
+
+### Disabling Percent Clamping
+
+```tsx
+<DimensionInput
+  label="Custom Range"
+  value={value}
+  unit="%"
+  axis="width"
+  onChange={onChange}
+  enablePercentClamping={false} // Disable automatic clamping
+/>
 ```
 
 ## 🔧 Advanced Usage

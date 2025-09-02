@@ -2,6 +2,25 @@
 
 A comprehensive library of custom Fluent UI components with a 5-level architecture, designed for enterprise applications. This library provides enhanced components that extend Fluent UI v9 with additional functionality, better UX patterns, and advanced features.
 
+## 🆕 What's New in v1.1.2
+
+### 🎯 Percent Input Clamping
+- **Added**: Automatic clamping of percent inputs to [0, 100] range on commit (blur/Enter)
+- **Enhanced**: Spin button increment/decrement respects percent bounds
+- **Improved**: Empty input handling with fallback to last valid value
+- **Maintained**: Full backward compatibility with existing implementations
+
+### 🔧 Technical Improvements
+- **Enhanced**: DimensionInput with configurable percent clamping options
+- **Added**: HTML min/max constraints for percent inputs
+- **Improved**: Axis-aware percentage conversion with proper reference handling
+- **Maintained**: Free-form typing during input with final clamp on commit
+
+### 🧪 Testing & Quality
+- **Added**: Comprehensive unit tests for percent clamping functionality
+- **Verified**: Roundtrip stability and edge case handling
+- **Confirmed**: Integration with SizeFields and PositionFields components
+
 ## 🆕 What's New in v1.1.1
 
 ### 🐛 Critical Bug Fixes

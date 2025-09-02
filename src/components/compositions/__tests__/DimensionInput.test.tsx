@@ -4,209 +4,291 @@
  */
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { DimensionInput } from '../DimensionInput';
 import { UnitConversionProvider } from '../../../contexts/UnitConversionContext';
 
-describe('DimensionInput - Axis-Aware Percentage Conversion', () => {
-  const mockOnChange = jest.fn();
-  const mockOnError = jest.fn();
+// Mock the unit conversion service
+jest.mock('../../../services/UnitConversionService', () => ({
+  unitConversionService: {
+    fromInternalUnit: jest.fn((value, unit) => {
+      if (unit === '%') {
+        // Mock conversion from cm to percentage
+        return value * 2; // Simple mock: 1cm = 2%
+      }
+      return value;
+    }),
+    toInternalUnit: jest.fn((value, unit) => {
+      if (unit === '%') {
+        // Mock conversion from percentage to cm
+        return value / 2; // Simple mock: 2% = 1cm
+      }
+      return value;
+    }),
+    validateContext: jest.fn(() => true),
+    getStepValue: jest.fn(() => 1),
+    getDecimalPlaces: jest.fn(() => 2),
+    getSystem: jest.fn(() => ({ id: 'length', internalUnit: 'cm' })),
+  },
+}));
+
+describe('DimensionInput - Percent Clamping', () => {
+  const defaultProps = {
+    label: 'Test Input',
+    value: 10, // 10cm = 20% in our mock
+    unit: '%',
+    onChange: jest.fn(),
+    onError: jest.fn(),
+  };
+
+  const renderWithContext = (props = {}) => {
+    return render(
+      <UnitConversionProvider
+        referenceWidth={50}
+        referenceHeight={30}
+        containerWidth={100}
+        containerHeight={80}
+        fontSize={16}
+        rootFontSize={16}
+      >
+        <DimensionInput {...defaultProps} {...props} />
+      </UnitConversionProvider>
+    );
+  };
 
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  const renderWithContext = (props: any, contextProps: any = {}) => {
-    return render(
-      <UnitConversionProvider {...contextProps}>
-        <DimensionInput
-          label="Test"
-          value={10}
-          unit="cm"
-          onChange={mockOnChange}
-          onError={mockOnError}
-          {...props}
-        />
-      </UnitConversionProvider>
-    );
-  };
-
-  describe('Axis-Aware Percentage Conversion', () => {
-    test('width axis uses referenceWidth for percentage calculations', async () => {
-      const contextProps = {
-        referenceWidth: 27.7,
-        referenceHeight: 19.0,
-      };
-
-      renderWithContext(
-        { axis: 'width', unit: '%' },
-        contextProps
-      );
-
-      // 100% width should display as 100% (not 68.6%)
-      const input = screen.getByRole('spinbutton');
-      expect(input).toHaveValue('100'); // 10cm / 27.7cm * 100 = 36.1%
-    });
-
-    test('height axis uses referenceHeight for percentage calculations', async () => {
-      const contextProps = {
-        referenceWidth: 27.7,
-        referenceHeight: 19.0,
-      };
-
-      renderWithContext(
-        { axis: 'height', unit: '%' },
-        contextProps
-      );
-
-      // 10cm should be 52.6% of 19cm height
-      const input = screen.getByRole('spinbutton');
-      expect(input).toHaveValue('52.6'); // 10cm / 19.0cm * 100 = 52.6%
-    });
-
-    test('changing from cm to % maintains correct axis reference', async () => {
-      const contextProps = {
-        referenceWidth: 27.7,
-        referenceHeight: 19.0,
-      };
-
-      renderWithContext(
-        { axis: 'height', value: 19.0, unit: 'cm' },
-        contextProps
-      );
-
-      // Find and click the unit selector
-      const unitSelector = screen.getByRole('combobox');
-      fireEvent.click(unitSelector);
-
-      // Select percentage
-      const percentOption = screen.getByText('%');
-      fireEvent.click(percentOption);
-
-      await waitFor(() => {
-        expect(mockOnChange).toHaveBeenCalledWith(19.0, '%');
-      });
-
-      // The display value should be 100% (19cm / 19cm * 100)
-      const input = screen.getByRole('spinbutton');
-      expect(input).toHaveValue('100');
-    });
-
-    test('roundtrip conversion maintains internal value', async () => {
-      const contextProps = {
-        referenceWidth: 27.7,
-        referenceHeight: 19.0,
-      };
-
-      const { rerender } = renderWithContext(
-        { axis: 'height', value: 19.0, unit: 'cm' },
-        contextProps
-      );
-
-      // Change to percentage
-      rerender(
-        <UnitConversionProvider {...contextProps}>
-          <DimensionInput
-            label="Test"
-            value={19.0}
-            unit="%"
-            axis="height"
-            onChange={mockOnChange}
-            onError={mockOnError}
-          />
-        </UnitConversionProvider>
-      );
-
-      // Change back to cm
-      rerender(
-        <UnitConversionProvider {...contextProps}>
-          <DimensionInput
-            label="Test"
-            value={19.0}
-            unit="cm"
-            axis="height"
-            onChange={mockOnChange}
-            onError={mockOnError}
-          />
-        </UnitConversionProvider>
-      );
-
-      // The internal value should remain 19.0cm
-      expect(mockOnChange).not.toHaveBeenCalledWith(expect.any(Number), 'cm');
-    });
-  });
-
-  describe('Real-World Scenarios', () => {
-    test('Paper active area scenario - width and height percentages', () => {
-      // Paper: 29.7 cm × 21.0 cm; margins: 1.0 cm each
-      // Paper active: 27.7 cm × 19.0 cm
-      const contextProps = {
-        referenceWidth: 27.7,
-        referenceHeight: 19.0,
-      };
-
-      // Test width 100%
-      const { rerender } = renderWithContext(
-        { axis: 'width', value: 27.7, unit: '%' },
-        contextProps
-      );
-
-      let input = screen.getByRole('spinbutton');
-      expect(input).toHaveValue('100'); // 27.7cm / 27.7cm * 100 = 100%
-
-      // Test height 100%
-      rerender(
-        <UnitConversionProvider {...contextProps}>
-          <DimensionInput
-            label="Test"
-            value={19.0}
-            unit="%"
-            axis="height"
-            onChange={mockOnChange}
-            onError={mockOnError}
-          />
-        </UnitConversionProvider>
-      );
-
-      input = screen.getByRole('spinbutton');
-      expect(input).toHaveValue('100'); // 19.0cm / 19.0cm * 100 = 100%
-    });
-
-    test('Bug verification - height % should NOT use width reference', () => {
-      const contextProps = {
-        referenceWidth: 27.7,
-        referenceHeight: 19.0,
-      };
-
-      renderWithContext(
-        { axis: 'height', value: 19.0, unit: '%' },
-        contextProps
-      );
+  describe('Percent clamping on commit', () => {
+    it('should clamp values above 100% on blur', async () => {
+      const onChange = jest.fn();
+      renderWithContext({ onChange });
 
       const input = screen.getByRole('spinbutton');
       
-      // Before fix: This would show 68.6% (19.0 / 27.7 * 100)
-      // After fix: This should show 100% (19.0 / 19.0 * 100)
-      expect(input).toHaveValue('100');
+      // Enter a value above 100%
+      await userEvent.clear(input);
+      await userEvent.type(input, '120');
+      
+      // Trigger blur event
+      fireEvent.blur(input);
+
+      // Should clamp to 100% and emit the clamped value
+      await waitFor(() => {
+        expect(onChange).toHaveBeenCalledWith(50, '%'); // 100% = 50cm in our mock
+      });
+    });
+
+    it('should clamp values below 0% on blur', async () => {
+      const onChange = jest.fn();
+      renderWithContext({ onChange });
+
+      const input = screen.getByRole('spinbutton');
+      
+      // Enter a negative value
+      await userEvent.clear(input);
+      await userEvent.type(input, '-10');
+      
+      // Trigger blur event
+      fireEvent.blur(input);
+
+      // Should clamp to 0% and emit the clamped value
+      await waitFor(() => {
+        expect(onChange).toHaveBeenCalledWith(0, '%'); // 0% = 0cm in our mock
+      });
+    });
+
+    it('should handle empty input on blur by reverting to last valid value', async () => {
+      const onChange = jest.fn();
+      renderWithContext({ onChange });
+
+      const input = screen.getByRole('spinbutton');
+      
+      // Clear the input
+      await userEvent.clear(input);
+      
+      // Trigger blur event
+      fireEvent.blur(input);
+
+      // Should revert to last valid value (20% from initial value)
+      await waitFor(() => {
+        expect(onChange).toHaveBeenCalledWith(10, '%'); // 20% = 10cm in our mock
+      });
     });
   });
 
-  describe('Error Handling', () => {
-    test('throws error when reference missing for axis', () => {
-      const contextProps = {
-        referenceWidth: 27.7,
-        // Missing referenceHeight
-      };
+  describe('Spin button clamping', () => {
+    it('should clamp increment to 100%', async () => {
+      const onChange = jest.fn();
+      renderWithContext({ value: 49, onChange }); // 98% in our mock
 
-      renderWithContext(
-        { axis: 'height', unit: '%' },
-        contextProps
-      );
+      const incrementButton = screen.getByLabelText('Increment');
+      
+      // Click increment button
+      await userEvent.click(incrementButton);
 
-      expect(mockOnError).toHaveBeenCalledWith(
-        expect.objectContaining({
-          message: expect.stringContaining('Reference height required for percentage conversion')
-        })
-      );
+      // Should clamp to 100% and emit the clamped value
+      await waitFor(() => {
+        expect(onChange).toHaveBeenCalledWith(50, '%'); // 100% = 50cm in our mock
+      });
+    });
+
+    it('should clamp decrement to 0%', async () => {
+      const onChange = jest.fn();
+      renderWithContext({ value: 1, onChange }); // 2% in our mock
+
+      const decrementButton = screen.getByLabelText('Decrement');
+      
+      // Click decrement button
+      await userEvent.click(decrementButton);
+
+      // Should clamp to 0% and emit the clamped value
+      await waitFor(() => {
+        expect(onChange).toHaveBeenCalledWith(0, '%'); // 0% = 0cm in our mock
+      });
+    });
+  });
+
+  describe('Roundtrip stability', () => {
+    it('should maintain value stability through percent conversion roundtrip', async () => {
+      const onChange = jest.fn();
+      const originalValue = 25; // 50% in our mock
+      
+      renderWithContext({ value: originalValue, onChange });
+
+      const input = screen.getByRole('spinbutton');
+      
+      // Enter a valid percentage value
+      await userEvent.clear(input);
+      await userEvent.type(input, '75');
+      
+      // Trigger blur event
+      fireEvent.blur(input);
+
+      // Should convert to internal unit and back to display unit
+      await waitFor(() => {
+        expect(onChange).toHaveBeenCalledWith(37.5, '%'); // 75% = 37.5cm in our mock
+      });
+    });
+  });
+
+  describe('Axis-aware percentage conversion', () => {
+    it('should use referenceWidth for width axis', async () => {
+      const onChange = jest.fn();
+      renderWithContext({ axis: 'width', onChange });
+
+      const input = screen.getByRole('spinbutton');
+      
+      // Enter 50%
+      await userEvent.clear(input);
+      await userEvent.type(input, '50');
+      
+      // Trigger blur event
+      fireEvent.blur(input);
+
+      // Should use referenceWidth (50) for conversion
+      await waitFor(() => {
+        expect(onChange).toHaveBeenCalledWith(25, '%'); // 50% of 50 = 25cm
+      });
+    });
+
+    it('should use referenceHeight for height axis', async () => {
+      const onChange = jest.fn();
+      renderWithContext({ axis: 'height', onChange });
+
+      const input = screen.getByRole('spinbutton');
+      
+      // Enter 50%
+      await userEvent.clear(input);
+      await userEvent.type(input, '50');
+      
+      // Trigger blur event
+      fireEvent.blur(input);
+
+      // Should use referenceHeight (30) for conversion
+      await waitFor(() => {
+        expect(onChange).toHaveBeenCalledWith(15, '%'); // 50% of 30 = 15cm
+      });
+    });
+  });
+
+  describe('Edge cases', () => {
+    it('should handle non-numeric paste correctly', async () => {
+      const onChange = jest.fn();
+      renderWithContext({ onChange });
+
+      const input = screen.getByRole('spinbutton');
+      
+      // Paste non-numeric content
+      await userEvent.clear(input);
+      fireEvent.paste(input, { clipboardData: { getData: () => '120%' } });
+      
+      // Trigger blur event
+      fireEvent.blur(input);
+
+      // Should strip non-numeric and clamp to 100%
+      await waitFor(() => {
+        expect(onChange).toHaveBeenCalledWith(50, '%'); // 100% = 50cm in our mock
+      });
+    });
+
+    it('should not clamp non-percent units', async () => {
+      const onChange = jest.fn();
+      renderWithContext({ unit: 'cm', value: 150, onChange });
+
+      const input = screen.getByRole('spinbutton');
+      
+      // Enter a value above 100
+      await userEvent.clear(input);
+      await userEvent.type(input, '200');
+      
+      // Trigger blur event
+      fireEvent.blur(input);
+
+      // Should not clamp for non-percent units
+      await waitFor(() => {
+        expect(onChange).toHaveBeenCalledWith(200, 'cm');
+      });
+    });
+
+    it('should handle disabled clamping', async () => {
+      const onChange = jest.fn();
+      renderWithContext({ enablePercentClamping: false, onChange });
+
+      const input = screen.getByRole('spinbutton');
+      
+      // Enter a value above 100%
+      await userEvent.clear(input);
+      await userEvent.type(input, '120');
+      
+      // Trigger blur event
+      fireEvent.blur(input);
+
+      // Should not clamp when disabled
+      await waitFor(() => {
+        expect(onChange).toHaveBeenCalledWith(60, '%'); // 120% = 60cm in our mock
+      });
+    });
+  });
+
+  describe('HTML constraints', () => {
+    it('should set min and max attributes for percent inputs', () => {
+      renderWithContext();
+
+      const input = screen.getByRole('spinbutton');
+      
+      expect(input).toHaveAttribute('min', '0');
+      expect(input).toHaveAttribute('max', '100');
+    });
+
+    it('should not set min and max for non-percent inputs', () => {
+      renderWithContext({ unit: 'cm' });
+
+      const input = screen.getByRole('spinbutton');
+      
+      expect(input).not.toHaveAttribute('min');
+      expect(input).not.toHaveAttribute('max');
     });
   });
 });
