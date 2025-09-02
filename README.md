@@ -2,6 +2,20 @@
 
 A comprehensive library of custom Fluent UI components with a 5-level architecture, designed for enterprise applications. This library provides enhanced components that extend Fluent UI v9 with additional functionality, better UX patterns, and advanced features.
 
+## 🆕 What's New in v1.1.3
+
+### 🔧 Export Fixes
+- **Fixed**: ColorsSection import now works from top-level library import
+- **Fixed**: All placeholder sections now properly exported
+- **Added**: Complete type exports for all sections
+- **Maintained**: Full backward compatibility with existing implementations
+
+### 📦 Library Improvements
+- **Enhanced**: All sections now available via top-level import
+- **Added**: Complete TypeScript support for all section components
+- **Verified**: TypeScript compilation and library build successful
+- **Improved**: Consistent export structure across all component levels
+
 ## 🆕 What's New in v1.1.2
 
 ### 🎯 Unified Min/Max Clamping
@@ -210,6 +224,6 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ---
 
-**Current Version**: 1.1.2  
+**Current Version**: 1.1.3  
 **Storybook Version**: 9.1.3  
 **Last Updated**: December 2024

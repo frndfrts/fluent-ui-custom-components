@@ -1,6 +1,20 @@
 # Fluent UI Custom Components - Organization Setup Guide
 
-*This guide provides comprehensive setup instructions for the Fluent UI Custom Components library within your organization. It covers installation, development workflow, contribution guidelines, and troubleshooting. Version 1.1.2 introduces unified min/max clamping, while v1.1.1 brought critical percentage conversion fixes, and v1.1.0 brought comprehensive unit conversion, Storybook 9 upgrade, and enhanced interactive features.*
+*This guide provides comprehensive setup instructions for the Fluent UI Custom Components library within your organization. It covers installation, development workflow, contribution guidelines, and troubleshooting. Version 1.1.3 fixes ColorsSection export issues, while v1.1.2 introduced unified min/max clamping, v1.1.1 brought critical percentage conversion fixes, and v1.1.0 brought comprehensive unit conversion, Storybook 9 upgrade, and enhanced interactive features.*
+
+## 🆕 What's New in v1.1.3
+
+### 🔧 Export Fixes
+- **Fixed**: ColorsSection import now works from top-level library import
+- **Fixed**: All placeholder sections now properly exported
+- **Added**: Complete type exports for all sections
+- **Maintained**: Full backward compatibility with existing implementations
+
+### 📦 Library Improvements
+- **Enhanced**: All sections now available via top-level import
+- **Added**: Complete TypeScript support for all section components
+- **Verified**: TypeScript compilation and library build successful
+- **Improved**: Consistent export structure across all component levels
 
 ## 🆕 What's New in v1.1.2
 
@@ -167,17 +181,18 @@ npm run prepublishOnly   # Pre-publish checks
 
 ## 🔄 Version Management
 
-### Current Version: 1.1.2
+### Current Version: 1.1.3
 
 The library follows semantic versioning (SemVer):
 
 - **Major** (1.x.x): Breaking changes
 - **Minor** (1.1.x): New features, backward compatible
-- **Patch** (1.1.2): Bug fixes, backward compatible
+- **Patch** (1.1.3): Bug fixes, backward compatible
 
 ### Version History
 
-- **v1.1.2** (Current): Unified min/max clamping system
+- **v1.1.3** (Current): ColorsSection export fixes
+- **v1.1.2**: Unified min/max clamping system
 - **v1.1.1**: Critical percentage conversion fixes
 - **v1.1.0**: Storybook 9 upgrade, enhanced unit conversion, new components
 - **v1.0.4**: Interactive stories and unit conversion improvements
@@ -187,9 +202,9 @@ The library follows semantic versioning (SemVer):
 
 ```bash
 # Update version in package.json
-npm version patch  # 1.1.2 -> 1.1.3
-npm version minor  # 1.1.2 -> 1.2.0
-npm version major  # 1.1.2 -> 2.0.0
+npm version patch  # 1.1.3 -> 1.1.4
+npm version minor  # 1.1.3 -> 1.2.0
+npm version major  # 1.1.3 -> 2.0.0
 ```
 
 ## 🔄 Unit Conversion System
@@ -453,7 +468,7 @@ npm test
 
 # 3. Commit changes
 git add .
-git commit -m "Release v1.1.2"
+git commit -m "Release v1.1.3"
 
 # 4. Push to GitHub
 git push origin main
@@ -471,7 +486,7 @@ npm publish
 ```json
 {
   "name": "@frndfrts/fluent-ui-custom-components",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   }
@@ -635,6 +650,6 @@ DEBUG=rollup:* npm run build
 
 ---
 
-**Current Version**: 1.1.2  
+**Current Version**: 1.1.3  
 **Storybook Version**: 9.1.3  
 **Last Updated**: December 2024

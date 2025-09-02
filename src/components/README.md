@@ -1,6 +1,20 @@
 # Fluent UI Custom Components - Component Documentation
 
-*This document provides detailed information about the component architecture, hierarchy, and usage patterns for the Fluent UI Custom Components library. Version 1.1.2 introduces unified min/max clamping, while v1.1.1 brought critical percentage conversion fixes, and v1.1.0 brought comprehensive unit conversion, Storybook 9 upgrade, and enhanced interactive features.*
+*This document provides detailed information about the component architecture, hierarchy, and usage patterns for the Fluent UI Custom Components library. Version 1.1.3 fixes ColorsSection export issues, while v1.1.2 introduced unified min/max clamping, v1.1.1 brought critical percentage conversion fixes, and v1.1.0 brought comprehensive unit conversion, Storybook 9 upgrade, and enhanced interactive features.*
+
+## 🆕 What's New in v1.1.3
+
+### 🔧 Export Fixes
+- **Fixed**: ColorsSection import now works from top-level library import
+- **Fixed**: All placeholder sections now properly exported
+- **Added**: Complete type exports for all sections
+- **Maintained**: Full backward compatibility with existing implementations
+
+### 📦 Library Improvements
+- **Enhanced**: All sections now available via top-level import
+- **Added**: Complete TypeScript support for all section components
+- **Verified**: TypeScript compilation and library build successful
+- **Improved**: Consistent export structure across all component levels
 
 ## 🆕 What's New in v1.1.2
 
@@ -535,6 +549,6 @@ describe('ComponentName', () => {
 
 ---
 
-**Current Version**: 1.1.2  
+**Current Version**: 1.1.3  
 **Storybook Version**: 9.1.3  
 **Last Updated**: December 2024
