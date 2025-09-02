@@ -1,6 +1,25 @@
 # Fluent UI Custom Components - Component Documentation
 
-*This document provides detailed information about the component architecture, hierarchy, and usage patterns for the Fluent UI Custom Components library. Version 1.1.1 introduces critical percentage conversion fixes, while v1.1.0 brought comprehensive unit conversion, Storybook 9 upgrade, and enhanced interactive features.*
+*This document provides detailed information about the component architecture, hierarchy, and usage patterns for the Fluent UI Custom Components library. Version 1.1.2 introduces unified min/max clamping, while v1.1.1 brought critical percentage conversion fixes, and v1.1.0 brought comprehensive unit conversion, Storybook 9 upgrade, and enhanced interactive features.*
+
+## 🆕 What's New in v1.1.2
+
+### 🎯 Unified Min/Max Clamping
+- **Added**: Unified clamping system based on unit system constraints and context
+- **Enhanced**: Automatic min/max calculation for percentage units (0-100%)
+- **Improved**: Support for custom min/max constraints in internal units
+- **Maintained**: Full backward compatibility with existing implementations
+
+### 🔧 Technical Improvements
+- **Enhanced**: NumericInput handles all clamping at the primitive level
+- **Added**: DimensionInput calculates appropriate min/max based on unit system
+- **Improved**: Axis-aware percentage bounds calculation
+- **Maintained**: Free-form typing during input with final clamp on commit
+
+### 🧪 Testing & Quality
+- **Added**: Comprehensive unit tests for unified clamping functionality
+- **Verified**: Roundtrip stability and edge case handling
+- **Confirmed**: Integration with SizeFields and PositionFields components
 
 ## 🆕 What's New in v1.1.1
 
@@ -516,6 +535,6 @@ describe('ComponentName', () => {
 
 ---
 
-**Current Version**: 1.1.1  
+**Current Version**: 1.1.2  
 **Storybook Version**: 9.1.3  
 **Last Updated**: December 2024

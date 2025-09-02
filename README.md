@@ -210,6 +210,6 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ---
 
-**Current Version**: 1.1.1  
+**Current Version**: 1.1.2  
 **Storybook Version**: 9.1.3  
 **Last Updated**: December 2024
