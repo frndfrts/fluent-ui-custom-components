@@ -1,6 +1,20 @@
 # Fluent UI Custom Components - Component Documentation
 
-*This document provides detailed information about the component architecture, hierarchy, and usage patterns for the Fluent UI Custom Components library. Version 1.1.3 fixes ColorsSection export issues, while v1.1.2 introduced unified min/max clamping, v1.1.1 brought critical percentage conversion fixes, and v1.1.0 brought comprehensive unit conversion, Storybook 9 upgrade, and enhanced interactive features.*
+*This document provides detailed information about the component architecture, hierarchy, and usage patterns for the Fluent UI Custom Components library. Version 1.2.0 brings ColorsSection width consistency, while v1.1.3 fixed ColorsSection export issues, v1.1.2 introduced unified min/max clamping, v1.1.1 brought critical percentage conversion fixes, and v1.1.0 brought comprehensive unit conversion, Storybook 9 upgrade, and enhanced interactive features.*
+
+## 🆕 What's New in v1.2.0
+
+### 🎨 ColorsSection Width Consistency
+- **Fixed**: ColorsSection now uses 320px width to match other main sections
+- **Enhanced**: Optimized label width allocation for "Followed Hyperlink:" and other labels
+- **Improved**: Reduced hex input field size for better space utilization
+- **Maintained**: Full functionality while achieving consistent layout
+
+### 🔧 Component Optimizations
+- **Enhanced**: LabeledColorPicker supports custom label widths
+- **Improved**: HexInput uses small size (60px) for compact layouts
+- **Optimized**: Better space allocation across all color picker components
+- **Maintained**: Full backward compatibility with existing implementations
 
 ## 🆕 What's New in v1.1.3
 
@@ -549,6 +563,6 @@ describe('ComponentName', () => {
 
 ---
 
-**Current Version**: 1.1.3  
+**Current Version**: 1.2.0  
 **Storybook Version**: 9.1.3  
 **Last Updated**: December 2024

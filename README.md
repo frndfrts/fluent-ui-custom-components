@@ -2,6 +2,20 @@
 
 A comprehensive library of custom Fluent UI components with a 5-level architecture, designed for enterprise applications. This library provides enhanced components that extend Fluent UI v9 with additional functionality, better UX patterns, and advanced features.
 
+## 🆕 What's New in v1.2.0
+
+### 🎨 ColorsSection Width Consistency
+- **Fixed**: ColorsSection now uses 320px width to match other main sections
+- **Enhanced**: Optimized label width allocation for "Followed Hyperlink:" and other labels
+- **Improved**: Reduced hex input field size for better space utilization
+- **Maintained**: Full functionality while achieving consistent layout
+
+### 🔧 Component Optimizations
+- **Enhanced**: LabeledColorPicker supports custom label widths
+- **Improved**: HexInput uses small size (60px) for compact layouts
+- **Optimized**: Better space allocation across all color picker components
+- **Maintained**: Full backward compatibility with existing implementations
+
 ## 🆕 What's New in v1.1.3
 
 ### 🔧 Export Fixes
@@ -224,6 +238,6 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ---
 
-**Current Version**: 1.1.3  
+**Current Version**: 1.2.0  
 **Storybook Version**: 9.1.3  
 **Last Updated**: December 2024
