@@ -4,20 +4,20 @@ A comprehensive library of custom Fluent UI components with a 5-level architectu
 
 ## 🆕 What's New in v1.1.2
 
-### 🎯 Percent Input Clamping
-- **Added**: Automatic clamping of percent inputs to [0, 100] range on commit (blur/Enter)
-- **Enhanced**: Spin button increment/decrement respects percent bounds
-- **Improved**: Empty input handling with fallback to last valid value
+### 🎯 Unified Min/Max Clamping
+- **Added**: Unified clamping system based on unit system constraints and context
+- **Enhanced**: Automatic min/max calculation for percentage units (0-100%)
+- **Improved**: Support for custom min/max constraints in internal units
 - **Maintained**: Full backward compatibility with existing implementations
 
 ### 🔧 Technical Improvements
-- **Enhanced**: DimensionInput with configurable percent clamping options
-- **Added**: HTML min/max constraints for percent inputs
-- **Improved**: Axis-aware percentage conversion with proper reference handling
+- **Enhanced**: NumericInput handles all clamping at the primitive level
+- **Added**: DimensionInput calculates appropriate min/max based on unit system
+- **Improved**: Axis-aware percentage bounds calculation
 - **Maintained**: Free-form typing during input with final clamp on commit
 
 ### 🧪 Testing & Quality
-- **Added**: Comprehensive unit tests for percent clamping functionality
+- **Added**: Comprehensive unit tests for unified clamping functionality
 - **Verified**: Roundtrip stability and edge case handling
 - **Confirmed**: Integration with SizeFields and PositionFields components
 

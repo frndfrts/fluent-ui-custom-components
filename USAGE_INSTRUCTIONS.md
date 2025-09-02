@@ -1,23 +1,23 @@
-# Fluent UI Custom Components - Usage Instructions
+ic percentage clamping behavior. # Fluent UI Custom Components - Usage Instructions
 
 *This library is designed to work seamlessly with Fluent UI v9 and provides enterprise-grade components for professional applications. All components are built with accessibility, performance, and maintainability in mind. Version 1.1.2 introduces percent input clamping, while v1.1.1 brought critical percentage conversion fixes, and v1.1.0 brought comprehensive unit conversion, Storybook 9 upgrade, and enhanced interactive features.*
 
 ## 🆕 What's New in v1.1.2
 
-### 🎯 Percent Input Clamping
-- **Added**: Automatic clamping of percent inputs to [0, 100] range on commit (blur/Enter)
-- **Enhanced**: Spin button increment/decrement respects percent bounds
-- **Improved**: Empty input handling with fallback to last valid value
+### 🎯 Unified Min/Max Clamping
+- **Added**: Unified clamping system based on unit system constraints and context
+- **Enhanced**: Automatic min/max calculation for percentage units (0-100%)
+- **Improved**: Support for custom min/max constraints in internal units
 - **Maintained**: Full backward compatibility with existing implementations
 
 ### 🔧 Technical Improvements
-- **Enhanced**: DimensionInput with configurable percent clamping options
-- **Added**: HTML min/max constraints for percent inputs
-- **Improved**: Axis-aware percentage conversion with proper reference handling
+- **Enhanced**: NumericInput handles all clamping at the primitive level
+- **Added**: DimensionInput calculates appropriate min/max based on unit system
+- **Improved**: Axis-aware percentage bounds calculation
 - **Maintained**: Free-form typing during input with final clamp on commit
 
 ### 🧪 Testing & Quality
-- **Added**: Comprehensive unit tests for percent clamping functionality
+- **Added**: Comprehensive unit tests for unified clamping functionality
 - **Verified**: Roundtrip stability and edge case handling
 - **Confirmed**: Integration with SizeFields and PositionFields components
 
@@ -235,19 +235,19 @@ function PreviewExample() {
 }
 ```
 
-## 🎯 Percent Input Clamping
+## 🎯 Unified Min/Max Clamping
 
 ### Overview
-The DimensionInput component now includes automatic percent clamping to prevent values outside the [0, 100] range. This ensures that percentage inputs always display valid values and maintain proper UX.
+The DimensionInput component now uses a unified clamping system that works with any unit of measure, including percentages. Clamping is handled at the NumericInput primitive level based on calculated min/max constraints derived from the unit system and context.
 
 ### Features
-- **Automatic Clamping**: Values above 100% are clamped to 100% on commit (blur/Enter)
-- **Spin Button Support**: Increment/decrement buttons respect percent bounds
-- **Empty Input Handling**: Empty inputs revert to last valid value or 0%
-- **HTML Constraints**: Min/max attributes are set for percent inputs
-- **Configurable**: Can be disabled via `enablePercentClamping` prop
+- **Unified Clamping**: All units use the same clamping logic at the primitive level
+- **Automatic Bounds**: Percentage units automatically get 0-100% bounds
+- **Custom Constraints**: Support for custom min/max values in internal units
+- **Axis-Aware**: Percentage bounds calculated based on correct axis reference
+- **HTML Constraints**: Min/max attributes set automatically for all constrained inputs
 
-### Basic Percent Input
+### Basic Usage with Automatic Bounds
 
 ```tsx
 import React, { useState } from 'react';
@@ -267,34 +267,39 @@ function PercentExample() {
         unit="%"
         axis="width"
         onChange={(value, unit) => setWidth(value)}
-        // enablePercentClamping={true} // default: true
+        // Automatically gets 0-100% bounds
       />
     </UnitConversionProvider>
   );
 }
 ```
 
-### Percent Clamping Behavior
-
-```tsx
-// User enters 120% → automatically clamped to 100%
-// User enters -10% → automatically clamped to 0%
-// User clears input → reverts to last valid value or 0%
-// Spin button at 100% + increment → stays at 100%
-// Spin button at 0% + decrement → stays at 0%
-```
-
-### Disabling Percent Clamping
+### Custom Min/Max Constraints
 
 ```tsx
 <DimensionInput
   label="Custom Range"
   value={value}
-  unit="%"
+  unit="cm"
   axis="width"
   onChange={onChange}
-  enablePercentClamping={false} // Disable automatic clamping
+  min={10}  // 10cm minimum
+  max={50}  // 50cm maximum
 />
+```
+
+### Clamping Behavior
+
+```tsx
+// For percentage units (automatic 0-100% bounds):
+// User enters 120% → automatically clamped to 100%
+// User enters -10% → automatically clamped to 0%
+// Spin button at 100% + increment → stays at 100%
+
+// For custom constraints:
+// User enters value above max → clamped to max
+// User enters value below min → clamped to min
+// Empty input → accepted as empty value
 ```
 
 ## 🔧 Advanced Usage

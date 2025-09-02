@@ -32,7 +32,7 @@ jest.mock('../../../services/UnitConversionService', () => ({
   },
 }));
 
-describe('DimensionInput - Percent Clamping', () => {
+describe('DimensionInput - Unified Min/Max Clamping', () => {
   const defaultProps = {
     label: 'Test Input',
     value: 10, // 10cm = 20% in our mock
@@ -60,8 +60,8 @@ describe('DimensionInput - Percent Clamping', () => {
     jest.clearAllMocks();
   });
 
-  describe('Percent clamping on commit', () => {
-    it('should clamp values above 100% on blur', async () => {
+  describe('Unified clamping on commit', () => {
+    it('should clamp values above max on blur', async () => {
       const onChange = jest.fn();
       renderWithContext({ onChange });
 
@@ -80,7 +80,7 @@ describe('DimensionInput - Percent Clamping', () => {
       });
     });
 
-    it('should clamp values below 0% on blur', async () => {
+    it('should clamp values below min on blur', async () => {
       const onChange = jest.fn();
       renderWithContext({ onChange });
 
@@ -99,7 +99,7 @@ describe('DimensionInput - Percent Clamping', () => {
       });
     });
 
-    it('should handle empty input on blur by reverting to last valid value', async () => {
+    it('should handle empty input on blur by accepting empty value', async () => {
       const onChange = jest.fn();
       renderWithContext({ onChange });
 
@@ -111,15 +111,15 @@ describe('DimensionInput - Percent Clamping', () => {
       // Trigger blur event
       fireEvent.blur(input);
 
-      // Should revert to last valid value (20% from initial value)
+      // Should accept empty value
       await waitFor(() => {
-        expect(onChange).toHaveBeenCalledWith(10, '%'); // 20% = 10cm in our mock
+        expect(onChange).toHaveBeenCalledWith('', '%');
       });
     });
   });
 
   describe('Spin button clamping', () => {
-    it('should clamp increment to 100%', async () => {
+    it('should clamp increment to max', async () => {
       const onChange = jest.fn();
       renderWithContext({ value: 49, onChange }); // 98% in our mock
 
@@ -134,7 +134,7 @@ describe('DimensionInput - Percent Clamping', () => {
       });
     });
 
-    it('should clamp decrement to 0%', async () => {
+    it('should clamp decrement to min', async () => {
       const onChange = jest.fn();
       renderWithContext({ value: 1, onChange }); // 2% in our mock
 
@@ -151,7 +151,7 @@ describe('DimensionInput - Percent Clamping', () => {
   });
 
   describe('Roundtrip stability', () => {
-    it('should maintain value stability through percent conversion roundtrip', async () => {
+    it('should maintain value stability through unit conversion roundtrip', async () => {
       const onChange = jest.fn();
       const originalValue = 25; // 50% in our mock
       
@@ -173,8 +173,8 @@ describe('DimensionInput - Percent Clamping', () => {
     });
   });
 
-  describe('Axis-aware percentage conversion', () => {
-    it('should use referenceWidth for width axis', async () => {
+  describe('Axis-aware min/max calculation', () => {
+    it('should use referenceWidth for width axis percentage bounds', async () => {
       const onChange = jest.fn();
       renderWithContext({ axis: 'width', onChange });
 
@@ -193,7 +193,7 @@ describe('DimensionInput - Percent Clamping', () => {
       });
     });
 
-    it('should use referenceHeight for height axis', async () => {
+    it('should use referenceHeight for height axis percentage bounds', async () => {
       const onChange = jest.fn();
       renderWithContext({ axis: 'height', onChange });
 
@@ -209,6 +209,54 @@ describe('DimensionInput - Percent Clamping', () => {
       // Should use referenceHeight (30) for conversion
       await waitFor(() => {
         expect(onChange).toHaveBeenCalledWith(15, '%'); // 50% of 30 = 15cm
+      });
+    });
+  });
+
+  describe('Custom min/max constraints', () => {
+    it('should use provided min/max values in internal units', async () => {
+      const onChange = jest.fn();
+      renderWithContext({ 
+        min: 5, // 5cm = 10% in our mock
+        max: 25, // 25cm = 50% in our mock
+        onChange 
+      });
+
+      const input = screen.getByRole('spinbutton');
+      
+      // Enter a value above max
+      await userEvent.clear(input);
+      await userEvent.type(input, '60');
+      
+      // Trigger blur event
+      fireEvent.blur(input);
+
+      // Should clamp to max (50%)
+      await waitFor(() => {
+        expect(onChange).toHaveBeenCalledWith(25, '%'); // 50% = 25cm in our mock
+      });
+    });
+
+    it('should clamp to provided min value', async () => {
+      const onChange = jest.fn();
+      renderWithContext({ 
+        min: 5, // 5cm = 10% in our mock
+        max: 25, // 25cm = 50% in our mock
+        onChange 
+      });
+
+      const input = screen.getByRole('spinbutton');
+      
+      // Enter a value below min
+      await userEvent.clear(input);
+      await userEvent.type(input, '5');
+      
+      // Trigger blur event
+      fireEvent.blur(input);
+
+      // Should clamp to min (10%)
+      await waitFor(() => {
+        expect(onChange).toHaveBeenCalledWith(5, '%'); // 10% = 5cm in our mock
       });
     });
   });
@@ -233,7 +281,7 @@ describe('DimensionInput - Percent Clamping', () => {
       });
     });
 
-    it('should not clamp non-percent units', async () => {
+    it('should not clamp non-percent units without custom min/max', async () => {
       const onChange = jest.fn();
       renderWithContext({ unit: 'cm', value: 150, onChange });
 
@@ -246,34 +294,40 @@ describe('DimensionInput - Percent Clamping', () => {
       // Trigger blur event
       fireEvent.blur(input);
 
-      // Should not clamp for non-percent units
+      // Should not clamp for non-percent units without custom constraints
       await waitFor(() => {
         expect(onChange).toHaveBeenCalledWith(200, 'cm');
       });
     });
 
-    it('should handle disabled clamping', async () => {
+    it('should apply custom min/max to non-percent units', async () => {
       const onChange = jest.fn();
-      renderWithContext({ enablePercentClamping: false, onChange });
+      renderWithContext({ 
+        unit: 'cm', 
+        value: 150, 
+        min: 0,
+        max: 100,
+        onChange 
+      });
 
       const input = screen.getByRole('spinbutton');
       
-      // Enter a value above 100%
+      // Enter a value above max
       await userEvent.clear(input);
-      await userEvent.type(input, '120');
+      await userEvent.type(input, '200');
       
       // Trigger blur event
       fireEvent.blur(input);
 
-      // Should not clamp when disabled
+      // Should clamp to max
       await waitFor(() => {
-        expect(onChange).toHaveBeenCalledWith(60, '%'); // 120% = 60cm in our mock
+        expect(onChange).toHaveBeenCalledWith(100, 'cm');
       });
     });
   });
 
   describe('HTML constraints', () => {
-    it('should set min and max attributes for percent inputs', () => {
+    it('should set min and max attributes for percentage inputs', () => {
       renderWithContext();
 
       const input = screen.getByRole('spinbutton');
@@ -282,7 +336,16 @@ describe('DimensionInput - Percent Clamping', () => {
       expect(input).toHaveAttribute('max', '100');
     });
 
-    it('should not set min and max for non-percent inputs', () => {
+    it('should set min and max for custom constraints', () => {
+      renderWithContext({ min: 10, max: 90 });
+
+      const input = screen.getByRole('spinbutton');
+      
+      expect(input).toHaveAttribute('min', '20'); // 10cm = 20% in our mock
+      expect(input).toHaveAttribute('max', '180'); // 90cm = 180% in our mock
+    });
+
+    it('should not set min and max for non-percent inputs without constraints', () => {
       renderWithContext({ unit: 'cm' });
 
       const input = screen.getByRole('spinbutton');
