@@ -87,6 +87,30 @@ export { PaperSection } from './sections/PaperSection';
 export { NotesSection } from './sections/NotesSection';
 export { SlidesSection } from './sections/SlidesSection';
 export { PreviewSection } from './sections/PreviewSection';
+export { ColorsSection } from './sections/ColorsSection';
+
+// Placeholder section components
+export { TitlePlaceholderSection } from './sections/TitlePlaceholderSection';
+export { SubtitlePlaceholderSection } from './sections/SubtitlePlaceholderSection';
+export { BodyPlaceholderSection } from './sections/BodyPlaceholderSection';
+export { FootnotePlaceholderSection } from './sections/FootnotePlaceholderSection';
+export { SourcePlaceholderSection } from './sections/SourcePlaceholderSection';
+export { LogoPlaceholderSection } from './sections/LogoPlaceholderSection';
+export { PageNumberPlaceholderSection } from './sections/PageNumberPlaceholderSection';
+
+// Section type exports
+export type { PaperSectionProps } from './sections/PaperSection';
+export type { NotesSectionProps } from './sections/NotesSection';
+export type { SlidesSectionProps } from './sections/SlidesSection';
+export type { PreviewSectionProps } from './sections/PreviewSection';
+export type { ColorsSectionProps } from './sections/ColorsSection';
+export type { TitlePlaceholderSectionProps } from './sections/TitlePlaceholderSection';
+export type { SubtitlePlaceholderSectionProps } from './sections/SubtitlePlaceholderSection';
+export type { BodyPlaceholderSectionProps } from './sections/BodyPlaceholderSection';
+export type { FootnotePlaceholderSectionProps } from './sections/FootnotePlaceholderSection';
+export type { SourcePlaceholderSectionProps } from './sections/SourcePlaceholderSection';
+export type { LogoPlaceholderSectionProps } from './sections/LogoPlaceholderSection';
+export type { PageNumberPlaceholderSectionProps } from './sections/PageNumberPlaceholderSection';
 
 // ============================================================================
 // LEGACY (Level 6) - Backward compatibility components
