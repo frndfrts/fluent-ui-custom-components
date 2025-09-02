@@ -19,7 +19,7 @@ const useStyles = makeStyles({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    minWidth: '160px',
+    minWidth: '120px',
     flexShrink: 0,
   },
   label: {

@@ -18,9 +18,9 @@ const useStyles = makeStyles({
     maxWidth: '100%',
   },
   card: {
-    width: '400px',
-    maxWidth: '400px',
-    minWidth: '400px',
+    width: '320px',
+    maxWidth: '320px',
+    minWidth: '320px',
   },
   colorPickerContainer: {
     display: 'flex',
@@ -178,6 +178,8 @@ export const ColorsSection = React.memo<ColorsSectionProps>(({
           label={label}
           disabled={disabled}
           onError={onError}
+          labelWidth={140}
+          size="small"
         />
       </div>
     );
