@@ -1,393 +1,620 @@
-# Personal GitHub Account Setup Guide - GitHub Packages
+# Fluent UI Custom Components - Organization Setup Guide
 
-This guide explains how to set up and use this component library under your personal GitHub account using GitHub Packages.
+*This guide provides comprehensive setup instructions for the Fluent UI Custom Components library within your organization. It covers installation, development workflow, contribution guidelines, and troubleshooting. Version 1.1.1 introduces critical percentage conversion fixes, while v1.1.0 brought comprehensive unit conversion, Storybook 9 upgrade, and enhanced interactive features.*
+
+## 🆕 What's New in v1.1.1
+
+### 🐛 Critical Bug Fixes
+- **Fixed**: Height percentage calculations now use correct referenceHeight instead of referenceWidth
+- **Fixed**: Y-coordinate percentage calculations use proper axis reference
+- **Fixed**: Eliminates UX confusion where height % showed incorrect values (e.g., 68.6% instead of 100%)
+
+### 🔧 Technical Improvements
+- **Enhanced**: UnitConversionService with axis-aware percentage conversion
+- **Added**: Axis property to UnitConversionContext interface for precise coordinate handling
+- **Improved**: Error messages for missing axis references
+- **Maintained**: Full backward compatibility with existing implementations
+
+### 🧪 Testing & Quality
+- **Added**: Comprehensive unit tests for axis-aware percentage conversion
+- **Verified**: Real-world paper active area scenarios
+- **Confirmed**: Roundtrip conversion stability across all axes
 
 ## 🆕 What's New in v1.1.0
 
-### ✨ **Storybook 9 Upgrade**
-- **Upgraded from v8.6.14 to v9.1.3**
-- **Modern framework-based configuration**
-- **Built-in addons**: Actions, Controls, Viewport, Backgrounds
-- **Enhanced performance**: 566ms manager startup, 19s preview
-- **Webpack 5 optimization**: Bundle splitting and caching
+### 🎨 New Components
+- **TabbedNavbar**: Advanced navigation component with tab management and focus handling
+- **PreviewSection**: Comprehensive preview area with integrated layout management
+- **PreviewPanel**: Flexible panel system for content organization
 
-### 🔄 **Comprehensive Unit Conversion System**
-- **5 Unit Systems**: Length, Temperature, Volume, Weight, Energy
-- **Full Precision**: Internal storage in standard units (cm, °C, ml, g, J)
-- **Smart Conversion**: Automatic unit conversion with proper precision
-- **Context-Aware**: Support for relative units (%, vw, vh, em, rem)
+### 🔄 Enhanced Unit Conversion System
+- **Multi-System Support**: Length, temperature, volume, weight, and energy units
+- **Context-Aware Calculations**: Relative units (%, vw, vh, em, rem) with proper reference handling
+- **Axis-Aware Percentage**: Width/height and x/y coordinates use correct reference dimensions
+- **Precision Preservation**: Full internal precision with appropriate display formatting
 
-### 🆕 **New Components**
-- **TabbedNavbar**: Navigation component with focus management
-- **PreviewSection**: Section-level preview component
-- **PreviewPanel**: Panel-level preview component
+### 📚 Storybook 9 Upgrade
+- **Latest Version**: Upgraded to Storybook 9.1.3 with modern architecture
+- **Interactive Stories**: Real-time component interaction
+- **Enhanced Documentation**: Comprehensive examples and usage patterns
 
-### 🎯 **Interactive Storybook Stories**
-- **State Management**: Proper React.useState for all stories
-- **Real-time Updates**: Live component interaction
-- **Enhanced Documentation**: Better examples and usage
+### 🎯 Component Improvements
+- **DimensionInput**: Enhanced with unit systems and axis-aware calculations
+- **UnitSelector**: Universal selector with built-in display mapping
+- **Interactive Panels**: All panels now reflect real-time user selections
 
-## Prerequisites
+## 📋 Table of Contents
 
-- GitHub personal account (`frndfrts`)
-- Repository access permissions
-- Node.js and npm installed
-- GitHub Personal Access Token (PAT) with appropriate permissions
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Development Setup](#development-setup)
+- [Version Management](#version-management)
+- [Unit Conversion System](#unit-conversion-system)
+- [Storybook Development](#storybook-development)
+- [Testing](#testing)
+- [Building](#building)
+- [Publishing](#publishing)
+- [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
 
-## Step 1: Personal Repository Setup
+## 🔧 Prerequisites
 
-### 1.1 Create Personal Repository
+### System Requirements
+- **Node.js**: 16.0.0 or higher
+- **npm**: 8.0.0 or higher (or yarn 1.22.0+)
+- **Git**: Latest stable version
+- **GitHub Access**: Access to the organization repository
+- **GitHub Token**: Personal Access Token with appropriate permissions
 
-1. Go to your GitHub account (`frndfrts`)
-2. Click "New repository"
-3. Name: `fluent-ui-custom-components`
-4. Set to **Private** (or Public if you prefer)
-5. Add description: "Custom Fluent UI component library with 5-level architecture"
-6. Initialize with README, .gitignore, and license
+### Required Permissions
+Your GitHub Personal Access Token needs these permissions:
+- `repo` - Full control of private repositories
+- `read:packages` - Download packages from GitHub Package Registry
+- `write:packages` - Upload packages to GitHub Package Registry
+- `delete:packages` - Delete packages from GitHub Package Registry
 
-### 1.2 Push This Code
+## 🚀 Installation
+
+### Step 1: Clone the Repository
 
 ```bash
-# Clone the new repository
 git clone https://github.com/frndfrts/fluent-ui-custom-components.git
 cd fluent-ui-custom-components
-
-# Copy all files from this project
-# (You'll need to manually copy the source code)
-
-# Commit and push
-git add .
-git commit -m "Initial commit: Fluent UI Custom Components library v1.1.0"
-git push origin main
 ```
 
-## Step 2: Configure GitHub Packages
+### Step 2: Install Dependencies
 
-### 2.1 Update Package Configuration
+```bash
+npm install
+```
 
-The `package.json` has been updated with:
-- Personal account scope: `@frndfrts/fluent-ui-custom-components`
-- Version: `1.1.0`
-- GitHub Packages registry configuration
-- Repository URL format
+### Step 3: Set Up Environment Variables
 
-### 2.2 Create .npmrc File
+Create a `.env` file in the root directory:
 
-The `.npmrc` file is configured for your personal account:
+```bash
+# GitHub Personal Access Token
+GITHUB_TOKEN=your_github_personal_access_token
+
+# NPM Registry Configuration
+NPM_REGISTRY=https://npm.pkg.github.com
+```
+
+### Step 4: Configure npm for GitHub Packages
+
+Create `.npmrc` file in the root directory:
+
 ```ini
 @frndfrts:registry=https://npm.pkg.github.com
 //npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
 ```
 
-## Step 3: First Publication
+## 🛠️ Development Setup
 
-### 3.1 Manual Publication (First Time)
+### Start Development Server
 
 ```bash
-# Login to GitHub Packages
-npm login --scope=@frndfrts --registry=https://npm.pkg.github.com
+# Start Storybook for component development
+npm run dev
 
-# When prompted:
-# Username: your-github-username
-# Password: your-github-personal-access-token
-# Email: your-github-email
+# Or start Storybook directly
+npm run storybook
+```
 
-# Build the package
+### Available Scripts
+
+```bash
+# Development
+npm run dev              # Start Storybook development server
+npm run storybook        # Start Storybook (same as dev)
+
+# Building
+npm run build            # Build the library
+npm run build:types      # Generate TypeScript declarations
+npm run build:all        # Build everything (types + library)
+npm run build:ci         # Build for CI with optimized settings
+
+# Testing
+npm test                 # Run all tests
+npm run test:coverage    # Run tests with coverage report
+
+# Storybook
+npm run build-storybook  # Build static Storybook
+
+# Utilities
+npm run clean            # Clean build artifacts
+npm run prepublishOnly   # Pre-publish checks
+```
+
+## 🔄 Version Management
+
+### Current Version: 1.1.1
+
+The library follows semantic versioning (SemVer):
+
+- **Major** (1.x.x): Breaking changes
+- **Minor** (1.1.x): New features, backward compatible
+- **Patch** (1.1.1): Bug fixes, backward compatible
+
+### Version History
+
+- **v1.1.1** (Current): Critical percentage conversion fixes
+- **v1.1.0**: Storybook 9 upgrade, enhanced unit conversion, new components
+- **v1.0.4**: Interactive stories and unit conversion improvements
+- **v1.0.3**: Initial release with core components
+
+### Updating Version
+
+```bash
+# Update version in package.json
+npm version patch  # 1.1.1 -> 1.1.2
+npm version minor  # 1.1.1 -> 1.2.0
+npm version major  # 1.1.1 -> 2.0.0
+```
+
+## 🔄 Unit Conversion System
+
+### Overview
+
+The library includes a comprehensive unit conversion system with 5 unit types:
+
+1. **Length System** (Internal: cm)
+2. **Temperature System** (Internal: °C)
+3. **Volume System** (Internal: ml)
+4. **Weight System** (Internal: g)
+5. **Energy System** (Internal: J)
+
+### Key Features
+
+- **Axis-Aware Percentage**: Width/height and x/y coordinates use correct references
+- **Context-Aware**: Relative units (%, vw, vh, em, rem) with proper context
+- **Precision Preservation**: Full internal precision with appropriate display
+- **Backward Compatibility**: Existing code continues to work
+
+### Usage in Development
+
+```tsx
+// Provide context for relative units
+<UnitConversionProvider 
+  referenceWidth={27.7} 
+  referenceHeight={19.0}
+  containerWidth={30.0}
+  containerHeight={20.0}
+>
+  <DimensionInput
+    label="Width"
+    value={15}
+    unit="%"
+    axis="width"  // Uses referenceWidth
+    onChange={(value, unit) => console.log(value, unit)}
+  />
+  
+  <DimensionInput
+    label="Height"
+    value={10}
+    unit="%"
+    axis="height"  // Uses referenceHeight
+    onChange={(value, unit) => console.log(value, unit)}
+  />
+</UnitConversionProvider>
+```
+
+### Testing Unit Conversion
+
+```bash
+# Run unit conversion tests
+npm test -- --testPathPattern=UnitConversionService.test.ts
+
+# Run component tests
+npm test -- --testPathPattern=DimensionInput.test.tsx
+```
+
+## 📚 Storybook Development
+
+### Storybook 9.1.3 Features
+
+- **Framework-based Configuration**: Modern architecture
+- **Interactive Stories**: Real-time component interaction
+- **Enhanced Performance**: Faster startup and build times
+- **Webpack 5**: Optimized bundling
+
+### Development Workflow
+
+1. **Start Storybook**:
+   ```bash
+   npm run dev
+   ```
+
+2. **Navigate to**: `http://localhost:6006`
+
+3. **Edit Stories**: Modify `.stories.tsx` files for component examples
+
+4. **Interactive Testing**: Use Storybook controls to test components
+
+### Story Structure
+
+```tsx
+// Example story structure
+export default {
+  title: 'Compositions/DimensionInput',
+  component: DimensionInput,
+  parameters: {
+    docs: {
+      description: {
+        component: 'Enhanced dimension input with unit conversion'
+      }
+    }
+  },
+  argTypes: {
+    label: { control: 'text' },
+    value: { control: 'number' },
+    unit: { control: 'select', options: ['cm', 'mm', 'in', '%'] },
+    axis: { control: 'select', options: ['width', 'height'] }
+  }
+} as Meta<DimensionInputProps>;
+
+// Interactive story with state management
+export const Interactive = (args: DimensionInputProps) => {
+  const [value, setValue] = useState(args.value);
+  const [unit, setUnit] = useState(args.unit);
+
+  return (
+    <UnitConversionProvider 
+      referenceWidth={27.7} 
+      referenceHeight={19.0}
+    >
+      <DimensionInput
+        {...args}
+        value={value}
+        unit={unit}
+        onChange={(newValue, newUnit) => {
+          setValue(newValue);
+          setUnit(newUnit);
+        }}
+      />
+    </UnitConversionProvider>
+  );
+};
+```
+
+### Storybook Maintenance
+
+```bash
+# Update Storybook dependencies
+npm update @storybook/*
+
+# Rebuild Storybook
+npm run build-storybook
+
+# Check for deprecated addons
+npm run storybook -- --help
+```
+
+## 🧪 Testing
+
+### Test Structure
+
+```
+src/
+├── components/
+│   ├── __tests__/
+│   │   ├── DimensionInput.test.tsx
+│   │   └── ...
+│   └── ...
+├── services/
+│   ├── __tests__/
+│   │   ├── UnitConversionService.test.ts
+│   │   └── ...
+│   └── ...
+└── ...
+```
+
+### Running Tests
+
+```bash
+# Run all tests
+npm test
+
+# Run with coverage
+npm run test:coverage
+
+# Run specific test file
+npm test -- DimensionInput.test.tsx
+
+# Run tests in watch mode
+npm test -- --watch
+```
+
+### Test Coverage Requirements
+
+- **Minimum Coverage**: 80% for branches, functions, lines, and statements
+- **Critical Components**: 90%+ coverage for core functionality
+- **Unit Conversion**: 100% coverage for conversion logic
+
+### Writing Tests
+
+```tsx
+// Example test for unit conversion
+describe('UnitConversionService - Percentage Conversion', () => {
+  test('height percentage uses referenceHeight', () => {
+    const context = { 
+      referenceWidth: 27.7, 
+      referenceHeight: 19.0,
+      axis: 'height' as const 
+    };
+    
+    const heightCm = unitConversionService.toInternalUnit(100, '%', 'length', context);
+    expect(heightCm).toBeCloseTo(19.0, 2);
+  });
+});
+```
+
+## 🏗️ Building
+
+### Build Process
+
+1. **Type Generation**: Generate TypeScript declarations
+2. **Library Build**: Bundle components with Rollup
+3. **Optimization**: Tree shaking and minification
+4. **Validation**: Type checking and linting
+
+### Build Commands
+
+```bash
+# Full build process
 npm run build:all
 
-# Publish
+# Build types only
+npm run build:types
+
+# Build library only
+npm run build
+
+# CI build (optimized)
+npm run build:ci
+```
+
+### Build Output
+
+```
+dist/
+├── index.js              # CommonJS bundle
+├── index.esm.js          # ES modules bundle
+├── index.d.ts            # TypeScript declarations
+└── types/                # Detailed type definitions
+```
+
+### Build Configuration
+
+- **Rollup**: Modern module bundler
+- **TypeScript**: Strict type checking
+- **Tree Shaking**: Dead code elimination
+- **Minification**: Production optimization
+
+## 📦 Publishing
+
+### Pre-publish Checklist
+
+1. **Tests Passing**: All tests must pass
+2. **Build Successful**: Library builds without errors
+3. **Type Checking**: TypeScript compilation successful
+4. **Documentation Updated**: README and docs current
+5. **Version Updated**: Package.json version incremented
+
+### Publishing Process
+
+```bash
+# 1. Update version
+npm version patch  # or minor/major
+
+# 2. Build and test
+npm run build:all
+npm test
+
+# 3. Commit changes
+git add .
+git commit -m "Release v1.1.2"
+
+# 4. Push to GitHub
+git push origin main
+git push --tags
+
+# 5. Create GitHub release
+# Go to GitHub repository -> Releases -> Create new release
+
+# 6. Publish to npm (if needed)
 npm publish
 ```
 
-### 3.2 Automated Publication (Future)
-
-The GitHub Actions workflow will automatically publish when you:
-1. Create a new release on GitHub
-2. Tag a new version
-3. Push to main branch (if configured)
-
-## Step 4: Team Member Onboarding
-
-### 4.1 Install the Package
-
-Team members can install the package using:
-
-```bash
-# Install from GitHub Packages
-npm install @frndfrts/fluent-ui-custom-components@1.1.0
-```
-
-### 4.2 Configure .npmrc in Consuming Projects
-
-Team members need to create `.npmrc` in their project root:
-
-```ini
-@frndfrts:registry=https://npm.pkg.github.com
-//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
-```
-
-### 4.3 Set GitHub Token
-
-```bash
-# Set as environment variable
-export GITHUB_TOKEN=your_github_personal_access_token
-
-# Or add to .env file
-echo "GITHUB_TOKEN=your_github_personal_access_token" >> .env
-```
-
-## Step 5: Usage in Team Projects
-
-### 5.1 Import Components
-
-```tsx
-import { ColorsSection, DimensionInput, TabbedNavbar } from '@frndfrts/fluent-ui-custom-components';
-```
-
-### 5.2 Update package.json
+### GitHub Packages Configuration
 
 ```json
 {
-  "dependencies": {
-    "@frndfrts/fluent-ui-custom-components": "^1.1.0"
+  "name": "@frndfrts/fluent-ui-custom-components",
+  "version": "1.1.1",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   }
 }
 ```
 
-### 5.3 Unit Conversion Setup
+## 🔧 Troubleshooting
 
-For advanced unit conversion features:
+### Common Issues
 
-```tsx
-import { UnitConversionProvider } from '@frndfrts/fluent-ui-custom-components';
-
-<UnitConversionProvider
-  referenceWidth={20}
-  referenceHeight={15}
-  containerWidth={30}
-  containerHeight={20}
-  fontSize={0.4}
-  rootFontSize={0.35}
->
-  {/* Your components here */}
-</UnitConversionProvider>
-```
-
-## Step 6: Version Management
-
-### 6.1 Semantic Versioning
-
-Follow semantic versioning for releases:
-- `1.0.0` - Initial release
-- `1.0.1` - Bug fixes
-- `1.1.0` - New features (Storybook 9, Unit Conversion)
-- `2.0.0` - Breaking changes
-
-### 6.2 Creating Releases
+#### 1. **Authentication Errors**
 
 ```bash
-# Update version
-npm version patch  # 1.1.0 -> 1.1.1
-npm version minor  # 1.1.1 -> 1.2.0
-npm version major  # 1.2.0 -> 2.0.0
-
-# Push tags
-git push origin main --tags
-
-# Create GitHub release (this triggers auto-publish)
+# Error: 401 Unauthorized
+# Solution: Check GitHub token permissions
 ```
 
-## Step 7: Access Control
+**Fix**: Ensure your GitHub token has `read:packages` and `write:packages` permissions.
 
-### 7.1 Repository Permissions
-
-- **Admin**: Full access to repository and packages
-- **Maintain**: Can manage releases and packages
-- **Write**: Can push code and create releases
-- **Read**: Can view and install packages
-
-### 7.2 Package Permissions
-
-- **Read**: Can install packages
-- **Write**: Can publish packages
-- **Admin**: Can manage package settings
-
-## Step 8: Troubleshooting
-
-### 8.1 Common Issues
-
-#### Authentication Errors
-```bash
-# Re-authenticate
-npm logout --registry=https://npm.pkg.github.com
-npm login --scope=@frndfrts --registry=https://npm.pkg.github.com
-```
-
-#### Package Not Found
-```bash
-# Check registry configuration
-npm config get @frndfrts:registry
-
-# Should return: https://npm.pkg.github.com
-```
-
-#### Build Errors
-```bash
-# Clean and rebuild
-npm run clean
-npm run build:all
-```
-
-#### Storybook Issues
-```bash
-# Clear Storybook cache
-rm -rf node_modules/.cache/storybook
-npm run dev
-```
-
-### 8.2 Debug Commands
+#### 2. **Build Errors**
 
 ```bash
-# Check npm configuration
-npm config list
-
-# Check package info
-npm view @frndfrts/fluent-ui-custom-components
-
-# List published versions
-npm view @frndfrts/fluent-ui-custom-components versions
-
-# Check Storybook version
-npx storybook --version
+# Error: Cannot find module
+# Solution: Check imports and dependencies
 ```
 
-## Step 9: CI/CD Integration
+**Fix**: Run `npm install` and check for missing dependencies.
 
-### 9.1 GitHub Actions
-
-The workflow automatically:
-- Builds the package
-- Publishes to GitHub Packages
-- Runs on release creation
-- Tests Storybook build
-
-### 9.2 Custom CI/CD
-
-For other CI/CD systems, use:
-```bash
-npm login --scope=@frndfrts --registry=https://npm.pkg.github.com
-npm run build:all
-npm publish
-```
-
-## Step 10: Monitoring and Maintenance
-
-### 10.1 Package Analytics
-
-Monitor package usage in GitHub:
-- Download statistics
-- Version adoption
-- Dependency graphs
-
-### 10.2 Regular Maintenance
-
-- Update dependencies monthly
-- Review and merge PRs
-- Monitor for security vulnerabilities
-- Update documentation
-- Test Storybook functionality
-- Verify unit conversion features
-
-### 10.3 Storybook Maintenance
+#### 3. **TypeScript Errors**
 
 ```bash
-# Update Storybook
-npx storybook@latest upgrade
-
-# Check for updates
-npm outdated
-
-# Test Storybook build
-npm run build-storybook
+# Error: Type 'X' is not assignable to type 'Y'
+# Solution: Check type definitions
 ```
 
-## Step 11: New Features in v1.1.0
+**Fix**: Update TypeScript types or fix component interfaces.
 
-### 11.1 Unit Conversion System
+#### 4. **Storybook Issues**
 
-The library now includes a comprehensive unit conversion system:
-
-```tsx
-import { unitConversionService } from '@frndfrts/fluent-ui-custom-components';
-
-// Length conversion
-const inches = unitConversionService.fromInternalUnit(10, 'in', 'length');
-const cm = unitConversionService.toInternalUnit(3.94, 'in', 'length');
-
-// Temperature conversion
-const fahrenheit = unitConversionService.fromInternalUnit(25, '°F', 'temperature');
-const celsius = unitConversionService.toInternalUnit(77, '°F', 'temperature');
+```bash
+# Error: Cannot resolve module
+# Solution: Check Storybook configuration
 ```
 
-### 11.2 New Components
+**Fix**: Update `.storybook/main.ts` and check addon compatibility.
 
-#### TabbedNavbar
-```tsx
-<TabbedNavbar
-  tabs={[
-    { id: 'paper', label: 'Paper', content: <PaperSection /> },
-    { id: 'notes', label: 'Notes', content: <NotesSection /> },
-  ]}
-  selectedTab="paper"
-  onTabSelect={setSelectedTab}
-/>
+#### 5. **Unit Conversion Errors**
+
+```bash
+# Error: Reference width required for percentage conversion
+# Solution: Provide context for relative units
 ```
 
-#### PreviewSection
-```tsx
-<PreviewSection
-  content={<YourContent />}
-  width={1200}
-  height={800}
-  backgroundColor="#f5f5f5"
-/>
+**Fix**: Wrap components in `UnitConversionProvider` with proper context.
+
+### Performance Issues
+
+#### 1. **Slow Build Times**
+
+```bash
+# Solution: Optimize build configuration
+npm run build:ci  # Use optimized build
 ```
 
-### 11.3 Enhanced DimensionInput
+#### 2. **Large Bundle Size**
 
-```tsx
-<DimensionInput
-  label="Width"
-  value={10}
-  unit="cm"
-  unitSystem="length"
-  units={['cm', 'mm', 'in', 'px', 'pt', '%', 'vw', 'vh']}
-  onChange={(value, unit) => console.log(`${value} ${unit}`)}
-  context={{
-    referenceWidth: 20,
-    referenceHeight: 15,
-    containerWidth: 30,
-    containerHeight: 20,
-    fontSize: 0.4,
-    rootFontSize: 0.35,
-  }}
-/>
+```bash
+# Solution: Check for unused dependencies
+npm run build -- --analyze
 ```
 
-## Support
+#### 3. **Memory Issues**
 
-For issues:
-1. Check this troubleshooting guide
-2. Review GitHub Actions logs
-3. Check package permissions
-4. Contact organization admins
-5. Review unit conversion documentation: [UNIT_CONVERSION_IMPLEMENTATION.md](./UNIT_CONVERSION_IMPLEMENTATION.md)
-6. Check Storybook documentation for v9.1.3
+```bash
+# Solution: Increase Node.js memory limit
+NODE_OPTIONS="--max-old-space-size=4096" npm run build
+```
+
+### Debug Mode
+
+```bash
+# Enable debug logging
+DEBUG=* npm run dev
+
+# Check specific areas
+DEBUG=storybook:* npm run dev
+DEBUG=rollup:* npm run build
+```
+
+## 🤝 Contributing
+
+### Development Workflow
+
+1. **Create Feature Branch**:
+   ```bash
+   git checkout -b feature/percentage-conversion-fix
+   ```
+
+2. **Make Changes**: Implement your feature or fix
+
+3. **Run Tests**:
+   ```bash
+   npm test
+   npm run build:all
+   ```
+
+4. **Update Documentation**: Update README and component docs
+
+5. **Create Pull Request**: Submit PR with detailed description
+
+### Code Standards
+
+- **TypeScript**: Strict mode enabled
+- **ESLint**: Code quality enforcement
+- **Prettier**: Code formatting
+- **Testing**: Minimum 80% coverage
+- **Documentation**: JSDoc comments required
+
+### Component Guidelines
+
+- **Architecture**: Follow 5-level hierarchy
+- **Props**: Consistent naming and types
+- **Error Handling**: Implement ErrorBoundary
+- **Accessibility**: ARIA support required
+- **Testing**: Unit tests for all components
+- **Unit Conversion**: Integrate with unit system
+
+### Pull Request Process
+
+1. **Description**: Clear description of changes
+2. **Testing**: All tests passing
+3. **Documentation**: Updated README if needed
+4. **Examples**: Storybook stories updated
+5. **Review**: Code review required
+
+### Release Process
+
+1. **Feature Complete**: All features implemented and tested
+2. **Documentation Updated**: README and docs current
+3. **Version Bumped**: Package.json version updated
+4. **Build Successful**: Library builds without errors
+5. **Tests Passing**: All tests pass
+6. **Release Created**: GitHub release with changelog
+
+## 📞 Support
+
+### Getting Help
+
+1. **Check Documentation**: Review README and component docs
+2. **Explore Storybook**: Run `npm run dev` to see components
+3. **Review Issues**: Check GitHub issues for known problems
+4. **Contact Team**: Reach out to development team
+5. **Unit Conversion**: Review unit conversion documentation
+
+### Resources
+
+- **[Usage Instructions](USAGE_INSTRUCTIONS.md)**: Detailed usage examples
+- **[Component Documentation](src/components/README.md)**: Component reference
+- **[Storybook](http://localhost:6006)**: Interactive examples
+- **[GitHub Issues](https://github.com/frndfrts/fluent-ui-custom-components/issues)**: Bug reports and feature requests
 
 ---
 
-**Note**: This guide is configured for the GitHub account `frndfrts`. If you're using a different account, replace `frndfrts` with your actual GitHub username throughout this guide.
-
-**Current Version**: 1.1.0
-**Storybook Version**: 9.1.3
+**Current Version**: 1.1.1  
+**Storybook Version**: 9.1.3  
 **Last Updated**: December 2024

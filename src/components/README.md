@@ -1,334 +1,521 @@
-# Fluent UI Custom Components - Component Hierarchy
+# Fluent UI Custom Components - Component Documentation
 
-This document describes the organization and hierarchy of custom Fluent UI components in this project.
+*This document provides detailed information about the component architecture, hierarchy, and usage patterns for the Fluent UI Custom Components library. Version 1.1.1 introduces critical percentage conversion fixes, while v1.1.0 brought comprehensive unit conversion, Storybook 9 upgrade, and enhanced interactive features.*
+
+## 🆕 What's New in v1.1.1
+
+### 🐛 Critical Bug Fixes
+- **Fixed**: Height percentage calculations now use correct referenceHeight instead of referenceWidth
+- **Fixed**: Y-coordinate percentage calculations use proper axis reference
+- **Fixed**: Eliminates UX confusion where height % showed incorrect values (e.g., 68.6% instead of 100%)
+
+### 🔧 Technical Improvements
+- **Enhanced**: UnitConversionService with axis-aware percentage conversion
+- **Added**: Axis property to UnitConversionContext interface for precise coordinate handling
+- **Improved**: Error messages for missing axis references
+- **Maintained**: Full backward compatibility with existing implementations
+
+### 🧪 Testing & Quality
+- **Added**: Comprehensive unit tests for axis-aware percentage conversion
+- **Verified**: Real-world paper active area scenarios
+- **Confirmed**: Roundtrip conversion stability across all axes
 
 ## 🆕 What's New in v1.1.0
 
-### ✨ **Storybook 9 Upgrade**
-- **Upgraded from v8.6.14 to v9.1.3**
-- **Modern framework-based configuration**
-- **Built-in addons**: Actions, Controls, Viewport, Backgrounds
-- **Enhanced performance**: 566ms manager startup, 19s preview
-- **Webpack 5 optimization**: Bundle splitting and caching
+### 🎨 New Components
+- **TabbedNavbar**: Advanced navigation component with tab management and focus handling
+- **PreviewSection**: Comprehensive preview area with integrated layout management
+- **PreviewPanel**: Flexible panel system for content organization
 
-### 🔄 **Comprehensive Unit Conversion System**
+### 🔄 Enhanced Unit Conversion System
+- **Multi-System Support**: Length, temperature, volume, weight, and energy units
+- **Context-Aware Calculations**: Relative units (%, vw, vh, em, rem) with proper reference handling
+- **Axis-Aware Percentage**: Width/height and x/y coordinates use correct reference dimensions
+- **Precision Preservation**: Full internal precision with appropriate display formatting
+
+### 📚 Storybook 9 Upgrade
+- **Latest Version**: Upgraded to Storybook 9.1.3 with modern architecture
+- **Interactive Stories**: Real-time component interaction and state management
+- **Enhanced Documentation**: Comprehensive examples and usage patterns
+
+### 🎯 Component Improvements
+- **DimensionInput**: Enhanced with unit systems and axis-aware calculations
+- **UnitSelector**: Universal selector with built-in display mapping
+- **Interactive Panels**: All panels now reflect real-time user selections
+
+## 🏗️ Component Hierarchy
+
+This library follows a **5-level hierarchical architecture** designed for maximum reusability, maintainability, and consistency:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    Level 5: Sections                       │
+│              (Complete UI Sections)                        │
+├─────────────────────────────────────────────────────────────┤
+│                    Level 4: Panels                         │
+│              (Functional Panels)                           │
+├─────────────────────────────────────────────────────────────┤
+│                  Level 3: Compositions                     │
+│              (Component Combinations)                      │
+├─────────────────────────────────────────────────────────────┤
+│                   Level 2: Components                      │
+│              (Specialized Components)                      │
+├─────────────────────────────────────────────────────────────┤
+│                   Level 1: Primitives                      │
+│              (Basic Building Blocks)                       │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Design Principles
+
+- **Bottom-Up Architecture**: Defaults and core logic defined at primitive level
+- **Composition Over Inheritance**: Components built by combining lower-level elements
+- **Consistent API**: Uniform prop patterns across all levels
+- **Error Boundaries**: Robust error handling at every level
+- **Accessibility First**: ARIA support and keyboard navigation throughout
+- **Type Safety**: Full TypeScript coverage with strict typing
+- **Unit Conversion**: Built-in unit conversion system with full precision
+
+## 📁 Directory Structure
+
+```
+src/components/
+├── 01-sections/          # Level 5: Complete UI Sections
+│   ├── PaperSection.tsx
+│   ├── NotesSection.tsx
+│   ├── SlidesSection.tsx
+│   ├── PreviewSection.tsx
+│   └── ...
+├── 02-panels/            # Level 4: Functional Panels
+│   ├── SizeFields.tsx
+│   ├── PositionFields.tsx
+│   ├── ColorPanel.tsx
+│   ├── PreviewPanel.tsx
+│   └── ...
+├── 03-compositions/      # Level 3: Component Combinations
+│   ├── DimensionInput.tsx
+│   ├── TabbedNavbar.tsx
+│   ├── ColorInput.tsx
+│   └── ...
+├── 04-components/        # Level 2: Specialized Components
+│   ├── UnitSelector.tsx
+│   ├── ColorSelector.tsx
+│   ├── PaperSelector.tsx
+│   └── ...
+├── 05-primitives/        # Level 1: Basic Building Blocks
+│   ├── NumericInput.tsx
+│   ├── HexInput.tsx
+│   ├── LockAspectRatio.tsx
+│   └── ...
+├── error/                # Error handling components
+│   └── ErrorBoundary.tsx
+├── index.ts              # Main export file
+└── README.md             # This file
+```
+
+## 🧩 Component Levels
+
+### Level 1: Primitives (`05-primitives/`)
+
+Basic building blocks with minimal dependencies and maximum reusability.
+
+#### Available Primitives
+
+- **NumericInput**: Advanced numeric input with stepper controls and validation
+- **HexInput**: Hexadecimal color input with validation and formatting
+- **SliderInput**: Fluent UI Slider wrapper with label and value display
+- **ColorSliderInput**: Width-constrained slider for color applications
+- **LockAspectRatio**: Checkbox component for aspect ratio locking
+- **UniversalSelector**: Truly universal selector supporting various option formats
+
+#### Usage Guidelines
+
+```tsx
+// Import primitives directly
+import { NumericInput, HexInput } from '@frndfrts/fluent-ui-custom-components';
+
+// Use with consistent prop patterns
+<NumericInput
+  value={100}
+  onChange={setValue}
+  min={0}
+  max={1000}
+  step={10}
+  size="medium"
+  disabled={false}
+/>
+```
+
+### Level 2: Components (`04-components/`)
+
+Specialized components built from primitives with domain-specific logic.
+
+#### Available Components
+
+- **UnitSelector**: Enhanced unit selector with 5 unit systems support
+- **ColorModelSelector**: Radio group for RGB/HSL color model selection
+- **PositionSelector**: 9-position grid selector for positioning
+- **OrientationSelector**: Portrait/landscape orientation selector
+- **AspectRatioSelector**: Common aspect ratio selector
+- **PaperSelector**: Standard paper size selector
+
+#### Usage Guidelines
+
+```tsx
+// Import components
+import { UnitSelector, ColorModelSelector } from '@frndfrts/fluent-ui-custom-components';
+
+// Use with domain-specific props
+<UnitSelector
+  unit="cm"
+  unitSystem="length"
+  units={['cm', 'mm', 'in', 'px', 'pt', '%']}
+  onChange={setUnit}
+  showUnitNames={true}
+/>
+```
+
+### Level 3: Compositions (`03-compositions/`)
+
+Complex functional units that combine multiple components.
+
+#### Available Compositions
+
+- **DimensionInput**: Enhanced number + unit input with context-aware conversions
+- **TabbedNavbar**: Complete tabbed navigation bar with focus management
+- **ColorInput**: Full color input with picker integration
+- **ColorHexInput**: Specialized hex color input with validation
+- **ColorSelector**: Color palette grid with selection
+- **RGBHSLColorSlidersInput**: RGB/HSL sliders for color components
+- **MultipleSlidersInput**: Multiple slider inputs in a single component
+
+#### Usage Guidelines
+
+```tsx
+// Import compositions
+import { DimensionInput, TabbedNavbar } from '@frndfrts/fluent-ui-custom-components';
+
+// Use with complex functionality
+<DimensionInput
+  label="Width"
+  value={15}
+  unit="cm"
+  unitSystem="length"
+  axis="width"
+  onChange={(value, unit) => console.log(value, unit)}
+/>
+```
+
+### Level 4: Panels (`02-panels/`)
+
+Functional panels that combine compositions for specific use cases.
+
+#### Available Panels
+
+- **SizeFields**: Width and height input with aspect ratio lock
+- **PositionFields**: Position selector with X/Y coordinate inputs
+- **SizeAndPositionPanel**: Combined size and position management
+- **PaperSizePanel**: Paper size and orientation configuration
+- **MarginsPanel**: Margin configuration for all sides
+- **PaddingPanel**: Padding configuration for all sides
+- **ResponsiveColorPicker**: Responsive color picker with inline labels
+- **PreviewPanel**: Preview container with header and content area
+
+#### Usage Guidelines
+
+```tsx
+// Import panels
+import { SizeFields, PositionFields } from '@frndfrts/fluent-ui-custom-components';
+
+// Use for specific functional areas
+<SizeFields
+  width={100}
+  height={50}
+  showLockAspectRatio={true}
+  onChange={setSize}
+  onLockAspectRatioChange={setLocked}
+/>
+```
+
+### Level 5: Sections (`01-sections/`)
+
+High-level functional areas that integrate panels for end-user functionality.
+
+#### Available Sections
+
+- **PaperSection**: Complete paper configuration section
+- **NotesSection**: Notes and annotations configuration
+- **SlidesSection**: Presentation slides configuration
+- **PreviewSection**: Preview area for content display
+- **ColorsSection**: Complete color theme configuration
+- **Placeholder Sections**: Various placeholder sections for content areas
+
+#### Usage Guidelines
+
+```tsx
+// Import sections
+import { PaperSection, NotesSection, PreviewSection } from '@frndfrts/fluent-ui-custom-components';
+
+// Use for complete feature areas
+<PaperSection
+  onPaperChange={handlePaperChange}
+  onError={handleError}
+/>
+```
+
+## 🔄 Unit Conversion System
+
+### Overview
+
+The library includes a comprehensive unit conversion system integrated at the composition level and above.
+
+### Key Features
+
 - **5 Unit Systems**: Length, Temperature, Volume, Weight, Energy
-- **Full Precision**: Internal storage in standard units (cm, °C, ml, g, J)
-- **Smart Conversion**: Automatic unit conversion with proper precision
-- **Context-Aware**: Support for relative units (%, vw, vh, em, rem)
+- **Axis-Aware Percentage**: Width/height and x/y coordinates use correct references
+- **Context-Aware**: Relative units (%, vw, vh, em, rem) with proper context
+- **Precision Preservation**: Full internal precision with appropriate display
 
-### 🆕 **New Components**
-- **TabbedNavbar**: Navigation component with focus management
-- **PreviewSection**: Section-level preview component
-- **PreviewPanel**: Panel-level preview component
+### Unit Conversion Context
 
-### 🎯 **Interactive Storybook Stories**
-- **State Management**: Proper React.useState for all stories
-- **Real-time Updates**: Live component interaction
-- **Enhanced Documentation**: Better examples and usage
+```tsx
+import { UnitConversionProvider } from '@frndfrts/fluent-ui-custom-components';
 
-## Component Hierarchy Overview
-
-The components are organized into 5 levels based on their complexity and integration level:
-
-### Level 5: Sections (`/sections`)
-**Purpose**: Complete UI sections that integrate panels for end-user functionality.
-
-**Components**:
-- `PaperSection` - Complete paper configuration section
-- `NotesSection` - Notes configuration section
-- `SlidesSection` - Slides configuration section
-- `PreviewSection` - Preview area for content display 🆕
-- `ColorsSection` - Complete color theme configuration section
-- `BodyPlaceholderSection` - Body content placeholder
-- `TitlePlaceholderSection` - Title placeholder
-- `SubtitlePlaceholderSection` - Subtitle placeholder
-- `SourcePlaceholderSection` - Source placeholder
-- `PageNumberPlaceholderSection` - Page number placeholder
-- `LogoPlaceholderSection` - Logo placeholder
-- `FootnotePlaceholderSection` - Footnote placeholder
-
-**Characteristics**:
-- Complete functional areas
-- Multiple panels integrated
-- End-user functionality
-- Full feature sets
-
-### Level 4: Panels (`/panels`)
-**Purpose**: Layout containers with specific functionality areas.
-
-**Components**:
-- `MarginsPanel` - Margin settings panel
-- `PaddingPanel` - Padding settings panel
-- `PaperSizePanel` - Paper size and orientation panel
-- `PositionFields` - Position and alignment fields
-- `SizeAndPositionPanel` - Combined size and position panel
-- `SizeFields` - Size and aspect ratio fields with unit conversion
-- `ResponsiveColorPicker` - Responsive color picker with layout adaptation
-- `PreviewPanel` - Preview container with header and content area 🆕
-
-**Characteristics**:
-- Layout containers
-- Multiple compositions
-- Form sections
-- Specific functionality areas
-- Unit conversion support
-
-### Level 3: Compositions (`/compositions`)
-**Purpose**: Complex functional units combining multiple components.
-
-**Components**:
-- `ColorHexInput` - Hex input with color swatch and validation
-- `ColorInput` - Complete color input with model selection
-- `ColorPicker` - Full color picker with standard colors and custom input
-- `ColorSelector` - Color palette selector with tooltips
-- `DimensionInput` - Enhanced dimension input with unit conversion and context awareness
-- `MultipleSlidersInput` - Stack of sliders with aligned labels
-- `ResponsiveColorPicker` - Responsive color picker with layout adaptation
-- `RGBHSLColorSlidersInput` - RGB/HSL color sliders
-- `LabeledColorHexInput` - Color input with label
-- `LabeledColorPicker` - Color picker with label
-- `TabbedNavbar` - Complete tabbed navigation bar with focus management 🆕
-
-**Characteristics**:
-- Complex state management
-- Multiple components combined
-- Business logic implementation
-- Complete functional units
-- Unit conversion integration
-
-### Level 2: Components (`/components`)
-**Purpose**: Molecule-level combinations of primitives for specific use cases.
-
-**Components**:
-- `AspectRatioSelector` - Aspect ratio selection with custom option
-- `ColorModelSelector` - RGB/HSL color model selection
-- `OrientationSelector` - Portrait/landscape orientation selection
-- `PaperSelector` - Paper size selection dropdown
-- `PositionSelector` - Position selection (top, center, bottom, etc.)
-- `UniversalSelector` - Generic selector with custom options and interactive state management
-- `UnitSelector` - Enhanced unit selector with 5 unit systems support
-
-**Characteristics**:
-- Combine 2-3 primitives
-- Simple state management
-- Domain-specific functionality
-- Used by compositions and panels
-- Unit system awareness
-
-### Level 1: Primitives (`/primitives`)
-**Purpose**: Atomic Fluent UI component wrappers - the fundamental building blocks.
-
-**Components**:
-- `ColorSliderInput` - Color-specific slider with label
-- `HexInput` - Hex color input with validation
-- `NumericInput` - Numeric input with precision control and unit-aware step values
-- `SliderInput` - Generic slider with label and value display
-- `UnitSelector` - Unit selection dropdown with comprehensive unit system support
-- `LockAspectRatio` - Aspect ratio lock toggle
-
-**Characteristics**:
-- Direct Fluent UI component inheritance
-- Single responsibility
-- Minimal customization
-- Reusable across the entire application
-- Unit conversion foundation
-
-### Level 0: Legacy (`/legacy`)
-**Purpose**: Older components maintained for backward compatibility.
-
-**Components**:
-- `FluentColorPicker` - Legacy Fluent UI color picker
-- `HorizontalColorPicker` - Legacy horizontal color picker
-- `LegacyColorPicker` - Legacy color picker component
-- `LegacyHexInput` - Legacy hex input component
-
-**Characteristics**:
-- Deprecated components
-- Maintained for compatibility
-- Not recommended for new development
-
-## Import Guidelines
-
-### For New Development
-```typescript
-// Import from the appropriate level
-import { PaperSection } from './components/sections/PaperSection';
-import { PaperSizePanel } from './components/panels/PaperSizePanel';
-import { ColorInput } from './components/compositions/ColorInput';
-import { ColorModelSelector } from './components/components/ColorModelSelector';
-import { HexInput } from './components/primitives/HexInput';
-import { TabbedNavbar } from './components/compositions/TabbedNavbar';
-import { PreviewSection } from './components/sections/PreviewSection';
+// Provide context for relative units
+<UnitConversionProvider 
+  referenceWidth={27.7} 
+  referenceHeight={19.0}
+  containerWidth={30.0}
+  containerHeight={20.0}
+  fontSize={0.4}
+  rootFontSize={0.35}
+>
+  {/* Your components here */}
+</UnitConversionProvider>
 ```
 
-### For Backward Compatibility
-```typescript
-// Import from inputs (re-exports all levels)
-import { HexInput, ColorInput, PaperSizePanel } from './components/inputs';
+### Axis-Aware Percentage Conversion
+
+The library now correctly handles percentage calculations for different axes:
+
+- **Width/X Axis**: Uses `referenceWidth` for percentage calculations
+- **Height/Y Axis**: Uses `referenceHeight` for percentage calculations
+
+This ensures that:
+- Width 100% = referenceWidth (e.g., 27.7 cm)
+- Height 100% = referenceHeight (e.g., 19.0 cm)
+- No more confusion between width and height references
+
+### Usage in Components
+
+```tsx
+// DimensionInput with axis-aware conversion
+<DimensionInput
+  label="Width"
+  value={15}
+  unit="%"
+  axis="width"  // Uses referenceWidth
+  onChange={(value, unit) => console.log(value, unit)}
+/>
+
+<DimensionInput
+  label="Height"
+  value={10}
+  unit="%"
+  axis="height"  // Uses referenceHeight
+  onChange={(value, unit) => console.log(value, unit)}
+/>
 ```
 
-### For Unit Conversion
-```typescript
-// Import unit conversion utilities
-import { unitConversionService, UnitConversionProvider } from './services/UnitConversionService';
-import { LENGTH_SYSTEM, TEMPERATURE_SYSTEM } from './systems/UnitSystems';
+## 📦 Import Guidelines
+
+### Recommended Import Patterns
+
+#### For End Users (Sections and Panels)
+
+```tsx
+// Import high-level sections for complete functionality
+import { 
+  PaperSection, 
+  NotesSection, 
+  PreviewSection,
+  TabbedNavbar 
+} from '@frndfrts/fluent-ui-custom-components';
 ```
 
-## Migration Guide
+#### For Custom Implementations (Compositions and Components)
 
-### From Old Structure
-If you were importing from the old `inputs/` folder:
-
-**Before**:
-```typescript
-import { HexInput } from './components/inputs/HexInput';
-import { ColorInput } from './components/inputs/ColorInput';
+```tsx
+// Import compositions for custom layouts
+import { 
+  DimensionInput, 
+  ColorInput, 
+  UnitSelector 
+} from '@frndfrts/fluent-ui-custom-components';
 ```
 
-**After**:
-```typescript
-import { HexInput } from './components/primitives/HexInput';
-import { ColorInput } from './components/compositions/ColorInput';
+#### For Advanced Usage (Primitives)
+
+```tsx
+// Import primitives for maximum customization
+import { 
+  NumericInput, 
+  HexInput, 
+  UniversalSelector 
+} from '@frndfrts/fluent-ui-custom-components';
 ```
 
-### Recommended Approach
-1. **For new components**: Import directly from the appropriate level folder
-2. **For existing code**: Continue using the `inputs/` re-exports for now
-3. **For refactoring**: Gradually migrate to direct imports from the new structure
-4. **For unit conversion**: Use the new unit conversion system for dimension inputs
+### Import Best Practices
 
-## Best Practices
+1. **Start High**: Begin with sections and panels for complete functionality
+2. **Go Lower**: Use compositions and components for custom layouts
+3. **Use Primitives**: Only when you need maximum customization
+4. **Consistent Patterns**: Use the same import pattern throughout your app
 
-### Component Selection
-- **Use primitives** for basic input needs
-- **Use components** for domain-specific selections
-- **Use compositions** for complex functional requirements
-- **Use panels** for layout and form sections
-- **Use sections** for complete functional areas
-- **Avoid legacy** components for new development
+## 🎯 Component Best Practices
 
-### Naming Conventions
-- All components follow PascalCase naming
-- Props interfaces use `ComponentNameProps` pattern
-- Export names match component names exactly
+### 1. **Error Handling**
 
-### File Organization
-- Each component has its own file
-- Index files provide clean exports
-- Types are re-exported for convenience
-- Backward compatibility is maintained through re-exports
+All components include error boundaries and error callbacks:
 
-### Unit Conversion Best Practices
-- **Use appropriate unit systems** for different measurement types
-- **Provide context** for relative units (%, vw, vh, em, rem)
-- **Leverage unit-aware step values** for better UX
-- **Store values in internal units** for consistency
-- **Display values in user-selected units** for clarity
-
-## Unit Conversion System
-
-### Supported Unit Systems
-
-#### **1. Length System**
-- **Internal Unit**: `cm` (centimeters)
-- **Units**: `cm`, `mm`, `in`, `px`, `pt`, `%`, `vw`, `vh`, `em`, `rem`
-- **Precision**: Full floating-point precision
-- **Context**: Required for relative units
-
-#### **2. Temperature System**
-- **Internal Unit**: `°C` (celsius)
-- **Units**: `°C`, `°F`, `K` (kelvin)
-- **Precision**: 1 decimal place
-- **Conversions**: Automatic temperature scale conversion
-
-#### **3. Volume System**
-- **Internal Unit**: `ml` (milliliters)
-- **Units**: `ml`, `l`, `oz`, `gal`, `pt`
-- **Precision**: 2 decimal places
-- **Conversions**: Metric and imperial volume units
-
-#### **4. Weight System**
-- **Internal Unit**: `g` (grams)
-- **Units**: `g`, `kg`, `oz`, `lb`
-- **Precision**: 2 decimal places
-- **Conversions**: Metric and imperial weight units
-
-#### **5. Energy System**
-- **Internal Unit**: `J` (joules)
-- **Units**: `J`, `cal`, `kcal`, `Wh`
-- **Precision**: 2 decimal places
-- **Conversions**: Various energy measurement units
-
-### Usage Examples
-
-#### Basic Unit Conversion
-```typescript
-import { unitConversionService } from './services/UnitConversionService';
-
-// Length conversion
-const inches = unitConversionService.fromInternalUnit(10, 'in', 'length');
-const cm = unitConversionService.toInternalUnit(3.94, 'in', 'length');
-
-// Temperature conversion
-const fahrenheit = unitConversionService.fromInternalUnit(25, '°F', 'temperature');
-const celsius = unitConversionService.toInternalUnit(77, '°F', 'temperature');
-```
-
-#### Component Integration
 ```tsx
 <DimensionInput
   label="Width"
   value={10}
-  unit="cm"
-  unitSystem="length"
-  units={['cm', 'mm', 'in', 'px', 'pt', '%', 'vw', 'vh']}
-  onChange={(value, unit) => console.log(`${value} ${unit}`)}
-  context={{
-    referenceWidth: 20,
-    referenceHeight: 15,
-    containerWidth: 30,
-    containerHeight: 20,
-    fontSize: 0.4,
-    rootFontSize: 0.35,
+  onChange={setValue}
+  onError={(error) => {
+    console.error('Dimension input error:', error);
+    // Handle error appropriately
   }}
 />
 ```
 
-## Positioning System and Defaults
+### 2. **Accessibility**
 
-- Default position at the lowest level: top-left
-- Default positions list at the lowest level: full 3x3 grid plus Custom
-- X/Y coordinate fields are only editable when position is Custom; for presets, fields are disabled but reflect computed values
-- Preset coordinates are computed in SizeAndPositionPanel using inner size and outer active area and are clamped to prevent overflow
-- Active area origin (0,0) is the top-left of the usable region inside outer padding/margins
+Components include built-in accessibility features:
 
-### Providing the active area to SizeAndPositionPanel
+```tsx
+<DimensionInput
+  label="Width"
+  value={10}
+  ariaLabel="Width input field"
+  ariaDescribedBy="width-description"
+  onChange={setValue}
+/>
+```
 
-You can pass either:
-- Explicit active area (recommended for papers with margins): `activeX`, `activeY`, `activeWidth`, `activeHeight` (cm)
-- Or outer dimensions with padding: `outerWidth`, `outerHeight`, `outerPaddingTop`, `outerPaddingRight`, `outerPaddingBottom`, `outerPaddingLeft` (cm)
+### 3. **Consistent Sizing**
 
-When `position !== 'Custom'`, x/y are recomputed automatically on size/position/outer changes.
+Use consistent size props across components:
 
-## Future Considerations
+```tsx
+<DimensionInput size="medium" />
+<UnitSelector size="medium" />
+<ColorInput size="medium" />
+```
 
-1. **Documentation**: Add Storybook stories for each component level
-2. **Testing**: Implement comprehensive tests for each level
-3. **Performance**: Monitor bundle size impact of the new structure
-4. **Migration**: Plan gradual migration away from legacy components
-5. **Unit Conversion**: Expand unit systems and improve precision
-6. **Interactive Stories**: Enhance Storybook with more interactive examples
+### 4. **Unit Conversion**
 
-## Support
+Always provide context for relative units:
 
-For questions about the component hierarchy or migration, refer to:
-- Component documentation in individual files
-- TypeScript definitions for prop interfaces
-- Example usage in the main App.tsx file
-- Unit conversion documentation: [UNIT_CONVERSION_IMPLEMENTATION.md](../UNIT_CONVERSION_IMPLEMENTATION.md)
-- Unit system architecture: [UNIT_SYSTEM_ARCHITECTURE.md](../UNIT_SYSTEM_ARCHITECTURE.md)
+```tsx
+<UnitConversionProvider 
+  referenceWidth={27.7} 
+  referenceHeight={19.0}
+>
+  <DimensionInput unit="%" axis="width" />
+</UnitConversionProvider>
+```
 
-**Current Version**: 1.1.0
-**Storybook Version**: 9.1.3
+### 5. **Type Safety**
+
+Use TypeScript for better type safety:
+
+```tsx
+import { DimensionInputProps } from '@frndfrts/fluent-ui-custom-components';
+
+const props: DimensionInputProps = {
+  label: "Width",
+  value: 10,
+  unit: "cm",
+  onChange: (value, unit) => console.log(value, unit)
+};
+```
+
+## 🔧 Development Guidelines
+
+### Creating New Components
+
+1. **Choose the Right Level**: Determine the appropriate hierarchy level
+2. **Follow Naming Conventions**: Use PascalCase for component names
+3. **Implement Error Boundaries**: Include error handling
+4. **Add TypeScript Types**: Define proper interfaces
+5. **Write Tests**: Include unit tests for all functionality
+6. **Update Documentation**: Add to this README and Storybook
+
+### Component Template
+
+```tsx
+import * as React from 'react';
+import { makeStyles } from '@fluentui/react-components';
+import { ErrorBoundary } from '../error/ErrorBoundary';
+
+const useStyles = makeStyles({
+  // Component styles
+});
+
+export interface ComponentNameProps {
+  // Component props
+}
+
+export const ComponentName = React.memo<ComponentNameProps>(({
+  // Destructure props
+}) => {
+  const styles = useStyles();
+  
+  // Component logic
+  
+  return (
+    <ErrorBoundary
+      fallback={ComponentNameErrorFallback}
+      onError={handleError}
+    >
+      {/* Component JSX */}
+    </ErrorBoundary>
+  );
+});
+
+ComponentName.displayName = 'ComponentName';
+```
+
+### Testing Components
+
+```tsx
+// Example test structure
+describe('ComponentName', () => {
+  test('renders correctly', () => {
+    // Test rendering
+  });
+  
+  test('handles user interactions', () => {
+    // Test interactions
+  });
+  
+  test('handles errors gracefully', () => {
+    // Test error handling
+  });
+});
+```
+
+## 📚 Additional Resources
+
+- **[Usage Instructions](../USAGE_INSTRUCTIONS.md)**: Detailed usage examples
+- **[Organization Setup](../ORGANIZATION_SETUP.md)**: Development and contribution guidelines
+- **[Storybook](http://localhost:6006)**: Interactive component examples
+- **[Unit Conversion Documentation](../UNIT_SYSTEM_ARCHITECTURE.md)**: Unit system architecture
+
+---
+
+**Current Version**: 1.1.1  
+**Storybook Version**: 9.1.3  
 **Last Updated**: December 2024
