@@ -1,5 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-webpack5';
+import * as React from 'react';
 import { PositionFields } from './PositionFields';
+import { UnitConversionProvider } from '../../contexts/UnitConversionContext';
+import { unitConversionService } from '../../services/UnitConversionService';
 
 const meta: Meta<typeof PositionFields> = {
   title: '02-Panels/PositionFields',
@@ -61,6 +64,15 @@ const meta: Meta<typeof PositionFields> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+// Helper function to get display value, now with axis awareness
+const getDisplayValue = (internalValue: number, unit: string, systemId: string, context?: any): number => {
+  try {
+    return unitConversionService.fromInternalUnit(internalValue, unit, systemId, { ...context, axis: context?.axis || 'width' });
+  } catch {
+    return internalValue; // Fallback to internal value if conversion fails
+  }
+};
+
 export const Default: Story = {
   args: {
     position: 'Custom',
@@ -95,5 +107,60 @@ export const NegativeValues: Story = {
     ...Default.args,
     x: -50,
     y: -100,
+  },
+};
+
+export const AxisAwarePercentage: Story = {
+  render: (args) => {
+    const refWidth = 27.7;
+    const refHeight = 19.0;
+
+    // 50% of refWidth for X, 50% of refHeight for Y
+    const [xValue, setXValue] = React.useState(refWidth / 2);
+    const [xUnit, setXUnit] = React.useState('%');
+    const [yValue, setYValue] = React.useState(refHeight / 2);
+    const [yUnit, setYUnit] = React.useState('%');
+    const [position, setPosition] = React.useState('Custom');
+
+    const handleChange = (fields: any) => {
+      setXValue(fields.x);
+      setXUnit(fields.xUnit);
+      setYValue(fields.y);
+      setYUnit(fields.yUnit);
+      setPosition(fields.position);
+      args.onChange?.(fields);
+    };
+
+    const displayX = getDisplayValue(xValue, xUnit, 'length', { referenceWidth: refWidth, referenceHeight: refHeight, axis: 'width' });
+    const displayY = getDisplayValue(yValue, yUnit, 'length', { referenceWidth: refWidth, referenceHeight: refHeight, axis: 'height' });
+
+    return (
+      <UnitConversionProvider referenceWidth={refWidth} referenceHeight={refHeight}>
+        <div style={{ padding: '20px', minWidth: '400px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <PositionFields
+            {...args}
+            x={xValue}
+            y={yValue}
+            xUnit={xUnit}
+            yUnit={yUnit}
+            position={position}
+            onChange={handleChange}
+          />
+          <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+            <div><strong>Display Horizontal (X):</strong> {displayX.toFixed(2)} {xUnit}</div>
+            <div><strong>Internal X:</strong> {xValue.toFixed(2)} cm</div>
+            <hr style={{ margin: '8px 0', border: 'none', borderTop: '1px solid #ccc' }} />
+            <div><strong>Display Vertical (Y):</strong> {displayY.toFixed(2)} {yUnit}</div>
+            <div><strong>Internal Y:</strong> {yValue.toFixed(2)} cm</div>
+          </div>
+          <small>Context: {refWidth}cm ref width, {refHeight}cm ref height. Horizontal and Vertical inputs should both show 50.00%.</small>
+        </div>
+      </UnitConversionProvider>
+    );
+  },
+  args: {
+    ...Default.args,
+    position: 'Custom',
+    units: ['cm', 'mm', 'in', '%'],
   },
 };

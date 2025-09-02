@@ -31,6 +31,11 @@ const meta: Meta<typeof DimensionInput> = {
       options: ['px', 'em', 'rem', '%', 'vw', 'vh', 'pt', 'in', 'cm', 'mm'],
       description: 'Display unit',
     },
+    axis: {
+      control: 'radio',
+      options: ['width', 'height'],
+      description: 'The dimensional axis, used for percentage calculations.',
+    },
     units: {
       control: 'object',
       description: 'Available units',
@@ -103,10 +108,10 @@ const meta: Meta<typeof DimensionInput> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// Helper function to get display value
+// Helper function to get display value, now with axis awareness
 const getDisplayValue = (internalValue: number, unit: string, systemId: string, context?: any): number => {
   try {
-    return unitConversionService.fromInternalUnit(internalValue, unit, systemId, context);
+    return unitConversionService.fromInternalUnit(internalValue, unit, systemId, { ...context, axis: context?.axis || 'width' });
   } catch {
     return internalValue; // Fallback to internal value if conversion fails
   }
@@ -167,6 +172,75 @@ export const Default: Story = {
     label: 'Width',
     value: 10,
     unit: 'cm',
+  },
+};
+
+// Story to demonstrate axis-aware percentage calculation
+export const AxisAwarePercentage: Story = {
+  render: (args) => {
+    const refWidth = 27.7;
+    const refHeight = 19.0;
+
+    // State for Width input
+    const [widthValue, setWidthValue] = React.useState(refWidth); // 100% of refWidth
+    const [widthUnit, setWidthUnit] = React.useState('%');
+
+    // State for Height input
+    const [heightValue, setHeightValue] = React.useState(refHeight); // 100% of refHeight
+    const [heightUnit, setHeightUnit] = React.useState('%');
+
+    const handleWidthChange = (newValue: number | '', newUnit: string) => {
+      setWidthValue(newValue as number);
+      setWidthUnit(newUnit);
+    };
+
+    const handleHeightChange = (newValue: number | '', newUnit: string) => {
+      setHeightValue(newValue as number);
+      setHeightUnit(newUnit);
+    };
+
+    const displayWidth = getDisplayValue(widthValue, widthUnit, 'length', { referenceWidth: refWidth, referenceHeight: refHeight, axis: 'width' });
+    const displayHeight = getDisplayValue(heightValue, heightUnit, 'length', { referenceWidth: refWidth, referenceHeight: refHeight, axis: 'height' });
+
+    return (
+      <UnitConversionProvider referenceWidth={refWidth} referenceHeight={refHeight}>
+        <div style={{ padding: '20px', minWidth: '400px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <div>
+            <DimensionInput
+              label="Width"
+              value={widthValue}
+              unit={widthUnit}
+              onChange={handleWidthChange}
+              axis="width"
+            />
+            <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+              <div><strong>Display:</strong> {displayWidth.toFixed(2)} {widthUnit}</div>
+              <div><strong>Internal:</strong> {widthValue.toFixed(2)} cm</div>
+            </div>
+          </div>
+          <div>
+            <DimensionInput
+              label="Height"
+              value={heightValue}
+              unit={heightUnit}
+              onChange={handleHeightChange}
+              axis="height"
+            />
+            <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+              <div><strong>Display:</strong> {displayHeight.toFixed(2)} {heightUnit}</div>
+              <div><strong>Internal:</strong> {heightValue.toFixed(2)} cm</div>
+            </div>
+          </div>
+          <small>Context: {refWidth}cm ref width, {refHeight}cm ref height. Both inputs should show 100.00%.</small>
+        </div>
+      </UnitConversionProvider>
+    );
+  },
+  args: {
+    // These args are not directly used in this story's render function but are good for the controls panel
+    label: 'Dimension',
+    value: 10,
+    unit: '%',
   },
 };
 

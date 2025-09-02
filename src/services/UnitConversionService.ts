@@ -15,6 +15,7 @@ export interface UnitConversionContext {
   rootFontSize?: number;     // For rem calculations (in internal unit)
   temperature?: number;      // For temperature conversions
   volume?: number;           // For volume conversions
+  axis?: 'width' | 'height' | 'x' | 'y'; // 🆕 Axis for percentage calculations
 }
 
 export class UnitConversionService {
@@ -135,13 +136,24 @@ export class UnitConversionService {
   private convertRelativeUnit(value: number, unit: string, systemId: string, context: UnitConversionContext, direction: 'toInternal' | 'fromInternal'): number {
     switch (unit) {
       case '%':
-        if (!context.referenceWidth && !context.referenceHeight) {
-          throw new Error('Reference dimensions required for percentage conversion');
+        // 🚨 FIX: Use axis-aware reference selection for percentage calculations
+        // Extract axis from context if provided, default to 'width' for backward compatibility
+        const axis = context.axis || 'width';
+        
+        let reference: number | undefined;
+        if (axis === 'width' || axis === 'x') {
+          reference = context.referenceWidth;
+        } else if (axis === 'height' || axis === 'y') {
+          reference = context.referenceHeight;
+        } else {
+          // Fallback for backward compatibility - use width reference
+          reference = context.referenceWidth || context.referenceHeight;
         }
-        const reference = context.referenceWidth || context.referenceHeight;
+        
         if (reference === undefined) {
-          throw new Error('Reference dimensions required for percentage conversion');
+          throw new Error(`Reference ${axis} required for percentage conversion`);
         }
+        
         if (direction === 'toInternal') {
           return (value / 100) * reference;
         } else {

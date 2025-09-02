@@ -190,6 +190,7 @@ export const PositionFields = React.memo<PositionFieldsProps>(({
               {...(units !== undefined && { units })}
               onChange={handleXChange}
               disabled={disabled || position !== 'Custom'}
+              axis="width"
               onError={onError}
             />
 
@@ -200,6 +201,7 @@ export const PositionFields = React.memo<PositionFieldsProps>(({
               {...(units !== undefined && { units })}
               onChange={handleYChange}
               disabled={disabled || position !== 'Custom'}
+              axis="height"
               onError={onError}
             />
           </div>

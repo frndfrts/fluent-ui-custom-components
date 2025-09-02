@@ -47,16 +47,19 @@ export interface DimensionInputProps {
   value: number | ''; // This is the internal unit value (e.g., cm for length, celsius for temperature)
   unit?: string; // This is the display unit
   units?: string[]; // Available units
-  
+
   // Unit system support
   unitSystem?: UnitSystem | string; // Can be UnitSystem object or system ID string
-  
+
+  // Axis for percentage calculations
+  axis?: 'width' | 'height'; // Defaults to 'width' for backward compatibility
+
   onChange: (value: number | '', unit: string) => void; // value is always in internal unit
   onError?: (error: Error) => void;
   size?: 'small' | 'medium' | 'large';
   disabled?: boolean;
   hideLabel?: boolean;
-  
+
   // Context for relative unit calculations (props override context)
   referenceWidth?: number;   // For percentage calculations (in internal unit)
   referenceHeight?: number;  // For percentage calculations (in internal unit)
@@ -64,7 +67,7 @@ export interface DimensionInputProps {
   containerHeight?: number;  // For viewport-relative units (in internal unit)
   fontSize?: number;         // For em calculations (in internal unit)
   rootFontSize?: number;     // For rem calculations (in internal unit)
-  
+
   // Enhanced features
   showUnitNames?: boolean; // Show full unit names instead of symbols
   filterUnits?: (unit: string) => boolean; // Filter function for units
@@ -73,9 +76,9 @@ export interface DimensionInputProps {
 // Custom error fallback for DimensionInput
 const DimensionInputErrorFallback: React.FC<{ error: Error; resetError: () => void }> = ({ error, resetError }) => {
   return (
-    <div style={{ 
-      padding: '8px', 
-      border: '1px solid var(--colorPaletteRedBorder1)', 
+    <div style={{
+      padding: '8px',
+      border: '1px solid var(--colorPaletteRedBorder1)',
       borderRadius: '4px',
       backgroundColor: 'var(--colorPaletteRedBackground1)',
       color: 'var(--colorPaletteRedForeground1)',
@@ -83,12 +86,12 @@ const DimensionInputErrorFallback: React.FC<{ error: Error; resetError: () => vo
     }}>
       <div><strong>Dimension Input Error:</strong></div>
       <div>{error.message}</div>
-      <button 
+      <button
         onClick={resetError}
-        style={{ 
-          marginTop: '4px', 
-          padding: '2px 8px', 
-          border: '1px solid currentColor', 
+        style={{
+          marginTop: '4px',
+          padding: '2px 8px',
+          border: '1px solid currentColor',
           borderRadius: '2px',
           background: 'transparent',
           color: 'inherit',
@@ -101,13 +104,14 @@ const DimensionInputErrorFallback: React.FC<{ error: Error; resetError: () => vo
   );
 };
 
-export const DimensionInput = React.memo<DimensionInputProps>(({ 
-  label, 
-  value, 
-  unit, 
-  units, 
+export const DimensionInput = React.memo<DimensionInputProps>(({
+  label,
+  value,
+  unit,
+  units,
+  axis = 'width', // Default to 'width' for backward compatibility
   unitSystem,
-  onChange, 
+  onChange,
   onError,
   size = 'medium',
   disabled = false,
@@ -185,13 +189,13 @@ export const DimensionInput = React.memo<DimensionInputProps>(({
     try {
       if (typeof value === 'number') {
         const currentUnit = unit || internalUnit;
-        
+
         // Validate context for relative units
         if (!unitConversionService.validateContext(currentUnit, systemId, context)) {
           throw new Error(`Context required for unit '${currentUnit}' but not provided`);
         }
-        
-        return unitConversionService.fromInternalUnit(value, currentUnit, systemId, context);
+
+        return unitConversionService.fromInternalUnit(value, currentUnit, systemId, { ...context, axis });
       }
       return value;
     } catch (error) {
@@ -199,7 +203,7 @@ export const DimensionInput = React.memo<DimensionInputProps>(({
       onError?.(errorObj);
       return value; // Return original value on error
     }
-  }, [value, unit, internalUnit, systemId, context, onError]);
+  }, [value, unit, internalUnit, systemId, context, axis, onError]);
 
   // Get step value and decimal places for current unit
   const currentUnit = unit || internalUnit;
@@ -210,14 +214,14 @@ export const DimensionInput = React.memo<DimensionInputProps>(({
   const handleNumericChange = React.useCallback((displayValue: number | '') => {
     try {
       const currentUnit = unit || internalUnit;
-      
+
       // Validate context for relative units
       if (!unitConversionService.validateContext(currentUnit, systemId, context)) {
         throw new Error(`Context required for unit '${currentUnit}' but not provided`);
       }
-      
+
       if (typeof displayValue === 'number') {
-        const internalValue = unitConversionService.toInternalUnit(displayValue, currentUnit, systemId, context);
+        const internalValue = unitConversionService.toInternalUnit(displayValue, currentUnit, systemId, { ...context, axis });
         onChange(internalValue, currentUnit);
       } else {
         onChange(displayValue, currentUnit);
@@ -226,7 +230,7 @@ export const DimensionInput = React.memo<DimensionInputProps>(({
       const errorObj = error instanceof Error ? error : new Error('Unknown error in numeric input change');
       onError?.(errorObj);
     }
-  }, [unit, internalUnit, systemId, onChange, onError, context]);
+  }, [unit, internalUnit, systemId, onChange, onError, context, axis]);
 
   // Handle unit change (convert internal unit value to new display unit)
   const handleUnitChange = React.useCallback((newUnit: string) => {
@@ -235,7 +239,7 @@ export const DimensionInput = React.memo<DimensionInputProps>(({
       if (!unitConversionService.validateContext(newUnit, systemId, context)) {
         throw new Error(`Context required for unit '${newUnit}' but not provided`);
       }
-      
+
       // The internal unit value stays the same, only the display unit changes
       // The displayValue will be recalculated automatically in the useMemo
       onChange(value, newUnit);
@@ -260,7 +264,7 @@ export const DimensionInput = React.memo<DimensionInputProps>(({
   }, [onError]);
 
   return (
-    <ErrorBoundary 
+    <ErrorBoundary
       fallback={DimensionInputErrorFallback}
       onError={handleError}
       resetOnPropsChange={true}
@@ -280,7 +284,7 @@ export const DimensionInput = React.memo<DimensionInputProps>(({
           disabled={disabled}
           onError={onError}
         />
-        
+
         <UnitSelector
           unitSystem={resolvedUnitSystem}
           unit={unit}

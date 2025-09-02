@@ -63,20 +63,20 @@ export interface SizeFieldsProps {
 // Custom error fallback for SizeFields
 const SizeFieldsErrorFallback: React.FC<{ error: Error; resetError: () => void }> = ({ error, resetError }) => {
   const styles = useStyles();
-  
+
   return (
     <div className={styles.errorFallback}>
       <div style={{ marginBottom: tokens.spacingVerticalS }}>
         Failed to load size settings
       </div>
-      <div style={{ 
-        fontSize: tokens.fontSizeBase200, 
+      <div style={{
+        fontSize: tokens.fontSizeBase200,
         color: tokens.colorPaletteRedForeground2,
-        marginBottom: tokens.spacingVerticalM 
+        marginBottom: tokens.spacingVerticalM
       }}>
         {error.message}
       </div>
-      <button 
+      <button
         onClick={resetError}
         style={{
           padding: `${tokens.spacingVerticalS} ${tokens.spacingHorizontalM}`,
@@ -122,9 +122,9 @@ export const SizeFields = React.memo<SizeFieldsProps>(({
   // Update locked dimensions when aspect ratio is locked or dimensions change significantly
   // Use a very small threshold to avoid unnecessary updates while maintaining precision
   React.useEffect(() => {
-    if (localLockAspectRatio && (lockedDimensions === null || 
-        Math.abs(width - lockedDimensions.width) > 0.001 || 
-        Math.abs(height - lockedDimensions.height) > 0.001)) {
+    if (localLockAspectRatio && (lockedDimensions === null ||
+      Math.abs(width - lockedDimensions.width) > 0.001 ||
+      Math.abs(height - lockedDimensions.height) > 0.001)) {
       setLockedDimensions({ width, height });
     }
   }, [localLockAspectRatio, width, height, lockedDimensions]);
@@ -133,7 +133,7 @@ export const SizeFields = React.memo<SizeFieldsProps>(({
   // Use full precision values for calculations
   const aspectRatio = React.useMemo(() => {
     if (localLockAspectRatio && lockedDimensions) {
-      return lockedDimensions.width > 0 && lockedDimensions.height > 0 ? 
+      return lockedDimensions.width > 0 && lockedDimensions.height > 0 ?
         lockedDimensions.width / lockedDimensions.height : 1;
     }
     return width > 0 && height > 0 ? width / height : 1;
@@ -143,7 +143,7 @@ export const SizeFields = React.memo<SizeFieldsProps>(({
     try {
       const currentHeightUnit = heightUnit || DEFAULT_UNIT;
       const newWidth = typeof value === 'number' ? value : 0;
-      
+
       let newHeight = height;
       // If aspect ratio is locked, adjust height proportionally
       // Use full precision values for calculations, don't truncate during calculation
@@ -168,7 +168,7 @@ export const SizeFields = React.memo<SizeFieldsProps>(({
     try {
       const currentWidthUnit = widthUnit || DEFAULT_UNIT;
       const newHeight = typeof value === 'number' ? value : 0;
-      
+
       let newWidth = width;
       // If aspect ratio is locked, adjust width proportionally
       // Use full precision values for calculations, don't truncate during calculation
@@ -193,7 +193,7 @@ export const SizeFields = React.memo<SizeFieldsProps>(({
     try {
       // Update local state immediately for responsive UI
       setLocalLockAspectRatio(locked);
-      
+
       // If locking, store current dimensions as the reference point
       // Store the full precision values, not truncated display values
       if (locked) {
@@ -201,7 +201,7 @@ export const SizeFields = React.memo<SizeFieldsProps>(({
       } else {
         setLockedDimensions(null);
       }
-      
+
       // Call parent callback to propagate state up
       if (onLockAspectRatioChange) {
         onLockAspectRatioChange(locked);
@@ -217,7 +217,7 @@ export const SizeFields = React.memo<SizeFieldsProps>(({
   }, [onError]);
 
   return (
-    <ErrorBoundary 
+    <ErrorBoundary
       fallback={SizeFieldsErrorFallback}
       onError={handleError}
       resetOnPropsChange={true}
@@ -233,9 +233,10 @@ export const SizeFields = React.memo<SizeFieldsProps>(({
               {...(units !== undefined && { units })}
               onChange={handleWidthChange}
               disabled={disabled}
+              axis="width"
               onError={onError}
             />
-            
+
             <DimensionInput
               label="Height"
               value={height}
@@ -243,10 +244,11 @@ export const SizeFields = React.memo<SizeFieldsProps>(({
               {...(units !== undefined && { units })}
               onChange={handleHeightChange}
               disabled={disabled}
+              axis="height"
               onError={onError}
             />
           </div>
-          
+
           {showLockAspectRatio && (
             <div className={styles.section}>
               <LockAspectRatio

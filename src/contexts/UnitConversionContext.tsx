@@ -4,7 +4,7 @@
  * Provides reference dimensions for relative unit calculations throughout the component tree.
  */
 import * as React from 'react';
-import { UnitConversionContext as UnitContext } from '../hooks/useUnitConversion';
+import { UnitConversionContext as UnitContext } from '../services/UnitConversionService';
 
 interface UnitConversionProviderProps {
   children: React.ReactNode;
